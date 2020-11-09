@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.configuration;
+package org.springframework.samples.farmatic.configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;

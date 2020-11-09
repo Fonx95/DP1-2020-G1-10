@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.repository;
+package org.springframework.samples.farmatic.repository;
 
 import java.io.Serializable;
 import java.util.List;

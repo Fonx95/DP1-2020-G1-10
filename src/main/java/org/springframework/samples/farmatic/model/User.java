@@ -1,4 +1,4 @@
-package org.springframework.samples.petclinic.model;
+package org.springframework.samples.farmatic.model;
 
 import java.util.Set;
 

@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.springframework.samples</groupId>
-    <artifactId>Grupo-alfmascal</artifactId>
+    <artifactId>Grupo-10</artifactId>
     <version>2.2.0.BUILD-SNAPSHOT</version>
 
     <parent>
@@ -12,7 +12,7 @@
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.2.4.RELEASE</version>
     </parent>
-    <name>grupo-alfmascal</name>
+    <name>grupo-10</name>
 
     <properties>
 
@@ -39,7 +39,77 @@
 			<email>alfmascal@alum.us.es</email>
 			<url></url>
 			<roles>
-				<role>tech master</role>
+				<role>developer</role>
+			</roles>
+			<properties>
+				<picUrl>
+					
+				</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<id>LordAdos</id>
+			<name>Gabriel</name>
+			<email>gabgutpri@alum.us.es</email>
+			<url></url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<properties>
+				<picUrl>
+					
+				</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<id>Raptor</id>
+			<name>Francisco Jose</name>
+			<email>fravarcas1@alum.us.es</email>
+			<url></url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<properties>
+				<picUrl>
+					
+				</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<id>Antrosbar</id>
+			<name>Antonio</name>
+			<email>antrosbar@alum.us.es</email>
+			<url></url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<properties>
+				<picUrl>
+					
+				</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<id>Fernd</id>
+			<name>Fernando</name>
+			<email>fermadrop@alum.us.es</email>
+			<url></url>
+			<roles>
+				<role>developer</role>
+			</roles>
+			<properties>
+				<picUrl>
+					
+				</picUrl>
+			</properties>
+		</developer>
+		<developer>
+			<id>abdelkader</id>
+			<name>Abdelkader</name>
+			<email>correo@alum.us.es</email>
+			<url></url>
+			<roles>
+				<role>developer</role>
 			</roles>
 			<properties>
 				<picUrl>

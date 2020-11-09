@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.springframework.samples.petclinic.web;
+package org.springframework.samples.farmatic.web;
 
 import org.springframework.stereotype.Controller;
 

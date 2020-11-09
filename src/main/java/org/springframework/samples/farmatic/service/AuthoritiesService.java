@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.samples.petclinic.service;
+package org.springframework.samples.farmatic.service;
 
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.petclinic.model.Authorities;
-import org.springframework.samples.petclinic.model.User;
-import org.springframework.samples.petclinic.repository.AuthoritiesRepository;
+import org.springframework.samples.farmatic.model.Authorities;
+import org.springframework.samples.farmatic.model.User;
+import org.springframework.samples.farmatic.repository.AuthoritiesRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
