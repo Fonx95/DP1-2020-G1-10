@@ -5,3 +5,7 @@ INSERT INTO authorities(id,username,authority) VALUES (1,'admin1','admin');
 INSERT INTO users(username,password,enabled) VALUES ('proveedor1','Prove3dor1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (2,'proveedor1','proveedor');
 INSERT INTO proveedores(empresa,direccion,cif) VALUES ('Empresa1','Direccion1','S4953142I');
+
+INSERT INTO users(username,password,enabled) VALUES ('proveedor2','Prove3dor1',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (3,'proveedor2','proveedor');
+INSERT INTO proveedores(empresa,direccion,cif) VALUES ('Empresa2','Direccion2','W7181885J');
