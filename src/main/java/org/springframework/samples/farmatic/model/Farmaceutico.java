@@ -21,6 +21,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 
 import lombok.Data;
@@ -31,20 +32,14 @@ import lombok.Data;
  * @author Ken Krebs
  */
 @Data
-@MappedSuperclass
-public class Registrado extends NamedEntity {
+@Entity
+public class Farmaceutico extends Registrado {
 
 	
 	@NotEmpty
-	protected String surnames;
+	protected String pharmacyAddress;
 
 	
-	@NotEmpty
-	protected String dni;
-	
-	@OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "username", referencedColumnName = "username")
-	private User user;
 
 	
 

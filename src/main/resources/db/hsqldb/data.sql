@@ -8,5 +8,4 @@ INSERT INTO authorities(id,username,authority) VALUES (2,'farm1','admin');
 INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (3,'client1','admin');
 
-INSERT INTO registrado VALUES (1, 'Pepe', 'Rodriguez Rodriguez', '123456789H', 'farm1');
-INSERT INTO registrado VALUES (2, 'María', 'Jimenez Gomez', '987654321G', 'client1');
+INSERT INTO farmaceutico VALUES (1, 'Pepe', 'Rodriguez Rodriguez', '123456789H','Calle Vieja','farm1');
