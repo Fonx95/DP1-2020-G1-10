@@ -5,6 +5,6 @@ import org.springframework.samples.farmatic.model.Registrado;
 import org.springframework.samples.farmatic.model.User;
 
 
-public interface UserRepository extends  CrudRepository<User, String>{
+public interface RegistradoRepository extends  CrudRepository<Registrado, String>{
 	
 }
