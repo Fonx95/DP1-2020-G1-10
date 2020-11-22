@@ -26,11 +26,8 @@ import lombok.Data;
 @Data
 @Entity
 
-public class Producto {
+public class Producto extends NamedEntity{
 	
-	@Column(name = "name")
-	@NotEmpty
-	private String name;
 	
 	@Column(name = "code")
 	@NotEmpty
@@ -40,26 +37,20 @@ public class Producto {
 	private tipoProducto productType;
 	
 	@Column(name = "pvp")
-	@NotEmpty
 	@Min(0)
 	private Double pvp;
 	
 	@Column(name = "pvf")
-	@NotEmpty
 	@Min(0)
 	private Double pvf;
 	
 	@Column(name = "stock")
-	@NotEmpty
 	@Min(0)
 	private Integer stock;
 	
 	@Column(name = "min_stock")
 	@Min(0)
 	private Integer minStock;
-	
-	@ManyToMany
-	private Collection<TipoMedicamento> tipoMedicamento;
 
 	public enum tipoProducto {
 		
