@@ -13,6 +13,7 @@ INSERT INTO proveedores(empresa,direccion,cif) VALUES ('Empresa2','Direccion2','
 --CLientes
 
 
+
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 
 
@@ -23,6 +24,13 @@ INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin');
 
 INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
+
+
+
+INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico');
+
+
 
 INSERT INTO cliente(id,name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES (8, 'Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Maria 1','10.0','client1');
 
