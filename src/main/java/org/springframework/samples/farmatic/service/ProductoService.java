@@ -17,11 +17,13 @@ public class ProductoService {
 	
 	@org.springframework.transaction.annotation.Transactional(readOnly = true)
 	public Collection<Producto> findProducts() throws DataAccessException{
+		//lista productos
 		return productoRepository.findALL();
 	}
 	
 	@org.springframework.transaction.annotation.Transactional(readOnly = true)
 	public Producto findProductoById(int id) throws DataAccessException {
+		//detalles productos
 		return productoRepository.findById(id);
 	}
 	
