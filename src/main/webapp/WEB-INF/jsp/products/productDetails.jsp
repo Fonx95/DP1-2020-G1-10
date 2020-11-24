@@ -11,17 +11,33 @@
 
     <table class="table table-striped">
         <tr>
-            <th>Name</th>
+            <th>Nombre</th>
             <td><b><c:out value="${product.name}"/></b></td>
+        </tr>
+        <tr>
+        	<th>Codigo</th>
+        	<td><b><c:out value="${product.code}"/></b></td>
         </tr>
         <tr>
             <th>Tipo_producto</th>
             <td><c:out value="${product.productType}"/></td>
         </tr>
         <tr>
-            <th>Stock</th>
-            <td><c:out value="${product.stock}"/></td>
+        	<th>PvP</th>
+        	<td><b><c:out value="${product.pvp}"/></b></td>
         </tr>
+        <tr>
+        	<th>PvF</th>
+        	<td><b><c:out values="${product.pvf}"/></b></td>
+        </tr>
+        <tr>
+            <th>Stock</th>
+            <td><b><c:out value="${product.stock}"/></b></td>
+        </tr>
+        <tr>
+        	<th>Minimo_stock</th>
+        	<td><b><c:out value="${product.minStock}"/></b>
+        
     </table>
 
     <spring:url value="{idProducto}/edit" var="editUrl">
