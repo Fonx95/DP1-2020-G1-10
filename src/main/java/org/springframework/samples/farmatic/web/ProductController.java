@@ -6,12 +6,14 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.Productos;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -32,10 +34,19 @@ public class ProductController {
 		dataBinder.setDisallowedFields("id");
 	}
 	
-	@GetMapping("/products")
-	public ModelAndView showProducts() {
-		ModelAndView mav = new ModelAndView("Producto/productDetails");
-		
+	@GetMapping(value = {"/products"})
+	public String showProductList(Map<String, Object> model) {
+		Productos productos = new Productos();
+		productos.getProductoLista().addAll(this.productService.findProducts());
+		model.put("productos", productos);
+		return "products/listaProductos";
+	}
+	
+	@GetMapping("/products/{idProducto}")
+	public ModelAndView showProducts(@PathVariable("idProducto") int idProducto) {
+		ModelAndView mav = new ModelAndView("Productos/detallesProducto");
+		Producto product = this.productService.findProductoById(idProducto);
+		mav.addObject(product);
 		return mav;
 		
 	}

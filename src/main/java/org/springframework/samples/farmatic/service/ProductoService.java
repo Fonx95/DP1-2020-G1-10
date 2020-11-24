@@ -1,5 +1,7 @@
 package org.springframework.samples.farmatic.service;
 
+import java.util.Collection;
+
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,16 @@ import org.springframework.stereotype.Service;
 public class ProductoService {
 	
 	private ProductoRepository productoRepository;
+	
+	@org.springframework.transaction.annotation.Transactional(readOnly = true)
+	public Collection<Producto> findProducts() throws DataAccessException{
+		return productoRepository.findALL();
+	}
+	
+	@org.springframework.transaction.annotation.Transactional(readOnly = true)
+	public Producto findProductoById(int id) throws DataAccessException {
+		return productoRepository.findById(id);
+	}
 	
 	@Autowired
 	public ProductoService(ProductoRepository productoRepository) {
