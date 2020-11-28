@@ -13,6 +13,7 @@
         <form:form modelAttribute="pedido" class="form-horizontal">
             <div class="form-group has-feedback">
                 <farmatic:inputField label="codigo" name="codigo"/>
+                <input type="datetime-local" name="fechaPedido" value="${pedido.fechaPedido.now()}">
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
@@ -21,21 +22,7 @@
                 </div>
             </div>
         </form:form>
-        
-        <br/>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th>fechaPedido</th>
-                <th>fechaEntrega</th>
-            </tr>
-            </thead>
-            <tr>
-                <td><c:out value="${LocalDate.now()}"/></td>
-                <td><c:out value="${pedido.fechaEntrega}"/></td>
-            </tr>
-        </table>    
-        
+   
         <br/> 
         <b>LineaPedido</b>
         <table class="table table-striped">
