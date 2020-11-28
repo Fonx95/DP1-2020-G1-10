@@ -13,6 +13,7 @@
 			<th>Nombre</th>
 			<th>Tipo_Producto</th>
 			<th>Stock</th>
+			<th>Detalles</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -26,6 +27,12 @@
 				</td>
 				<td>
 					<c:out value="${producto.stock }"/>
+				</td>
+				<td>
+					<spring:url value="/products/productList/{idProducto}" var="productUrl">
+						<spring:param name="idProducto" value="${producto.id}"/>
+					</spring:url>
+					<a href="${fn:escapeXml(productUrl)}">Detalles</a>
 				</td>
 			</tr>
 		</c:forEach>
