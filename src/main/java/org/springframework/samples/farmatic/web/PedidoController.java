@@ -9,6 +9,7 @@ import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedidos;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,22 +42,23 @@ public class PedidoController {
 	}
 	
 	@GetMapping(value = {"/pedidos/new"})
-	public String initCreationForm(Map<String, Object> model) {
+	public String initCreationForm(ModelMap modelMap) {
 			Pedido pedido = new Pedido();
-			model.put("pedido", pedido);
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
+			modelMap.addAttribute("pedido", pedido);
+			return "pedidos/editPedido";
 	}
 	
-	@PostMapping(value = {"/pedidos/new"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result) {
+	@PostMapping(value = {"/pedidos/save"})
+	public String processCreationForm(@Valid Pedido pedido, BindingResult result, ModelMap modelMap) {
 		if (result.hasErrors()) {
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
+			modelMap.addAttribute("pedido", pedido);
+			return "pedidos/editPedido";
 		}
 		else {
 			//creating order
 			this.pedidoService.savePedido(pedido);
 			
-			return "redirect:/pedidos/" + pedido.getId();
 		}
+		return "redirect:/pedidos/" + pedido.getId();
 	}
 }
