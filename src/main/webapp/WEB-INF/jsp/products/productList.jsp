@@ -7,7 +7,7 @@
 <farmatic:layout pageName= "productos">
 	<h2> Productos</h2>
 	
-	<table class = "table table-striped">
+	<table id="productosTable" class = "table table-striped">
 		<thead>
 		<tr>
 			<th>Nombre</th>
@@ -16,7 +16,7 @@
 		</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${products.listaProductos}" var="producto">
+		<c:forEach items="${productos}" var="producto">
 			<tr>
 				<td>
 					<c:out value="${producto.name }"/>
