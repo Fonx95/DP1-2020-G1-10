@@ -18,7 +18,9 @@ public class ProductoService {
 	@Transactional
 	public Iterable<Producto> findProducts() throws DataAccessException {
 		//lista productos
+
 		return this.productoRepository.findAll();
+
 	}
 
 	@Transactional
