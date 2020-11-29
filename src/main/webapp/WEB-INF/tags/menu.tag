@@ -33,6 +33,11 @@
 					<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
 					<span>Error</span>
 				</petclinic:menuItem>
+				<petclinic:menuItem active="${name eq 'pedidos'}" url="/pedidos/new"
+					title="trigger a RuntimeException to see how it is handled">
+					<span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>
+					<span>Error</span>
+				</petclinic:menuItem>
 
 			</ul>
 

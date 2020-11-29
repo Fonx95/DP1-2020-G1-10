@@ -45,24 +45,30 @@ public class PedidoController {
 	@GetMapping(value = {"/pedidos/new"})
 	public String initCreationForm(ModelMap modelMap) {
 			Pedido pedido = new Pedido();
-			modelMap.addAttribute("pedido", pedido);
+			pedido.setEstadoPedido(EstadoPedido.Borrador);
+			pedido.setFechaEntrega(LocalDate.now());
+			modelMap.put("pedido", pedido);
+			modelMap.put("mensaje", "he llegado");
 			return "pedidos/createOrUpdatePedido";
 	}
 	
 	@PostMapping(value = {"/pedidos/new"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result) {
+	public String processCreationForm(@Valid Pedido pedido, BindingResult result,ModelMap model) {
+		
+		pedido.setEstadoPedido(EstadoPedido.Borrador);
+		pedido.setFechaEntrega(LocalDate.now());
+		
 		if (result.hasErrors()) {
-			
+			model.put("mensaje", result.getAllErrors());
+			model.put("pedido", pedido);
 			return "pedidos/createOrUpdatePedido";
 		}
 		else {
 			//creating order
-			pedido.setFechaPedido(LocalDate.now());
-			pedido.setEstadoPedido(EstadoPedido.Borrador);
 			this.pedidoService.savePedido(pedido);
 			
 			//return "redirect:/pedidos/" + pedido.getId();
-			return "redirect:/menu";
+			return "redirect:/pedidos/pedidosList";
 		}
 	}
 }

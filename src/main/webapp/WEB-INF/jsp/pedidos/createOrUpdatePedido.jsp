@@ -21,6 +21,8 @@
                 </div>
             </div>
         </form:form>
+        
+        <c:out value="${mensaje}"/>
    
         <br/> 
         <b>LineaPedido</b>
