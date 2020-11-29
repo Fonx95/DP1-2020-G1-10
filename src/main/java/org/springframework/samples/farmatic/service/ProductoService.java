@@ -18,7 +18,7 @@ public class ProductoService {
 	@org.springframework.transaction.annotation.Transactional(readOnly = true)
 	public Collection<Producto> findProducts() throws DataAccessException{
 		//lista productos
-		return productoRepository.findALL();
+		return productoRepository.findAll();
 	}
 	
 	@org.springframework.transaction.annotation.Transactional(readOnly = true)
