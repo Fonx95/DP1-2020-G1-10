@@ -27,6 +27,14 @@
 					<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
 					<span>Home</span>
 				</petclinic:menuItem>
+				
+				<sec:authorize access= "hasAuthority('farmaceutico')">
+					<petclinic:menuItem active="${name eq 'producto'}" url="/products"
+						title="diseases">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Productos</span>
+					</petclinic:menuItem>
+				</sec:authorize>
 
 				<petclinic:menuItem active="${name eq 'error'}" url="/oups"
 					title="trigger a RuntimeException to see how it is handled">

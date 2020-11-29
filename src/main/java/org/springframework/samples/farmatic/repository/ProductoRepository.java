@@ -11,7 +11,7 @@ import org.springframework.samples.farmatic.model.Producto;
 
 public interface ProductoRepository extends CrudRepository<Producto, String>{
 	
-	Collection<Producto> findALL() throws DataAccessException;
+	Iterable<Producto> findAll() throws DataAccessException;
 
 	@Query("SELECT producto FROM Producto producto WHERE producto.id =:id")
 	public Producto findById(@Param("id") int id);
