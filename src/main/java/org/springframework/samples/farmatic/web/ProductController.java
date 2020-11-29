@@ -6,9 +6,9 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Producto;
-import org.springframework.samples.farmatic.model.Productos;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,16 +35,15 @@ public class ProductController {
 	}
 	
 	@GetMapping(value = {"/products"})
-	public String showProductList(Map<String, Object> model) {
-		Productos productos = new Productos();
-		productos.getProductoLista().addAll(this.productService.findProducts());
-		model.put("productos", productos);
-		return "products/listaProductos";
+	public String listadoProductos(ModelMap modelMap) {
+		Iterable<Producto> productos = productService.findProducts();
+		modelMap.addAttribute("products", productos);
+		return "products/productList";
 	}
 	
-	@GetMapping("/products/{idProducto}")
+	@GetMapping("/products/productList/{idProducto}")
 	public ModelAndView showProducts(@PathVariable("idProducto") int idProducto) {
-		ModelAndView mav = new ModelAndView("Productos/detallesProducto");
+		ModelAndView mav = new ModelAndView("Products/productDetails");
 		Producto product = this.productService.findProductoById(idProducto);
 		mav.addObject(product);
 		return mav;

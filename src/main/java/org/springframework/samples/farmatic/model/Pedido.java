@@ -6,13 +6,14 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 
 import lombok.Data;
 
@@ -35,6 +36,7 @@ public class Pedido extends BaseEntity{
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private LocalDate fechaEntrega;
 	
+	@Enumerated(EnumType.STRING)
 	@Column(name = "Estado")
 	@NotNull
 	private EstadoPedido estadoPedido;
@@ -42,8 +44,5 @@ public class Pedido extends BaseEntity{
 	@OneToMany(cascade = CascadeType.ALL)
 	private Collection<LineaPedido> lineaPedido;
 	
-	public enum EstadoPedido {
-		Pedido, Enviado, Recibido, Borrador;
-	}
-
+	
 }

@@ -1,10 +1,12 @@
 package org.springframework.samples.farmatic.web;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.farmatic.model.EstadoPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedidos;
 import org.springframework.samples.farmatic.service.PedidoService;
@@ -19,7 +21,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class PedidoController {
 	
-	private static final String VIEWS_ORDER_CREATE_OR_UPDATE_FORM = "products/createOrUpdateOrderForm";
 	
 	private final PedidoService pedidoService;
 	
@@ -38,27 +39,30 @@ public class PedidoController {
 		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
 		model.put("pedidos", pedidos);
-		return "pedidos/pedidoLista";
+		return "pedidos/pedidoList";
 	}
 	
 	@GetMapping(value = {"/pedidos/new"})
 	public String initCreationForm(ModelMap modelMap) {
 			Pedido pedido = new Pedido();
 			modelMap.addAttribute("pedido", pedido);
-			return "pedidos/editPedido";
+			return "pedidos/createOrUpdatePedido";
 	}
 	
-	@PostMapping(value = {"/pedidos/save"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result, ModelMap modelMap) {
+	@PostMapping(value = {"/pedidos/new"})
+	public String processCreationForm(@Valid Pedido pedido, BindingResult result) {
 		if (result.hasErrors()) {
-			modelMap.addAttribute("pedido", pedido);
-			return "pedidos/editPedido";
+			
+			return "pedidos/createOrUpdatePedido";
 		}
 		else {
 			//creating order
+			pedido.setFechaPedido(LocalDate.now());
+			pedido.setEstadoPedido(EstadoPedido.Borrador);
 			this.pedidoService.savePedido(pedido);
 			
+			//return "redirect:/pedidos/" + pedido.getId();
+			return "redirect:/menu";
 		}
-		return "redirect:/pedidos/" + pedido.getId();
 	}
 }

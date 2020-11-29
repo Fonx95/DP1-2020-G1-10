@@ -17,13 +17,13 @@ INSERT INTO proveedores(empresa,direccion,cif) VALUES ('Empresa2','Direccion2','
 -- One admin user, named admin1 with passwor 4dm1n and authority admin
 
 
-INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (5,'farm1','admin');
+INSERT INTO users(username,password,enabled) VALUES ('farm2','farm1',TRUE);
+INSERT INTO authorities(id,username,authority) VALUES (5,'farm2','admin');
 
 INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin');
 
-INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
+INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm2');
 
 
 

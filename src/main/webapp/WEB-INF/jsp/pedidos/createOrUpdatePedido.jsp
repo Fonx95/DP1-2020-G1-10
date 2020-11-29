@@ -7,18 +7,17 @@
 
 <farmatic:layout pageName="Pedidos">
     <jsp:body>
-        <h2>Pedido</h2>
+        <h2>Nuevo Pedido</h2>
 
-
+		<h2><c:if test="${pedido['new']}"></c:if></h2>
         <form:form modelAttribute="pedido" class="form-horizontal">
             <div class="form-group has-feedback">
                 <farmatic:inputField label="codigo" name="codigo"/>
-                <input type="datetime-local" name="fechaPedido" value="${pedido.fechaPedido.now()}">
             </div>
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <input type="hidden" name="pedidoId" value="${pedido.id}"/>
-                    <button class="btn btn-default" type="submit">terminar pedido</button>
+                    <button class="btn btn-default" type="submit">Guardar pedido</button>
                 </div>
             </div>
         </form:form>
@@ -31,11 +30,13 @@
                 <th>Nombre</th>
                 <th>Cantidad</th>
             </tr>
+            <c:forEach var="lineaPedido" items="${pedido.lineaPedido}">
+                    <tr>
+                        <td><c:out value="${lineaPedido.producto.name}"/></td>
+                        <td><c:out value="${lineaPedido.cantidad}"/></td>
+                    </tr>
+            </c:forEach>
             </thead>
-            <tr>
-                <td><c:out value="${pedido.lineaPedido.producto.name}"/></td>
-                <td><c:out value="${pedido.lineaPedido.cantidad}"/></td>
-            </tr>
         </table>    
     </jsp:body>
 
