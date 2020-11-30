@@ -17,6 +17,8 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <input type="hidden" name="pedidoId" value="${pedido.id}"/>
+                    <input type="hidden" name="fechaPedido" value="${pedido.fechaPedido}"/>
+                    <input type="hidden" name="estadoPedido" value="${pedido.estadoPedido}"/>
                     <button class="btn btn-default" type="submit">Guardar pedido</button>
                 </div>
             </div>

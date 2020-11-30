@@ -9,7 +9,6 @@ import org.springframework.samples.farmatic.model.Pedido;
 
 public interface PedidoRepository extends CrudRepository<Pedido, String>{
 	
-	
 	Collection<Pedido> findAll() throws DataAccessException;
 
 }

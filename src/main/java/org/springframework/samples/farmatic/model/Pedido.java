@@ -29,11 +29,11 @@ public class Pedido extends BaseEntity{
 	
 	@Column(name = "fecha_pedido")
 	@NotNull
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate fechaPedido;
 	
 	@Column(name = "fecha_entrega")
-	@DateTimeFormat(pattern = "dd/MM/yyyy")
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	private LocalDate fechaEntrega;
 	
 	@Enumerated(EnumType.STRING)

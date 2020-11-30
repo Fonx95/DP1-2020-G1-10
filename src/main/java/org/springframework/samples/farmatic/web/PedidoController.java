@@ -17,6 +17,7 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class PedidoController {
@@ -46,18 +47,17 @@ public class PedidoController {
 	public String initCreationForm(ModelMap modelMap) {
 			Pedido pedido = new Pedido();
 			pedido.setEstadoPedido(EstadoPedido.Borrador);
-			pedido.setFechaEntrega(LocalDate.now());
+			pedido.setFechaPedido(LocalDate.now());
 			modelMap.put("pedido", pedido);
 			modelMap.put("mensaje", "he llegado");
 			return "pedidos/createOrUpdatePedido";
 	}
 	
 	@PostMapping(value = {"/pedidos/new"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result,ModelMap model) {
-		
-		pedido.setEstadoPedido(EstadoPedido.Borrador);
-		pedido.setFechaEntrega(LocalDate.now());
-		
+	public String processCreationForm(@Valid Pedido pedido, BindingResult result,ModelMap model
+			, @RequestParam(value = "fechaPedido") final String fechaPedido) {
+		pedido.setFechaPedido(LocalDate.parse(fechaPedido));
+		pedido.setFechaPedido(LocalDate.now());
 		if (result.hasErrors()) {
 			model.put("mensaje", result.getAllErrors());
 			model.put("pedido", pedido);
