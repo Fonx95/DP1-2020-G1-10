@@ -15,4 +15,7 @@ public interface ProductoRepository extends CrudRepository<Producto, String>{
 
 	@Query("SELECT producto FROM Producto producto WHERE producto.id =:id")
 	public Producto findById(@Param("id") int id);
+	
+	@Query("SELECT producto FROM Producto producto WHERE producto.code LIKE :codigo")
+	public Producto findByCode(@Param("codigo") String codigo);
 }

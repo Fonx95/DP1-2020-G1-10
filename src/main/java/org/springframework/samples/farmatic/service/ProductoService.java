@@ -37,5 +37,10 @@ public class ProductoService {
 		//creating product
 		this.productoRepository.save(product);
 	}
-
+	
+	@Transactional
+	public Producto findProductoByCode(final String code) throws DataAccessException {
+		//detalles productos (code)
+		return this.productoRepository.findByCode(code);
+	}
 }

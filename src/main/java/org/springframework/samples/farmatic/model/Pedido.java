@@ -6,8 +6,12 @@ import java.util.Collection;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
@@ -18,7 +22,7 @@ import lombok.Data;
 
 @Data
 @Entity
-
+@Table(name = "pedidos")
 public class Pedido extends BaseEntity{
 	
 
@@ -39,11 +43,19 @@ public class Pedido extends BaseEntity{
 	@NotNull
 	private EstadoPedido estadoPedido;
 	
-	@OneToMany(cascade = CascadeType.ALL)
+	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@JoinColumn(name = "proveedor_id", referencedColumnName = "id")
+	private Proveedor proveedor;
+	
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", fetch = FetchType.LAZY)
 	private Collection<LineaPedido> lineaPedido;
 	
 	public enum EstadoPedido {
-		Pedido, Enviado, Recibido, Borrador;
+		Enviado, Recibido, Borrador;
 	}
-
+	
+	public void addLinea(LineaPedido linea) {
+		getLineaPedido().add(linea);
+		linea.setPedido(this);
+	}
 }

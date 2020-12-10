@@ -6,7 +6,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
 
-<farmatic:layout pageName="products">
+<farmatic:layout pageName="productos">
     <h2>
         <c:if test="${product['new']}">New </c:if> Product
     </h2>

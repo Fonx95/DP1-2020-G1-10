@@ -1,10 +1,13 @@
 
 package org.springframework.samples.farmatic.model;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
@@ -43,5 +46,8 @@ public class Producto extends NamedEntity {
 	@Column(name = "min_stock")
 	@Min(0)
 	private Integer			minStock;
+	
+	@OneToMany()
+	private Collection<LineaPedido> lineaPedido;
 
 }
