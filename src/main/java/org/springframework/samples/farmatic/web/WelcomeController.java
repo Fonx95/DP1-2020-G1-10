@@ -36,10 +36,6 @@ public class WelcomeController {
 		  person4.setFirstName("Francisco Jose");
 		  person4.setLastName("Vargas Castro");
 		  persons.add(person4);
-		  Person person5 = new Person();
-		  person5.setFirstName("Abdelkader");
-		  person5.setLastName("Chellik");
-		  persons.add(person5);
 		  model.put("persons", persons);
 		  model.put("title", "Farmatic Proyect");
 		  model.put("group", "10");

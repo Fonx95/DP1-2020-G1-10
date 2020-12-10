@@ -4,7 +4,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
 
-<farmatic:layout pageName= "products">
+<farmatic:layout pageName= "productos">
 
     <h2>Product Information</h2>
 
