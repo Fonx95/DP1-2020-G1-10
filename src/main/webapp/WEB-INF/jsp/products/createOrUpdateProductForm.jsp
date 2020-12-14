@@ -14,11 +14,12 @@
         <div class="form-group has-feedback">
             <farmatic:inputField label="Nombre" name="name"/>
             <farmatic:inputField label="Código" name="code"/>
-            <farmatic:inputField label="Tipo" name="productType"/>
+            <farmatic:selectField name="productType" label="Tipo " names="${types}" size="4"/>
             <farmatic:inputField label="Precio de vental al público" name="pvp"/>
             <farmatic:inputField label="Precio de venta Farmacia" name="pvf"/>
             <farmatic:inputField label="Stock" name="stock"/>
             <farmatic:inputField label="Stock mínimo" name="minStock"/>
+            
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

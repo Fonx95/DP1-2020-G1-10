@@ -1,11 +1,15 @@
 
 package org.springframework.samples.farmatic.service;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 
@@ -38,6 +42,18 @@ public class ProductoService {
 	public void saveProducto(final Producto product) throws DataAccessException {
 		//creating product
 		this.productoRepository.save(product);
+	}
+	
+	@Transactional(readOnly = true)
+	public Collection<TipoProducto> getProductTypes() throws DataAccessException {
+		Collection<TipoProducto> productTypes = new ArrayList<TipoProducto>();
+		productTypes.add(TipoProducto.ESTUPEFACIENTE);
+		productTypes.add(TipoProducto.FARMACOCONRECETA);
+		productTypes.add(TipoProducto.FARMACOSINRECETA);
+		productTypes.add(TipoProducto.PARAFARMACIA);
+		
+		return productTypes;
+		
 	}
 
 }
