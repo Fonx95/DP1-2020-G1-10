@@ -26,15 +26,15 @@ INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico')
 INSERT INTO cliente(id,name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES (8, 'Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Maria 1','10.0','client1');
 
 --Productos
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dalsy','PR-002','FARMACOCONRECETA','6.75','5.74','3','2');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dolocatil','PR-003','FARMACOSINRECETA','7.55','6.11','4','4');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Mariguanilla','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Cinfatos','PR-005','FARMACOSINRECETA','9.20','8.34','4','3');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Gelocatil Gripe','PR-006','FARMACOCONRECETA','6.10','5.23','15','10');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Flumil Forte','PR-007','FARMACOSINRECETA','2.60','2.03','7','7');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Pasta Diente Lacer','PR-008','PARAFARMACIA','2.65','1.84','7','7');
-INSERT INTO producto(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Potito Manzana y Platano','PR-009','PARAFARMACIA','1.40','0.72','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dalsy','PR-002','FARMACOCONRECETA','6.75','5.74','3','2');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dolocatil','PR-003','FARMACOSINRECETA','7.55','6.11','4','4');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Mariguanilla','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Cinfatos','PR-005','FARMACOSINRECETA','9.20','8.34','4','3');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Gelocatil Gripe','PR-006','FARMACOCONRECETA','6.10','5.23','15','10');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Flumil Forte','PR-007','FARMACOSINRECETA','2.60','2.03','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Pasta Diente Lacer','PR-008','PARAFARMACIA','2.65','1.84','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Potito Manzana y Platano','PR-009','PARAFARMACIA','1.40','0.72','7','7');
 
 --Pedidos
 INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-001','2020-12-01',null,2,null);

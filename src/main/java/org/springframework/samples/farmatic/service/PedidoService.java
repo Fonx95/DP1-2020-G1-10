@@ -8,6 +8,7 @@ import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
+import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.PedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
@@ -18,10 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class PedidoService {
 	
+	@Autowired
 	private PedidoRepository pedidoRepository;
 	
+	@Autowired	
 	private LineaPedidoRepository lineaRepository;
 	
+	@Autowired	
 	private ProveedorRepository proveedorRepository;
 	
 	@Autowired
@@ -70,7 +74,18 @@ public class PedidoService {
 	
 	@Transactional
 	public void saveLinea(LineaPedido linea) throws DataAccessException{
-		//creando linea de pedido
+		//guardando linea de pedido
 		lineaRepository.save(linea);
+	}
+	
+	@Transactional
+	public LineaPedido newLinea(Producto producto) throws DataAccessException{
+		//creando linea de pedido vacia
+		Pedido pedido = pedidoActual();
+		LineaPedido linea = new LineaPedido();
+		linea.addProducto(producto);
+		linea.addPedido(pedido);
+		linea.setCantidad(1);
+		return linea;
 	}
 }

@@ -56,6 +56,6 @@ public class Pedido extends BaseEntity{
 	
 	public void addLinea(LineaPedido linea) {
 		getLineaPedido().add(linea);
-		linea.setPedido(this);
+		//linea.addPedido(this);
 	}
 }

@@ -17,21 +17,22 @@
 	</form:form>
 	<c:if test="${!producto['new']}">
 		<table class = "table table-striped">
-			<tr>
-				<th>${producto.code}</th>
-				<th>Nombre: ${producto.name}</th>
-				<th>Stock: ${producto.stock}</th>
-				<th>Stock minimo: ${producto.minStock}</th>
-				<th>
-					<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
-						<div>
+			<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
+				<tr>
+					<th>${nuevaLinea.producto.code}</th>
+					<th>Nombre: ${nuevaLinea.producto.name}</th>
+					<th>Stock: ${nuevaLinea.producto.stock}</th>
+					<th>Stock minimo: ${nuevaLinea.producto.minStock}</th>
+					<th>
 						<farmatic:inputField label="Cantidad: " name="cantidad"/>
-						<farmatic:inputField label="id: " name="id"/>
-						<button class="btn btn-default btn-right" onclick="form:search-producto-form()" type="submit">Añadir</button>
-						</div>
-					</form:form>
-				</th>
-			</tr>
+					</th>
+					<th>
+						<input type="hidden" name="Pedido" value="${nuevaLinea.pedido.id}"/>
+						<input type="hidden" name="Producto" value="${nuevaLinea.producto.id}"/>
+						<button class="btn btn-default btn-right" type="submit">Añadir</button>
+					</th>
+				</tr>
+			</form:form>
 		</table>
 	</c:if>
 	<table class = "table table-striped">
@@ -43,31 +44,37 @@
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
+			<th>cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
-		<c:forEach items="${nuevaLinea.pedido.lineaPedido}" var="lin">
-			<tr>
-				<td>
-					<c:out value="${lin.producto.code}"/>
-				</td>
-				<td>
-					<c:out value="${lin.producto.name}"/>
-				</td>
-				<td>
-					<c:out value="${lin.producto.pvp}"/>
-				</td>
-				<td>
-					<c:out value="${lin.producto.pvf}"/>
-				</td>
-				<td>
-					<c:out value="${lin.producto.stock}"/>
-				</td>
-				<td>
-					<c:out value="${lin.producto.minStock}"/>
-				</td>
-			</tr>
-		</c:forEach>
+			<form:form modelAttribute="pedidoActual" class="form-horizontal" id="put-linea-form">
+				<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
+					<tr>
+						<td>
+							<c:out value="${linea.producto.code}"/>
+						</td>
+						<td>
+							<c:out value="${linea.producto.name}"/>
+						</td>
+						<td>
+							<c:out value="${linea.producto.pvp}"/>
+						</td>
+						<td>
+							<c:out value="${linea.producto.pvf}"/>
+						</td>
+						<td>
+							<c:out value="${linea.producto.stock}"/>
+						</td>
+						<td>
+							<c:out value="${linea.producto.minStock}"/>
+						</td>
+						<td>
+							<c:out value="${linea.cantidad}"/>
+						</td>
+					</tr>
+				</c:forEach>
+			</form:form>
 		</tbody>
 	</table>
 </farmatic:layout>

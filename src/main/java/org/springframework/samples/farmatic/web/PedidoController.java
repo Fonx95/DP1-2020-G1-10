@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class PedidoController {
 	
-	private static final String VIEWS_ORDER_CREATE_OR_UPDATE_FORM = "products/createOrUpdateOrderForm";
-	
 	private final PedidoService pedidoService;
 	
 	private final ProductoService productoService;
@@ -46,17 +44,10 @@ public class PedidoController {
 		dataBinder.setDisallowedFields("id");
 	}
 	
-	@ModelAttribute("nuevaLinea")
-	public LineaPedido initnuevalinea(@ModelAttribute("producto") Producto producto, ModelMap model){
+	@ModelAttribute("pedidoActual")
+	public Pedido initnuevalinea(@ModelAttribute("producto") Producto producto, ModelMap model){
 		Pedido pedido = this.pedidoService.pedidoActual();
-		LineaPedido linea = (LineaPedido)model.get("nuevaLinea");
-		linea.setCantidad(1);
-		if(linea.getProducto().getCode()!=null) {
-			producto = this.productoService.findProductoByCode(producto.getCode());
-			linea.addProducto(producto);
-		}
-		pedido.addLinea(linea);
-		return linea;
+		return pedido;
 	}
 	
 	@GetMapping(value = {"/pedidos"})
@@ -81,10 +72,8 @@ public class PedidoController {
 	
 	@GetMapping(value= {"/pedidos/actual"})
 	public String showPedidoActual(Map<String, Object> model) {
-		//Pedido pedido = this.pedidoService.pedidoActual();
 		Producto producto = new Producto();
 		model.put("producto", producto);
-		//model.put("pedido", pedido);
 		return "pedidos/pedidoActual";
 	}
 	
@@ -94,42 +83,18 @@ public class PedidoController {
 		if (result.hasErrors()) {
 			return "/pedidos/pedidoActual";
 		}else if(producto.getCode()!=null){
-			return searchProductForm(producto, result, model);
+			producto = this.productoService.findProductoByCode(producto.getCode());
+			linea = pedidoService.newLinea(producto);
+			model.addAttribute("nuevaLinea", linea);
+			model.addAttribute("producto", producto);
+			return "pedidos/pedidoActual";
 		}else {
 			this.pedidoService.saveLinea(linea);
 			model.addAttribute("producto", producto);
-			//return addNewLineForm(linea, result, model);
 			return "pedidos/pedidoActual";
 		}
 	}
 	
-	public String searchProductForm(Producto producto, BindingResult result, ModelMap model) {
-		producto = this.productoService.findProductoByCode(producto.getCode());/*
-		Pedido pedido = this.pedidoService.pedidoActual();
-		LineaPedido linea = (LineaPedido)model.get("nuevaLinea");
-		//LineaPedido linea = initnuevalinea();
-		//pedido.addLinea(linea);
-		linea.addProducto(producto);
-		//linea.setCantidad(1);
-		model.replace("nuevaLinea", linea);*/
-		model.addAttribute("producto", producto);
-		//model.addAttribute("pedido", pedido);
-		//model.addAttribute("linea", linea);
-		//this.pedidoService.saveLinea(linea);
-		return "pedidos/pedidoActual";
-	}
-	
-	public String addNewLineForm(LineaPedido linea, BindingResult result, ModelMap model) {
-		Pedido pedido = this.pedidoService.pedidoActual();
-		//pedido.addLinea(linea);
-		this.pedidoService.saveLinea(linea);
-		
-		Producto producto = new Producto();
-		model.addAttribute("pedido", pedido);
-		model.addAttribute("producto", producto);
-		
-		return "pedidos/pedidoActual";
-	}
 	
 	/*
 	@GetMapping(value = {"/pedidos/new"})

@@ -31,6 +31,10 @@ public class LineaPedido extends BaseEntity{
 	
 	public void addProducto(Producto producto) {
 		this.producto = producto;
-		producto.getLineaPedido().add(this);
+		//producto.getLineaPedido().add(this);
+	}
+	
+	public void addPedido(Pedido pedido) {
+		this.pedido = pedido;
 	}
 }
