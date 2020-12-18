@@ -44,16 +44,9 @@ public class ProductoService {
 		this.productoRepository.save(product);
 	}
 	
-	@Transactional(readOnly = true)
-	public Collection<TipoProducto> getProductTypes() throws DataAccessException {
-		Collection<TipoProducto> productTypes = new ArrayList<TipoProducto>();
-		productTypes.add(TipoProducto.ESTUPEFACIENTE);
-		productTypes.add(TipoProducto.FARMACOCONRECETA);
-		productTypes.add(TipoProducto.FARMACOSINRECETA);
-		productTypes.add(TipoProducto.PARAFARMACIA);
-		
-		return productTypes;
-		
+	@Transactional
+	public Producto findProductoByCode(final String code) throws DataAccessException {
+		//detalles productos (code)
+		return this.productoRepository.findByCode(code);
 	}
-
 }

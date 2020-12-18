@@ -103,20 +103,6 @@
 				</picUrl>
 			</properties>
 		</developer>
-		<developer>
-			<id>abdelkader</id>
-			<name>Abdelkader</name>
-			<email>correo@alum.us.es</email>
-			<url></url>
-			<roles>
-				<role>developer</role>
-			</roles>
-			<properties>
-				<picUrl>
-					
-				</picUrl>
-			</properties>
-		</developer>
 	</developers>
 	
     <dependencies>

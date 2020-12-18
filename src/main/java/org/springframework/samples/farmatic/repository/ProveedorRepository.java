@@ -9,7 +9,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.Proveedor;
 
-public interface ProveedorRepository extends CrudRepository<Proveedor,Integer >{
+public interface ProveedorRepository extends CrudRepository<Proveedor,String >{
 	
 //	void save(Proveedor proveedor) throws DataAccessException;
 //
@@ -19,7 +19,7 @@ public interface ProveedorRepository extends CrudRepository<Proveedor,Integer >{
 //
 //
 //
-//	@Query("SELECT empresa FROM Proveedor proveedor left join fetch proveedor.empresas WHERE empresa.id =:id")
-//	public Proveedor findById(@Param("id") int id);
+	@Query("SELECT proveedor FROM Proveedor proveedor WHERE proveedor.id =:id")
+	public Proveedor findById(@Param("id") int id);
 
 }

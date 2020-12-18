@@ -1,10 +1,14 @@
 
 package org.springframework.samples.farmatic.model;
 
+import java.util.Collection;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 
@@ -17,7 +21,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-
+@Table(name = "productos")
 public class Producto extends NamedEntity {
 
 	@Column(name = "code")
@@ -43,5 +47,5 @@ public class Producto extends NamedEntity {
 	@Column(name = "min_stock")
 	@Min(0)
 	private Integer			minStock;
-
+	
 }
