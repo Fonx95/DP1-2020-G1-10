@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 @Controller
 public class PedidoController {
@@ -95,6 +96,25 @@ public class PedidoController {
 		}
 	}
 	
+	@GetMapping(value= {"/pedidos/actual/{lineaId}"})
+	public String showLineaEdit(@PathVariable("lineaId") LineaPedido linea, ModelMap model) {
+		Producto producto = new Producto();
+		model.put("producto", producto);
+		model.put("editaLinea", linea);
+		return "pedidos/editarLinea";
+	}
+	
+	@PostMapping(value= {"/pedidos/actual/{lineaId}"})
+	public String LineaEdit(@ModelAttribute("producto") Producto producto, @ModelAttribute("editarLinea") LineaPedido linea, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/pedidos/editarLinea";
+		}else if(producto.getCode()!=null){
+			return pedidoProcessCreation(producto, linea, result, model);
+		}else {
+			this.pedidoService.saveLinea(linea);
+			return "redirect:/pedidos/actual";
+		}
+	}
 	
 	/*
 	@GetMapping(value = {"/pedidos/new"})

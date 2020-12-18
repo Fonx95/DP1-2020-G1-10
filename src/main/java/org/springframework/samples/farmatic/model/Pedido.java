@@ -51,7 +51,7 @@ public class Pedido extends BaseEntity{
 	private Collection<LineaPedido> lineaPedido;
 	
 	public enum EstadoPedido {
-		Enviado, Recibido, Borrador;
+		Enviado, Recibido, Borrador, Pedido;
 	}
 	
 	public void addLinea(LineaPedido linea) {

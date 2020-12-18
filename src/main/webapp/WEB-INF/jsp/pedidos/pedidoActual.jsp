@@ -8,33 +8,6 @@
 
 <farmatic:layout pageName= "pedidos">
 	<h2> Pedido en Proceso</h2>
-	
-	<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
-		<div>
-		<farmatic:inputField label="Codigo Producto:" name="code"/>
-		<button class="btn btn-default btn-right" type="submit">Buscar</button>
-		</div>
-	</form:form>
-	<c:if test="${!producto['new']}">
-		<table class = "table table-striped">
-			<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
-				<tr>
-					<th>${nuevaLinea.producto.code}</th>
-					<th>Nombre: ${nuevaLinea.producto.name}</th>
-					<th>Stock: ${nuevaLinea.producto.stock}</th>
-					<th>Stock minimo: ${nuevaLinea.producto.minStock}</th>
-					<th>
-						<farmatic:inputField label="Cantidad: " name="cantidad"/>
-					</th>
-					<th>
-						<input type="hidden" name="Pedido" value="${nuevaLinea.pedido.id}"/>
-						<input type="hidden" name="Producto" value="${nuevaLinea.producto.id}"/>
-						<button class="btn btn-default btn-right" type="submit">Añadir</button>
-					</th>
-				</tr>
-			</form:form>
-		</table>
-	</c:if>
 	<table class = "table table-striped">
 		<thead>
 		<tr>
@@ -44,36 +17,79 @@
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
-			<th>cantidad</th>
+			<th>Cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
-			<form:form modelAttribute="pedidoActual" class="form-horizontal" id="put-linea-form">
-				<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
+			<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
+				<tr>
+					<td>
+						<input disabled type="text" name="code" value="${linea.producto.code}"/>
+					</td>
+					<td>
+						<c:out value="${linea.producto.name}"/>
+					</td>
+					<td>
+						<c:out value="${linea.producto.pvp}"/>
+					</td>
+					<td>
+						<c:out value="${linea.producto.pvf}"/>
+					</td>
+					<td>
+						<c:out value="${linea.producto.stock}"/>
+					</td>
+					<td>
+						<c:out value="${linea.producto.minStock}"/>
+					</td>
+					<td>
+						<input disabled type="text" name="Cantidad" value="${linea.cantidad}"/>
+					</td>
+					<td>
+						<a class="btn btn-default btn-sm" href="/pedidos/actual/${linea.id}">
+	                	<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+	                	</a>
+					</td>
+				</tr>
+			</c:forEach>
+			<c:if test="${!producto['new']}">
+				<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
 					<tr>
-						<td>
-							<c:out value="${linea.producto.code}"/>
-						</td>
-						<td>
-							<c:out value="${linea.producto.name}"/>
-						</td>
-						<td>
-							<c:out value="${linea.producto.pvp}"/>
-						</td>
-						<td>
-							<c:out value="${linea.producto.pvf}"/>
-						</td>
-						<td>
-							<c:out value="${linea.producto.stock}"/>
-						</td>
-						<td>
-							<c:out value="${linea.producto.minStock}"/>
-						</td>
-						<td>
-							<c:out value="${linea.cantidad}"/>
-						</td>
+						<th>${nuevaLinea.producto.code}</th>
+						<th>${nuevaLinea.producto.name}</th>
+						<th>${nuevaLinea.producto.pvp}</th>
+						<th>${nuevaLinea.producto.pvf}</th>
+						<th>${nuevaLinea.producto.stock}</th>
+						<th>${nuevaLinea.producto.minStock}</th>
+						<th>
+							<input type="text" name="Cantidad" value="${nuevaLinea.cantidad}"/>
+						</th>
+						<th>
+							<input type="hidden" name="Pedido" value="${nuevaLinea.pedido.id}"/>
+							<input type="hidden" name="Producto" value="${nuevaLinea.producto.id}"/>
+							<button class="btn btn-default btn-sm" type="submit">
+								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+							</button>
+						</th>
 					</tr>
-				</c:forEach>
+				</form:form>
+			</c:if>
+			<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
+				<tr>
+					<td>
+						<input type="text" name="code"/>
+					</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td>
+						<button class="btn btn-default btn-sm" type="submit">
+							<span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+						</button>
+					</td>
+				</tr>
 			</form:form>
 		</tbody>
 	</table>
