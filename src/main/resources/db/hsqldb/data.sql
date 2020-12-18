@@ -19,7 +19,15 @@ INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin');
 
 INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
+
 INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico');
+
+
+
+
+--INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
+--INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico');
+
 
 
 

@@ -1,11 +1,15 @@
 
 package org.springframework.samples.farmatic.service;
 
-import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +22,9 @@ public class ProductoService {
 	@Transactional
 	public Iterable<Producto> findProducts() throws DataAccessException {
 		//lista productos
+
 		return this.productoRepository.findAll();
+
 	}
 
 	@Transactional

@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 
+
 public interface PedidoRepository extends CrudRepository<Pedido, String>{
 	
 	//void save(Pedido pedido) throws DataAccessException;

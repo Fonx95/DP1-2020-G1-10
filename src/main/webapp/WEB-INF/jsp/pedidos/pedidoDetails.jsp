@@ -9,7 +9,7 @@
 	<h2>Informacion del Pedido</h2>
 	<table class = "table table-striped">
 		<tr>
-			<th>Código</th>
+			<th>Cï¿½digo</th>
 			<th>${pedido.codigo}</th>
 		</tr>
 		<tr>
@@ -33,7 +33,7 @@
 	<table class = "table table-striped">
 		<thead>
 			<tr>
-				<th>Código</th>
+				<th>Cï¿½digo</th>
 				<th>Nombre</th>
 				<th>PvP</th>
 				<th>PvF</th>

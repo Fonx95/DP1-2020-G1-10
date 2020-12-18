@@ -43,5 +43,6 @@
 			</tr>
 		</c:forEach>
 		</tbody>
+
 	</table>
 </farmatic:layout>

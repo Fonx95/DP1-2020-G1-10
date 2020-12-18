@@ -1,12 +1,14 @@
 
 package org.springframework.samples.farmatic.web;
 
+import java.util.Collection;
 import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -29,6 +32,11 @@ public class ProductController {
 	@Autowired
 	public ProductController(final ProductoService productService) {
 		this.productService = productService;
+	}
+	
+	@ModelAttribute("types")
+	public Collection<TipoProducto> populatePetTypes() {
+		return this.productService.getProductTypes();
 	}
 
 	@InitBinder
@@ -69,7 +77,7 @@ public class ProductController {
 			//creating owner, user and authorities
 			this.productService.saveProducto(product);
 
-			return "redirect:/products/" + product.getId();
+			return "redirect:/products/productsList" + product.getId();
 		}
 	}
 
