@@ -35,13 +35,13 @@ class ProductoServiceTests {
 
 		Collection<Producto> lista = new HashSet<>();
 		aux.iterator().forEachRemaining(x -> lista.add(x));
-		assertThat(lista.size()).isEqualTo(2); // Comprobará que el númeor de elementos de la lista sea correcto. Depende de la base de datos.
+		assertThat(lista.size()).isEqualTo(9); // Comprobará que el númeor de elementos de la lista sea correcto. Depende de la base de datos.
 	}
 
 	@Test
 	void shouldFindProductoByID() {
 		Producto p = this.productoService.findProductoById(1);
-		assertThat(p.getCode().equals("PR-002"));
+		assertThat(p.getCode().equals("PR-001"));
 	}
 	
 	@Test

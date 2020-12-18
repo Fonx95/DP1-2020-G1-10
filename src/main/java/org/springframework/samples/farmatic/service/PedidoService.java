@@ -40,11 +40,6 @@ public class PedidoService {
 		//listado pedidos
 		return pedidoRepository.findAll();
 	}
-	@org.springframework.transaction.annotation.Transactional(readOnly = true)
-	public Pedido findPedidoById(int id) throws DataAccessException {
-		//detalles pedidos
-		return pedidoRepository.findById(id);
-	}
 	@Transactional
 	public void savePedido(Pedido pedido) throws DataAccessException{
 		//creando Pedido

@@ -77,7 +77,7 @@ public class ProductController {
 			//creating owner, user and authorities
 			this.productService.saveProducto(product);
 
-			return "redirect:/products/productsList" + product.getId();
+			return "redirect:/products/productList/" + product.getId();
 		}
 	}
 

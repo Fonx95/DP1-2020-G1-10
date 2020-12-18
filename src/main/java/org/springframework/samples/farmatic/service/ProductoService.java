@@ -49,4 +49,15 @@ public class ProductoService {
 		//detalles productos (code)
 		return this.productoRepository.findByCode(code);
 	}
+	
+	public Collection<TipoProducto> getProductTypes() throws DataAccessException {
+		Collection<TipoProducto> productTypes = new ArrayList<TipoProducto>();
+		productTypes.add(TipoProducto.ESTUPEFACIENTE);
+		productTypes.add(TipoProducto.FARMACOCONRECETA);
+		productTypes.add(TipoProducto.FARMACOSINRECETA);
+		productTypes.add(TipoProducto.PARAFARMACIA);
+		
+		return productTypes;
+		
+	}
 }
