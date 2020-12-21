@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -7,28 +8,30 @@
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
-	<table class = "table table-striped">
-		<tr>
-			<th>Código</th>
-			<th>${pedido.codigo}</th>
-		</tr>
-		<tr>
-			<th>Proveedor</th>
-			<th>${pedido.proveedor.empresa}</th>
-		</tr>
-		<tr>
-			<th>Fecha Pedido</th>
-			<th>${pedido.fechaPedido}</th>
-		</tr>
-		<tr>
-			<th>Estado</th>
-			<th>${pedido.estadoPedido}</th>
-		</tr>
-		<tr>
-			<th>Fecha Entrega</th>
-			<th>${pedido.fechaEntrega}</th>
-		</tr>
-	</table>
+	<form:form modelAttribute="proveedor" class="form-horizontal" id="edit-linea-form">
+		<table class = "table table-striped">
+			<tr>
+				<th>Código</th>
+				<th>${pedidoActual.codigo}</th>
+			</tr>
+			<tr>
+				<th>Proveedor</th>
+				<th><select class="form-control form-control-sm" name="proveedor">
+					<c:forEach items="${proveedores}" var="proveedor">
+						<option value="${proveedor.id}">${proveedor.empresa}</option>
+					</c:forEach>
+				</select>
+			</tr>
+			<tr>
+				<th>Estado</th>
+				<th>${pedidoActual.estadoPedido}</th>
+			</tr>
+		</table><!--  
+		<input type="hidden" name="codigo" value="${pedidoActual.codigo}"/>
+		<input type="hidden" name="estadoPedido" value="${pedidoActual.estadoPedido}"/>
+		<input type="hidden" name="Id" value="${pedidoActual.id}"/>-->
+		<button class="btn btn-default btn-sm" type="submit">Enviar</button>
+	</form:form>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
@@ -43,7 +46,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${pedido.lineaPedido}" var="linea">
+			<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
 				<tr>
 					<td>
 						<c:out value="${linea.producto.code}"/>
@@ -70,5 +73,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/pedidos/" class="btn btn-default">Volver</a>
+	<a href="/pedidos/actual" class="btn btn-default">Volver</a>
 </farmatic:layout>
