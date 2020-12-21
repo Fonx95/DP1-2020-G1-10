@@ -26,12 +26,11 @@
 				<th>Estado</th>
 				<th>${pedidoActual.estadoPedido}</th>
 			</tr>
-		</table><!--  
-		<input type="hidden" name="codigo" value="${pedidoActual.codigo}"/>
-		<input type="hidden" name="estadoPedido" value="${pedidoActual.estadoPedido}"/>
-		<input type="hidden" name="Id" value="${pedidoActual.id}"/>-->
-		<button class="btn btn-default btn-sm" type="submit">Enviar</button>
+		</table>
+		<a href="/pedidos/actual" class="btn btn-default">Volver</a>
+		<button class="btn btn-default" type="submit">Enviar</button>
 	</form:form>
+	<br>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
@@ -73,5 +72,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/pedidos/actual" class="btn btn-default">Volver</a>
+	
 </farmatic:layout>

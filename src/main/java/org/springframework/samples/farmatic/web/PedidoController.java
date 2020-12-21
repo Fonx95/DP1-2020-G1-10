@@ -64,6 +64,16 @@ public class PedidoController {
 		}
 	}
 	
+	@PostMapping(value="/pedidos/{id}")
+	public String pedidoRecibido(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/pedidos/" + pedido.getId();
+		}else {
+			this.pedidoService.pedidoRecibido(pedido);
+			return "redirect:/pedidos/" + pedido.getId();
+		}
+	}
+	
 	@GetMapping(value= {"/pedidos/actual"})
 	public String showPedidoActual(ModelMap model) {
 		Producto producto = new Producto();

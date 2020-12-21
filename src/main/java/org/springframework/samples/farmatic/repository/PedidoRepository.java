@@ -14,6 +14,7 @@ public interface PedidoRepository extends CrudRepository<Pedido, String>{
 	
 	//void save(Pedido pedido) throws DataAccessException;
 	
+	@Query("SELECT pedido FROM Pedido pedido ORDER BY pedido.fechaPedido DESC")
 	Collection<Pedido> findAll() throws DataAccessException;
 	
 	@Query("SELECT pedido FROM Pedido pedido WHERE pedido.estadoPedido = 2")

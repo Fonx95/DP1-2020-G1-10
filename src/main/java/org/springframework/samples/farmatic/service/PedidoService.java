@@ -28,11 +28,15 @@ public class PedidoService {
 		
 	private ProveedorRepository proveedorRepository;
 	
+	private ProductoRepository productoRepository;
+	
 	@Autowired
-	public PedidoService(PedidoRepository pedidoRepository, LineaPedidoRepository lineaRepository, ProveedorRepository proveedorRepository) {
+	public PedidoService(PedidoRepository pedidoRepository, LineaPedidoRepository lineaRepository, 
+			ProveedorRepository proveedorRepository, ProductoRepository productoRepository) {
 		this.pedidoRepository = pedidoRepository;
 		this.lineaRepository = lineaRepository;
 		this.proveedorRepository = proveedorRepository;
+		this.productoRepository = productoRepository;
 	}
 	
 	//---------Metodos referente a PEDIDOS---------
@@ -52,6 +56,19 @@ public class PedidoService {
 	@Transactional
 	public Pedido pedido(int id) throws DataAccessException{
 		return pedidoRepository.pedido(id);
+	}
+	
+	@Transactional
+	public void pedidoRecibido(Pedido pedido) throws DataAccessException{
+		pedido = pedido(pedido.getId());
+		pedido.setEstadoPedido(EstadoPedido.Recibido);
+		pedido.setFechaEntrega(LocalDate.now());
+		for(LineaPedido linea:pedido.getLineaPedido()) {
+			Producto producto = linea.getProducto();
+			producto.sumaStock(linea.getCantidad());
+			productoRepository.save(producto);
+		}
+		pedidoRepository.save(pedido);
 	}
 	
 	@Transactional
