@@ -116,25 +116,4 @@ public class PedidoController {
 			return "redirect:/pedidos/actual";
 		}
 	}
-	
-	/*
-	@GetMapping(value = {"/pedidos/new"})
-	public String initCreationForm(Map<String, Object> model) {
-			Pedido pedido = new Pedido();
-			model.put("pedido", pedido);
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
-	}
-	
-	@PostMapping(value = {"/pedidos/new"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result) {
-		if (result.hasErrors()) {
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
-		}
-		else {
-			//creating order
-			this.pedidoService.savePedido(pedido);
-			
-			return "redirect:/pedidos/" + pedido.getId();
-		}
-	}*/
 }
