@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ class ProductoServiceTests {
 
 		Collection<Producto> lista = new HashSet<>();
 		aux.iterator().forEachRemaining(x -> lista.add(x));
-		assertThat(lista.size()).isEqualTo(9); // Comprobará que el númeor de elementos de la lista sea correcto. Depende de la base de datos.
+		assertThat(lista.size()).isEqualTo(9); // Comprobará que el número de elementos de la lista sea correcto. Depende de la base de datos.
 	}
 
 	@Test
@@ -70,5 +71,9 @@ class ProductoServiceTests {
 	}
 	
 	//Test negativos
-
+	
+	@Test
+	void shouldNotFindProductoByID() {
+		assertThrows(NullPointerException.class, ()->{this.productoService.findProductoById(0).getClass();}); // Comprobará que se lanza un NullPointerException al realizar la acción en el corchete.
+	}
 }
