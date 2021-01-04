@@ -44,6 +44,14 @@
 					</farmatic:menuItem>
 				</sec:authorize>
 				
+				<sec:authorize access= "hasAuthority('proveedor')">
+					<farmatic:menuItem active="${name eq 'pedidos'}" url="/mispedidos"
+						title="diseases">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Pedidos</span>
+					</farmatic:menuItem>
+				</sec:authorize>
+				
 				<sec:authorize access= "hasAuthority('farmaceutico')">
 					<farmatic:menuItem active="${name eq 'productos'}" url="/products"
 						title="diseases">
