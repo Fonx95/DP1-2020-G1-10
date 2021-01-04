@@ -37,24 +37,29 @@ public class PedidoServiceTests {
 	@Autowired
 	protected ProductoRepository	productoRepository;
 
-	private Pedido					pedido; // Pedido para las pruebas.
-
 
 	//Test positivos
 
 	@Test
+	public void getPedidoActual() { // Método que devuelve el pedido actual auto creado por el sistema.
+		Pedido p = this.pedidoService.pedidoActual();
+		Assertions.assertNotNull(p); // Comprobamos que no sea nulo.
+		Assertions.assertTrue(p.getEstadoPedido().equals(EstadoPedido.Borrador)); // Comprobamos que está en estado Borrador.
+	}
+
+	@Test
 	@Transactional
 	public void shouldInsertPedido() { // Probamos a guardar un pedido en estado borrador
-		this.pedido = new Pedido();
-		this.pedido.setCodigo("P-000");
-		this.pedido.setEstadoPedido(EstadoPedido.Borrador);
-		this.pedido.setFechaEntrega(null);
-		this.pedido.setFechaPedido(LocalDate.now());
-		this.pedido.setLineaPedido(null); // No metemos ninguna porque está en borrador.
-		this.pedido.setProveedor(this.proveedorRepository.findById(1));
+		Pedido pedido = new Pedido();
+		pedido.setCodigo("P-000");
+		pedido.setEstadoPedido(EstadoPedido.Borrador);
+		pedido.setFechaEntrega(null);
+		pedido.setFechaPedido(LocalDate.now());
+		pedido.setLineaPedido(null); // No metemos ninguna porque está en borrador.
+		pedido.setProveedor(this.proveedorRepository.findById(1));
 
-		this.pedidoService.savePedido(this.pedido);
-		Assertions.assertTrue(this.pedidoService.pedido(this.pedido.getId()).equals(this.pedido)); // Comprueba que se ha guardado sin errores.
+		this.pedidoService.savePedido(pedido);
+		Assertions.assertTrue(this.pedidoService.pedido(pedido.getId()).equals(pedido)); // Comprueba que se ha guardado sin errores.
 	}
 
 	@Test
@@ -74,8 +79,18 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldUpdatePedido() {
+	public void shouldUpdatePedido() { // Modificamos la fecha d epedido a la fecha de hoy.
+		Pedido p = this.pedidoService.pedidoActual();
+		Assertions.assertNotNull(p);
+		LocalDate l = LocalDate.of(2020, 12, 01); // Valor del pedido actucal con código P-001
 
+		Assertions.assertTrue(p.getFechaPedido().equals(l));
+
+		p.setFechaPedido(LocalDate.now());
+		this.pedidoService.savePedido(p);
+		Pedido p1 = this.pedidoService.pedido(p.getId());
+
+		Assertions.assertTrue(p1.getFechaPedido().equals(LocalDate.now()));
 	}
 
 	//Test negativos
@@ -111,7 +126,18 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldNotUpdatePedido() {
+	public void shouldNotUpdatePedido() { // Intentamos poner a null la fecha de pedido.
+		Pedido p = this.pedidoService.pedidoActual();
+		Assertions.assertNotNull(p);
+		LocalDate l = LocalDate.of(2020, 12, 01); // Valor del pedido actucal con código P-001
 
+		Assertions.assertTrue(p.getFechaPedido().equals(l));
+
+		try {
+			p.setFechaPedido(null); // Cambiamos fecha a nulo.
+			this.pedidoService.savePedido(p);
+		} catch (Exception e) {
+			Assertions.assertNotNull(e);
+		}
 	}
 }
