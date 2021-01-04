@@ -4,12 +4,14 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
 	<table class = "table table-striped">
 		<tr>
-			<th>Cï¿½digo</th>
+			<th>Código</th>
 			<th>${pedido.codigo}</th>
 		</tr>
 		<tr>
@@ -33,7 +35,7 @@
 	<table class = "table table-striped">
 		<thead>
 			<tr>
-				<th>Cï¿½digo</th>
+				<th>Código</th>
 				<th>Nombre</th>
 				<th>PvP</th>
 				<th>PvF</th>
@@ -70,5 +72,10 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/pedidos/" class="btn btn-default">Volver</a>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+		<a href="/pedidos/" class="btn btn-default">Volver</a>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
+		<a href="/mispedidos" class="btn btn-default">Volver</a>
+	</sec:authorize>
 </farmatic:layout>
