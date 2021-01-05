@@ -65,7 +65,7 @@ public class PedidoServiceTests {
 	@Test
 	@Transactional
 	public void shouldInsertLineaPedido() {
-		LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(1)); // Generamos una nueva línea de pedido con el servicio, esto le asigna el pedido actual y el producto que le pasemos.
+		LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(1),1); // Generamos una nueva línea de pedido con el servicio, esto le asigna el pedido actual y el producto que le pasemos.
 
 		Assertions.assertNotNull(lp); // Comprobamos que no es nula.
 
@@ -118,7 +118,7 @@ public class PedidoServiceTests {
 	@Transactional
 	public void shouldNotInsertLineaPedido() { // No podmeos guardar porque directamente no podemos crear con el método usado por el sistema.
 		try {
-			LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(0));
+			LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(0),1);
 		} catch (Exception e) {
 			Assertions.assertNotNull(e);
 		}

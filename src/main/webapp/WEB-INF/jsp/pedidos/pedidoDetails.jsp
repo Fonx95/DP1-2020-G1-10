@@ -35,6 +35,7 @@
 			<th>${pedido.fechaEntrega}</th>
 		</tr>
 	</table>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
 	<c:if test="${pedido.estadoPedido == 'Enviado'}">
 		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
 			<input type="hidden" name="Id" value="${pedido.id}"/>
@@ -46,6 +47,7 @@
            	<br>
         </form:form>
 	</c:if>
+	</sec:authorize>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>

@@ -11,6 +11,7 @@ import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Pedidos;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
@@ -154,14 +155,14 @@ public class PedidoController {
 		}
 	}
 	
-	@PostMapping(value = {"/mispedidos/{id}"})
-	public String modificarPedidoAEnviado(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model) {
+	
+	@PostMapping(value="/mispedidos/{id}")
+	public String pedidoEnviado(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-			return "/mispedidos";
-		} else {
-			this.pedidoService.proveedorEnviarPedido(pedido);
-			this.pedidoService.savePedido(pedido);
-			return "redirect:/mispedidos";
+			return "/mispedidos/" + pedido.getId();
+		}else {
+			this.pedidoService.pedidoEnviado(pedido);
+			return "redirect:/mispedidos/" + pedido.getId();
 		}
 	}
   
