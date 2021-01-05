@@ -46,9 +46,7 @@ public class PedidoController {
 		return pedido;
 	}
 
-	@GetMapping(value = {
-		"/pedidos"
-	})
+	@GetMapping(value = {"/pedidos"})
 	public String showListaPedidos(final Map<String, Object> model) {
 		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
@@ -107,9 +105,7 @@ public class PedidoController {
 		}
 	}
 
-	@GetMapping(value = {
-		"/pedidos/actual/{lineaId}"
-	})
+	@GetMapping(value = {"/pedidos/actual/{lineaId}"})
 	public String showLineaEdit(@PathVariable("lineaId") final LineaPedido linea, final ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
@@ -117,9 +113,7 @@ public class PedidoController {
 		return "pedidos/editarLinea";
 	}
 
-	@PostMapping(value = {
-		"/pedidos/actual/{lineaId}"
-	})
+	@PostMapping(value = {"/pedidos/actual/{lineaId}"})
 	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editarLinea") final LineaPedido linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			return "/pedidos/editarLinea";
@@ -128,6 +122,17 @@ public class PedidoController {
 		} else {
 			this.pedidoService.saveLinea(linea);
 			return "redirect:/pedidos/actual";
+		}
+	}
+	
+	@PostMapping(value = {"/mispedidos/{id}"})
+	public String modificarPedidoAEnviado(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			return "/mispedidos";
+		} else {
+			this.pedidoService.proveedorEnviarPedido(pedido);
+			this.pedidoService.savePedido(pedido);
+			return "redirect:/mispedidos";
 		}
 	}
 }

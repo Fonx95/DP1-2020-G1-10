@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
+import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
@@ -108,5 +109,13 @@ public class PedidoService {
 		//listado pedidos de un proveedor
 		Proveedor p = this.proveedorRepository.findByUser(this.getCurrentUser());
 		return p.getPedido();
+	}
+
+	@Transactional
+	public Pedido proveedorEnviarPedido(final Pedido pedido) {
+		if (pedido.getEstadoPedido() == EstadoPedido.Borrador) {
+			pedido.setEstadoPedido(EstadoPedido.Enviado);
+		}
+		return pedido;
 	}
 }

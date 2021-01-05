@@ -51,6 +51,7 @@ INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUE
 INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-004','2020-11-28','2020-11-29',1,1);
 INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-005','2020-11-27','2020-11-28',1,2);
 INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-006','2020-11-26','2020-11-27',1,2);
+INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-007','2020-11-28',null,3,1);
 
 --LineaPedidos
 INSERT INTO linea_Pedidos(cantidad,pedido_id,producto_id) VALUES (2,1,1);
