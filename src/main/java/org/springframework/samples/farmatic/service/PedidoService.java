@@ -117,6 +117,12 @@ public class PedidoService {
 	}
 	
 	@Transactional
+	public void deleteLinea(LineaPedido linea) throws DataAccessException{
+		//elimina linea de pedido
+		lineaRepository.delete(linea);
+	}
+	
+	@Transactional
 	public LineaPedido newLinea(Producto producto, Integer cantidad) throws DataAccessException{
 		//creando linea de pedido vacia
 		Pedido pedido = pedidoActual();

@@ -110,4 +110,5 @@
 			</form:form>
 		</tbody>
 	</table>
+	<a href="/pedidos/actual/pedir" class="btn btn-default">Pedir</a>
 </farmatic:layout>

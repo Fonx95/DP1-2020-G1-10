@@ -21,12 +21,12 @@ public class LineaPedido extends BaseEntity{
 	@Min(0)
 	private Integer cantidad;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	@JoinColumn(name = "pedido_id")
 	private Pedido pedido;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "producto_id", referencedColumnName = "id")
+	@ManyToOne()
+	@JoinColumn(name = "producto_id"/*, referencedColumnName = "id"*/)
 	private Producto producto;
 	
 	public void addProducto(Producto producto) {

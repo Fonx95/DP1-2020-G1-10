@@ -28,7 +28,7 @@
 					<span>Home</span>
 				</farmatic:menuItem>
 				
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'ventas'}" url="/"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
@@ -36,7 +36,7 @@
 					</farmatic:menuItem>
 				</sec:authorize>
 				
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'pedidos'}" url="/pedidos"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
@@ -44,7 +44,7 @@
 					</farmatic:menuItem>
 				</sec:authorize>
 				
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'productos'}" url="/products"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
@@ -52,7 +52,7 @@
 					</farmatic:menuItem>
 				</sec:authorize>
 				
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'clientes'}" url="/"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
