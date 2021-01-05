@@ -25,13 +25,27 @@
 		</tr>
 		<tr>
 			<th>Estado</th>
-			<th>${pedido.estadoPedido}</th>
+			<th>
+				${pedido.estadoPedido}  
+				
+			</th>
 		</tr>
 		<tr>
 			<th>Fecha Entrega</th>
 			<th>${pedido.fechaEntrega}</th>
 		</tr>
 	</table>
+	<c:if test="${pedido.estadoPedido == 'Enviado'}">
+		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
+			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<label class="control-label">Pedido recibido: </label>
+			<button class="btn btn-default btn-sm" type="submit">
+           		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+           	</button>
+           	<br>
+           	<br>
+        </form:form>
+	</c:if>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
