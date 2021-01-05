@@ -5,18 +5,18 @@ INSERT INTO authorities(id,username,authority) VALUES (1,'admin1','admin');
 --Proveedores
 INSERT INTO users(username,password,enabled) VALUES ('proveedor1','Prove3dor1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (2,'proveedor1','proveedor');
-INSERT INTO proveedors(empresa,direccion,cif) VALUES ('COFARES','Direccion1','S4953142I');
+INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('COFARES','Direccion1','S4953142I','proveedor1');
 
 INSERT INTO users(username,password,enabled) VALUES ('proveedor2','Prove3dor1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (3,'proveedor2','proveedor');
-INSERT INTO proveedors(empresa,direccion,cif) VALUES ('CECOFAR','Direccion2','W7181885J');
+INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('CECOFAR','Direccion2','W7181885J','proveedor2');
 --CLientes
 
 INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
 INSERT INTO authorities(id,username,authority) VALUES (5,'farm1','admin');
 
 INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin');
+INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin'); --No puede ser admin, ES UN CLIENTE
 
 INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
 

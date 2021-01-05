@@ -1,3 +1,4 @@
+
 package org.springframework.samples.farmatic.model;
 
 import javax.persistence.CascadeType;
@@ -14,27 +15,27 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "lineaPedidos")
-public class LineaPedido extends BaseEntity{
-	
+public class LineaPedido extends BaseEntity {
+
 	@Column(name = "cantidad")
 	@NotNull
 	@Min(0)
-	private Integer cantidad;
-	
+	private Integer		cantidad;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "pedido_id")
-	private Pedido pedido;
-	
+	private Pedido		pedido;
+
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "producto_id", referencedColumnName = "id")
-	private Producto producto;
-	
-	public void addProducto(Producto producto) {
+	private Producto	producto;
+
+
+	public void addProducto(final Producto producto) {
 		this.producto = producto;
-		//producto.getLineaPedido().add(this);
 	}
-	
-	public void addPedido(Pedido pedido) {
+
+	public void addPedido(final Pedido pedido) {
 		this.pedido = pedido;
 	}
 }
