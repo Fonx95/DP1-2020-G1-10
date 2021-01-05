@@ -48,4 +48,8 @@ public class Producto extends NamedEntity {
 	@Min(0)
 	private Integer			minStock;
 	
+	public void sumaStock(Integer suma) {
+		this.stock += suma;
+	}
+	
 }

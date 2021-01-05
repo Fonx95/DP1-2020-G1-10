@@ -5,47 +5,32 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
-<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
-
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
-	<table class = "table table-striped">
-		<tr>
-			<th>Código</th>
-			<th>${pedido.codigo}</th>
-		</tr>
-		<tr>
-			<th>Proveedor</th>
-			<th>${pedido.proveedor.empresa}</th>
-		</tr>
-		<tr>
-			<th>Fecha Pedido</th>
-			<th>${pedido.fechaPedido}</th>
-		</tr>
-		<tr>
-			<th>Estado</th>
-			<th>
-				${pedido.estadoPedido}  
-				
-			</th>
-		</tr>
-		<tr>
-			<th>Fecha Entrega</th>
-			<th>${pedido.fechaEntrega}</th>
-		</tr>
-	</table>
-	<c:if test="${pedido.estadoPedido == 'Enviado'}">
-		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
-			<input type="hidden" name="Id" value="${pedido.id}"/>
-			<label class="control-label">Pedido recibido: </label>
-			<button class="btn btn-default btn-sm" type="submit">
-           		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
-           	</button>
-           	<br>
-           	<br>
-        </form:form>
-	</c:if>
+	<form:form modelAttribute="proveedor" class="form-horizontal" id="edit-linea-form">
+		<table class = "table table-striped">
+			<tr>
+				<th>Código</th>
+				<th>${pedidoActual.codigo}</th>
+			</tr>
+			<tr>
+				<th>Proveedor</th>
+				<th><select class="form-control form-control-sm" name="proveedor">
+					<c:forEach items="${proveedores}" var="proveedor">
+						<option value="${proveedor.id}">${proveedor.empresa}</option>
+					</c:forEach>
+				</select>
+			</tr>
+			<tr>
+				<th>Estado</th>
+				<th>${pedidoActual.estadoPedido}</th>
+			</tr>
+		</table>
+		<a href="/pedidos/actual" class="btn btn-default">Volver</a>
+		<button class="btn btn-default" type="submit">Enviar</button>
+	</form:form>
+	<br>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
@@ -60,7 +45,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			<c:forEach items="${pedido.lineaPedido}" var="linea">
+			<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
 				<tr>
 					<td>
 						<c:out value="${linea.producto.code}"/>
@@ -87,10 +72,5 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<sec:authorize access= "hasAuthority('farmaceutico')">
-		<a href="/pedidos/" class="btn btn-default">Volver</a>
-	</sec:authorize>
-	<sec:authorize access= "hasAuthority('proveedor')">
-		<a href="/mispedidos" class="btn btn-default">Volver</a>
-	</sec:authorize>
+	
 </farmatic:layout>

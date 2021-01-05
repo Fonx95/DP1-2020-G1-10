@@ -1,6 +1,8 @@
 
 package org.springframework.samples.farmatic.web;
 
+import java.util.Collection;
+import javax.validation.Valid;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,15 +43,13 @@ public class PedidoController {
 	}
 
 	@ModelAttribute("pedidoActual")
-	public Pedido initnuevalinea(@ModelAttribute("producto") final Producto producto, final ModelMap model) {
+	public Pedido getPedidoActual(){
 		Pedido pedido = this.pedidoService.pedidoActual();
 		return pedido;
 	}
-
-	@GetMapping(value = {
-		"/pedidos"
-	})
-	public String showListaPedidos(final Map<String, Object> model) {
+	
+	@GetMapping(value = {"/pedidos"})
+	public String showListaPedidos(ModelMap model) {
 		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
 		model.put("pedidos", pedidos);
@@ -72,19 +72,27 @@ public class PedidoController {
 	}
 
 	@GetMapping(value = {"/pedidos/{id}"})
-	public String showPedido(@PathVariable("id") final int pedidoId, final Map<String, Object> model) {
-		Pedido pedido = this.pedidoService.pedido(pedidoId);
-		if (pedido.getEstadoPedido() == EstadoPedido.Borrador) {
+	public String showPedido(@PathVariable("id") Pedido pedido, ModelMap model) {
+		if(pedido.getEstadoPedido() == EstadoPedido.Borrador) {
 			return "redirect:/pedidos/actual";
 		} else {
 			model.put("pedido", pedido);
 			return "pedidos/pedidoDetails";
 		}
-
 	}
-
-	@GetMapping(value = {"/pedidos/actual"})
-	public String showPedidoActual(final Map<String, Object> model) {
+	
+	@PostMapping(value="/pedidos/{id}")
+	public String pedidoRecibido(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/pedidos/" + pedido.getId();
+		}else {
+			this.pedidoService.pedidoRecibido(pedido);
+			return "redirect:/pedidos/" + pedido.getId();
+		}
+	}
+	
+	@GetMapping(value= {"/pedidos/actual"})
+	public String showPedidoActual(ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
 		return "pedidos/pedidoActual";
@@ -96,7 +104,7 @@ public class PedidoController {
 			return "/pedidos/pedidoActual";
 		} else if (producto.getCode() != null) {
 			producto = this.productoService.findProductoByCode(producto.getCode());
-			linea = this.pedidoService.newLinea(producto);
+			linea = pedidoService.newLinea(producto,1);
 			model.addAttribute("nuevaLinea", linea);
 			model.addAttribute("producto", producto);
 			return "pedidos/pedidoActual";
@@ -107,9 +115,7 @@ public class PedidoController {
 		}
 	}
 
-	@GetMapping(value = {
-		"/pedidos/actual/{lineaId}"
-	})
+	@GetMapping(value = {"/pedidos/actual/{lineaId}"})
 	public String showLineaEdit(@PathVariable("lineaId") final LineaPedido linea, final ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
@@ -117,9 +123,7 @@ public class PedidoController {
 		return "pedidos/editarLinea";
 	}
 
-	@PostMapping(value = {
-		"/pedidos/actual/{lineaId}"
-	})
+	@PostMapping(value = {"/pedidos/actual/{lineaId}"})
 	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editarLinea") final LineaPedido linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			return "/pedidos/editarLinea";
@@ -130,4 +134,24 @@ public class PedidoController {
 			return "redirect:/pedidos/actual";
 		}
 	}
+
+	@GetMapping(value={"/pedidos/actual/pedir"})
+	public String sendPedido(ModelMap model) {
+		Collection<Proveedor> proveedores = pedidoService.findProveedores();
+		Proveedor proveedor = new Proveedor();
+		model.addAttribute("proveedores", proveedores);
+		model.addAttribute("proveedor", proveedor);
+		return "pedidos/enviarPedido";
+	}
+	
+	@PostMapping(value={"/pedidos/actual/pedir"})
+	public String createPedido(@Valid Proveedor proveedor, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/pedidos/actual/pedir";
+		}else {
+			this.pedidoService.enviarPedido(proveedor);
+			return "redirect:/pedidos";
+		}
+	}
+  
 }
