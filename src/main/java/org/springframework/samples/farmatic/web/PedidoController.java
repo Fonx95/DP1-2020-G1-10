@@ -153,5 +153,16 @@ public class PedidoController {
 			return "redirect:/pedidos";
 		}
 	}
+	
+	@PostMapping(value = {"/mispedidos/{id}"})
+	public String modificarPedidoAEnviado(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			return "/mispedidos";
+		} else {
+			this.pedidoService.proveedorEnviarPedido(pedido);
+			this.pedidoService.savePedido(pedido);
+			return "redirect:/mispedidos";
+		}
+	}
   
 }

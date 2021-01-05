@@ -91,6 +91,14 @@
 		<a href="/pedidos/" class="btn btn-default">Volver</a>
 	</sec:authorize>
 	<sec:authorize access= "hasAuthority('proveedor')">
+	<c:if test="${pedido.estadoPedido == 'Pedido'}">
+		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
+			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<button class="btn btn-default btn-right" type="submit">Enviar</button>
+		</form:form>
+	</c:if>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
 		<a href="/mispedidos" class="btn btn-default">Volver</a>
 	</sec:authorize>
 </farmatic:layout>
