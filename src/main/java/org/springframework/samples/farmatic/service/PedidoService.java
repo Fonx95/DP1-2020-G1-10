@@ -54,12 +54,6 @@ public class PedidoService {
 	}
 
 	@Transactional
-	public void savePedido(final Pedido pedido) throws DataAccessException {
-		//creando Pedido
-		this.pedidoRepository.save(pedido);
-	}
-
-	@Transactional
 	public Pedido pedidoActual() throws DataAccessException {
 		//pedido actual
 		return this.pedidoRepository.pedidoActual();

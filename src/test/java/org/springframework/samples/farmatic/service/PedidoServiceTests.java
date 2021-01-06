@@ -4,6 +4,7 @@ package org.springframework.samples.farmatic.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
+import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.ProveedorRepository;
@@ -37,6 +39,8 @@ public class PedidoServiceTests {
 	@Autowired
 	protected ProductoRepository	productoRepository;
 
+	// Recordatorio: No hay un create directo en los pedidos, sino que se crean al usar enviarPedido, por lo tanto, en ese test se comprobará la creación.
+
 
 	//Test positivos
 
@@ -49,23 +53,8 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldInsertPedido() { // Probamos a guardar un pedido en estado borrador
-		Pedido pedido = new Pedido();
-		pedido.setCodigo("P-000");
-		pedido.setEstadoPedido(EstadoPedido.Borrador);
-		pedido.setFechaEntrega(null);
-		pedido.setFechaPedido(LocalDate.now());
-		pedido.setLineaPedido(null); // No metemos ninguna porque está en borrador.
-		pedido.setProveedor(this.proveedorRepository.findById(1));
-
-		this.pedidoService.savePedido(pedido);
-		Assertions.assertTrue(this.pedidoService.pedido(pedido.getId()).equals(pedido)); // Comprueba que se ha guardado sin errores.
-	}
-
-	@Test
-	@Transactional
 	public void shouldInsertLineaPedido() {
-		LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(1),1); // Generamos una nueva línea de pedido con el servicio, esto le asigna el pedido actual y el producto que le pasemos.
+		LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(1), 1); // Generamos una nueva línea de pedido con el servicio, esto le asigna el pedido actual y el producto que le pasemos.
 
 		Assertions.assertNotNull(lp); // Comprobamos que no es nula.
 
@@ -79,46 +68,56 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldUpdatePedido() { // Modificamos la fecha d epedido a la fecha de hoy.
-		Pedido p = this.pedidoService.pedidoActual();
-		Assertions.assertNotNull(p);
-		LocalDate l = LocalDate.of(2020, 12, 01); // Valor del pedido actucal con código P-001
+	public void enviarPedidoPositivo() { // Modificamos un pedido de Borrador a Pedido.
+		Proveedor prov = this.proveedorRepository.findById(1);
+		Pedido p = this.pedidoService.pedidoActual(); // Nos traemos el pedido actual para comprobar que se realizan las modificaciones.
+		Assertions.assertTrue(p.getEstadoPedido() == EstadoPedido.Borrador);
 
-		Assertions.assertTrue(p.getFechaPedido().equals(l));
-
-		p.setFechaPedido(LocalDate.now());
-		this.pedidoService.savePedido(p);
+		this.pedidoService.enviarPedido(prov); // Función que cambia el estado de Borrador a Pedido, pone la nueva fecha de pedido y asigna el proveedor al que se pide.
 		Pedido p1 = this.pedidoService.pedido(p.getId());
-
+		Assertions.assertTrue(p1.getProveedor().equals(prov));
 		Assertions.assertTrue(p1.getFechaPedido().equals(LocalDate.now()));
+		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Pedido);
+
+		Pedido p2 = this.pedidoService.pedidoActual(); // La función anterior también crea un pedido nuevo.
+		Assertions.assertNotNull(p2);
+		Assertions.assertTrue(p2.getEstadoPedido() == EstadoPedido.Borrador);
+	}
+
+	@Test
+	@Transactional
+	public void recibirPedidoPositivo() { // Modificamos un pedido de Enviado a Recibido.
+		Pedido p = this.pedidoService.pedido(2); // Nos traemos el pedido con estado Enviado de la BD.
+		Assertions.assertTrue(p.getFechaEntrega() == null);
+		Assertions.assertTrue(p.getEstadoPedido() == EstadoPedido.Enviado);
+
+		List<Integer> cantidadLp = new ArrayList<>();
+		List<Integer> stockOriginal = new ArrayList<>();
+		List<Integer> stockActual = new ArrayList<>();
+		p.getLineaPedido().stream().forEach(x -> cantidadLp.add(x.getCantidad()));
+		p.getLineaPedido().stream().forEach(x -> stockOriginal.add(x.getProducto().getStock()));
+
+		this.pedidoService.pedidoRecibido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		Pedido p1 = this.pedidoService.pedido(p.getId());
+		Assertions.assertTrue(p1.getFechaEntrega().equals(LocalDate.now()));
+		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Recibido);
+
+		p1.getLineaPedido().stream().forEach(x -> stockActual.add(x.getProducto().getStock()));
+
+		int i = 0;
+		while (i < cantidadLp.size()) {
+			Assertions.assertTrue(stockActual.get(i) == stockOriginal.get(i) + cantidadLp.get(i)); // Comprobamos que el stock se suma correctamente.
+			i++;
+		}
 	}
 
 	//Test negativos
 
 	@Test
 	@Transactional
-	public void shouldNotInsertPedido() {	// El estado del pedido no puede ser nulo.
-		Pedido p = new Pedido();
-		p.setCodigo("P-000");
-		p.setEstadoPedido(null);
-		p.setFechaEntrega(null);
-		p.setFechaPedido(LocalDate.now());
-		p.setLineaPedido(null); // No metemos ninguna porque está en borrador.
-		p.setProveedor(this.proveedorRepository.findById(1));
-
-		try {
-			this.pedidoService.savePedido(p);
-		} catch (Exception e) {
-			Assertions.assertNotNull(e);
-		}
-
-	}
-
-	@Test
-	@Transactional
 	public void shouldNotInsertLineaPedido() { // No podmeos guardar porque directamente no podemos crear con el método usado por el sistema.
 		try {
-			LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(0),1);
+			LineaPedido lp = this.pedidoService.newLinea(this.productoRepository.findById(0), 1);
 		} catch (Exception e) {
 			Assertions.assertNotNull(e);
 		}
@@ -126,16 +125,25 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void shouldNotUpdatePedido() { // Intentamos poner a null la fecha de pedido.
-		Pedido p = this.pedidoService.pedidoActual();
+	public void enviarPedidoNegativo() { // Probamos a mandar un pedido a un proveedor nulo
+		Pedido p = this.pedidoService.pedidoActual(); // Comprobamos que no es nulo el pedido actual.
 		Assertions.assertNotNull(p);
-		LocalDate l = LocalDate.of(2020, 12, 01); // Valor del pedido actucal con código P-001
-
-		Assertions.assertTrue(p.getFechaPedido().equals(l));
 
 		try {
-			p.setFechaPedido(null); // Cambiamos fecha a nulo.
-			this.pedidoService.savePedido(p);
+			this.pedidoService.enviarPedido(null);
+		} catch (Exception e) {
+			Assertions.assertNotNull(e);
+			Assertions.assertTrue(this.pedidoService.pedidoActual().equals(p)); // Comprobamos que el pedido actual sigue siendo el mismo.
+		}
+	}
+
+	@Test
+	@Transactional
+	public void recibirPedidoNegativo() { // Probamos a mandar un pedido recien creado.
+		Pedido p = new Pedido(); // Creamos un nuevo pedido.
+
+		try {
+			this.pedidoService.pedidoRecibido(p);
 		} catch (Exception e) {
 			Assertions.assertNotNull(e);
 		}
