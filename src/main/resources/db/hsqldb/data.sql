@@ -21,6 +21,7 @@ INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin'); --N
 INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
 
 INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico');
+INSERT INTO authorities(id,username,authority) VALUES (7,'client1','cliente');
 
 
 
