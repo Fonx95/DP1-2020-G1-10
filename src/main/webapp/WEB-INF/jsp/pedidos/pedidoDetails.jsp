@@ -5,6 +5,8 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
@@ -33,6 +35,7 @@
 			<th>${pedido.fechaEntrega}</th>
 		</tr>
 	</table>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
 	<c:if test="${pedido.estadoPedido == 'Enviado'}">
 		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
 			<input type="hidden" name="Id" value="${pedido.id}"/>
@@ -44,6 +47,7 @@
            	<br>
         </form:form>
 	</c:if>
+	</sec:authorize>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
@@ -85,5 +89,18 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/pedidos/" class="btn btn-default">Volver</a>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+		<a href="/pedidos/" class="btn btn-default">Volver</a>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
+	<c:if test="${pedido.estadoPedido == 'Pedido'}">
+		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
+			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<button class="btn btn-default btn-right" type="submit">Enviar</button>
+		</form:form>
+	</c:if>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
+		<a href="/mispedidos" class="btn btn-default">Volver</a>
+	</sec:authorize>
 </farmatic:layout>

@@ -4,10 +4,14 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
 
 <farmatic:layout pageName= "pedidos">
-	<h2> Pedidos</h2> 
-	<a href="/pedidos/actual" class="btn btn-default btn-right">Pedido en proceso</a>
+	
+	<sec:authorize access= "hasAuthority('proveedor')"><h2>Mis </h2></sec:authorize><h2>Pedidos</h2>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+	 <a href="/pedidos/actual" class="btn btn-default btn-right">Pedido en proceso</a>
+	</sec:authorize>
 	<br/>
 	<table class = "table table-striped">
 		<thead>
@@ -23,9 +27,16 @@
 		<c:forEach items="${pedidos.pedidoLista}" var="pedido">
 			<tr>
 				<td>
-					<spring:url value="/pedidos/{idPedido}" var="mostrarPedido">
-                   	<spring:param name="idPedido" value="${pedido.id}"/>
-                   	</spring:url>
+					<sec:authorize access= "hasAuthority('farmaceutico')">
+						<spring:url value="/pedidos/{idPedido}" var="mostrarPedido">
+                   		<spring:param name="idPedido" value="${pedido.id}"/>
+                   		</spring:url>
+                   	</sec:authorize>
+                   	<sec:authorize access= "hasAuthority('proveedor')">
+                   		<spring:url value="/mispedidos/{idPedido}" var="mostrarPedido">
+                   		<spring:param name="idPedido" value="${pedido.id}"/>
+                   		</spring:url>
+                   	</sec:authorize>
                     <a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${pedido.codigo}"/></a>
 				</td>
 				<td>

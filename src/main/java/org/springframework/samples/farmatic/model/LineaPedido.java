@@ -1,3 +1,4 @@
+
 package org.springframework.samples.farmatic.model;
 
 import javax.persistence.CascadeType;
@@ -14,8 +15,8 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "lineaPedidos")
-public class LineaPedido extends BaseEntity{
-	
+public class LineaPedido extends BaseEntity {
+
 	@Column(name = "cantidad")
 	@NotNull
 	@Min(0)
@@ -31,10 +32,9 @@ public class LineaPedido extends BaseEntity{
 	
 	public void addProducto(Producto producto) {
 		this.producto = producto;
-		//producto.getLineaPedido().add(this);
 	}
-	
-	public void addPedido(Pedido pedido) {
+
+	public void addPedido(final Pedido pedido) {
 		this.pedido = pedido;
 	}
 }
