@@ -123,6 +123,12 @@ public class PedidoService {
 	}
 
 	@Transactional
+	public void deleteLinea(LineaPedido linea) throws DataAccessException{
+		//elimina linea de pedido
+		lineaRepository.delete(linea);
+	}
+	
+	@Transactional
 	public LineaPedido newLinea(final Producto producto, final Integer cantidad) throws DataAccessException {
 		//creando linea de pedido vacia
 		Pedido pedido = this.pedidoActual();

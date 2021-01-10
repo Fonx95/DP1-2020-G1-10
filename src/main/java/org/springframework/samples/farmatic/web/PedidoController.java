@@ -123,14 +123,18 @@ public class PedidoController {
 		model.put("editaLinea", linea);
 		return "pedidos/editarLinea";
 	}
-
-	@PostMapping(value = {"/pedidos/actual/{lineaId}"})
-	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editarLinea") final LineaPedido linea, final BindingResult result, final ModelMap model) {
+	
+	@PostMapping(value= {"/pedidos/actual/{lineaId}"})
+	public String LineaEdit(@ModelAttribute("producto") Producto producto, @ModelAttribute("editarLinea") LineaPedido linea, 
+			BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			return "/pedidos/editarLinea";
-		} else if (producto.getCode() != null) {
-			return this.pedidoProcessCreation(producto, linea, result, model);
-		} else {
+		}else if(producto.getCode()!=null){
+			return pedidoProcessCreation(producto, linea, result, model);
+		}else if(linea.getCantidad() == 0){
+			this.pedidoService.deleteLinea(linea);
+			return "redirect:/pedidos/actual";
+		}else {
 			this.pedidoService.saveLinea(linea);
 			return "redirect:/pedidos/actual";
 		}
