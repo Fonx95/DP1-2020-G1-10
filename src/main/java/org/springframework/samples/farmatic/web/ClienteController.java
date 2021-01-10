@@ -48,7 +48,16 @@ public class ClienteController {
 		return "clientes/clienteList";
 	}
 
-	@GetMapping("/clientes/me")
+	@GetMapping("/clientes/clienteList/{idCliente}")
+	public ModelAndView showClientes(@PathVariable("idCliente") final int idCliente) {
+		ModelAndView mav = new ModelAndView("clientes/clienteDetails");
+		Cliente cliente = this.clienteService.findClienteById(idCliente);
+		mav.addObject(cliente);
+		return mav;
+
+	}
+
+	@GetMapping("/profile/me")
 	public ModelAndView showClientes() {
 		ModelAndView mav = new ModelAndView("clientes/clienteDetails");
 		Cliente cliente = this.clienteService.findClienteData();
@@ -56,9 +65,6 @@ public class ClienteController {
 		return mav;
 
 	}
-	
-	
-
 
 
 }

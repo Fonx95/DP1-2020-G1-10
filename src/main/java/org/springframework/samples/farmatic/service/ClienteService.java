@@ -22,7 +22,7 @@ public class ClienteService {
 	
 	private UserRepository			userRepository;
 	@Transactional
-	public int proveedorCount() {
+	public int clienteCount() {
 		return (int) clienteRepo.count();
 	}
 	
