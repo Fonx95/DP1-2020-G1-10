@@ -8,9 +8,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.samples.farmatic.model.Farmaceutico;
+import org.springframework.samples.farmatic.model.LineaPedido;
+import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.TipoProducto;
+import org.springframework.samples.farmatic.repository.FarmaceuticoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
+import org.springframework.samples.farmatic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +24,14 @@ public class ProductoService {
 
 	private ProductoRepository productoRepository;
 
-
+	private FarmaceuticoRepository farmaceuticoRepository;
+	private UserRepository			userRepository;
+	@Autowired
+	public ProductoService(final ProductoRepository productoRepository, final FarmaceuticoRepository farmaceuticoRepository,final UserRepository userRepository) {
+		this.productoRepository = productoRepository;
+		this.farmaceuticoRepository = farmaceuticoRepository;
+		this.userRepository = userRepository;
+	}
 	@Transactional
 	public Iterable<Producto> findProducts() throws DataAccessException {
 		//lista productos
@@ -33,10 +46,7 @@ public class ProductoService {
 		return this.productoRepository.findById(id);
 	}
 
-	@Autowired
-	public ProductoService(final ProductoRepository productoRepository) {
-		this.productoRepository = productoRepository;
-	}
+	
 
 	@Transactional
 	public void saveProducto(final Producto product) throws DataAccessException {
@@ -59,5 +69,15 @@ public class ProductoService {
 		
 		return productTypes;
 		
+	}
+
+	//------Metodo referente a Farmaceutico
+	@Transactional
+	public Farmaceutico farmaceutico(final int id) {
+		return this.farmaceuticoRepository.findById(id);
+	}
+	@Transactional(readOnly = true)
+	public Collection<Farmaceutico> findFarmaceuticos() {
+		return (Collection<Farmaceutico>) this.farmaceuticoRepository.findAll();
 	}
 }
