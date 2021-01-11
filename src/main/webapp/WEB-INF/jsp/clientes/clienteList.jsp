@@ -38,5 +38,6 @@
 		</c:forEach>
 		</tbody>
 	</table>
+	<a href="/clientes/new" class="btn btn-default">Registrar Cliente</a>
 </farmatic:layout>
 	

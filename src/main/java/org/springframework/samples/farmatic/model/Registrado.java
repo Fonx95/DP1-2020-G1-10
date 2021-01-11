@@ -36,10 +36,12 @@ public class Registrado extends NamedEntity {
 
 	
 	@NotEmpty
+	@Column(name = "surnames")
 	protected String surnames;
 
 	
 	@NotEmpty
+	@Column(name = "dni")
 	protected String dni;
 	
 	@OneToOne(cascade = CascadeType.ALL)
