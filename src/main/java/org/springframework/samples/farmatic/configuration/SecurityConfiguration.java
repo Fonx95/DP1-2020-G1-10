@@ -40,6 +40,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				//.antMatchers("/products/new/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/products/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/pedidos/**").hasAnyAuthority("farmaceutico","admin")
+				.antMatchers("/ventas/**").hasAnyAuthority("farmaceutico","admin")
 				//.antMatchers("/products/productList/{idProducto}").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/vets/**").authenticated()
 				.anyRequest().denyAll()
