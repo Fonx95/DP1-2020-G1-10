@@ -13,15 +13,16 @@ INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('CECOFAR','Direcc
 --CLientes
 
 INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (5,'farm1','admin');
 
 INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
-INSERT INTO authorities(id,username,authority) VALUES (6,'client1','admin'); --No puede ser admin, ES UN CLIENTE
+
+
+INSERT INTO authorities(id,username,authority) VALUES (5,'farm1','farmaceutico');
+INSERT INTO authorities(id,username,authority) VALUES (6,'client1','cliente');
 
 INSERT INTO farmaceutico VALUES (7, 'Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
 
-INSERT INTO authorities(id,username,authority) VALUES (4,'farm1','farmaceutico');
-INSERT INTO authorities(id,username,authority) VALUES (7,'client1','cliente');
+
 
 
 
@@ -32,7 +33,7 @@ INSERT INTO authorities(id,username,authority) VALUES (7,'client1','cliente');
 
 
 
-INSERT INTO cliente(id,name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES (8, 'Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Maria 1','10.0','client1');
+INSERT INTO clientes(id,name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES (8, 'Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Maria 1','10.0','client1');
 
 --Productos
 INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');

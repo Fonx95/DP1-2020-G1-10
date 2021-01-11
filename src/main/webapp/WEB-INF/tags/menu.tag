@@ -53,7 +53,7 @@
 				</sec:authorize>
 				
 				<sec:authorize access= "hasAuthority('cliente')">
-					<farmatic:menuItem active="${name eq 'clientes'}" url="/clientes/me"
+					<farmatic:menuItem active="${name eq 'clientes'}" url="/profile/me"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Mis datos</span>
