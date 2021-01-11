@@ -1,15 +1,18 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page session="false" trimDirectiveWhitespaces="true" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags"%>
+
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
 	<table class = "table table-striped">
 		<tr>
-			<th>Cï¿½digo</th>
+			<th>Código</th>
 			<th>${pedido.codigo}</th>
 		</tr>
 		<tr>
@@ -22,18 +25,34 @@
 		</tr>
 		<tr>
 			<th>Estado</th>
-			<th>${pedido.estadoPedido}</th>
+			<th>
+				${pedido.estadoPedido}  
+				
+			</th>
 		</tr>
 		<tr>
 			<th>Fecha Entrega</th>
 			<th>${pedido.fechaEntrega}</th>
 		</tr>
 	</table>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+	<c:if test="${pedido.estadoPedido == 'Enviado'}">
+		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
+			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<label class="control-label">Pedido recibido: </label>
+			<button class="btn btn-default btn-sm" type="submit">
+           		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+           	</button>
+           	<br>
+           	<br>
+        </form:form>
+	</c:if>
+	</sec:authorize>
 	<h2>Lineas:</h2>
 	<table class = "table table-striped">
 		<thead>
 			<tr>
-				<th>Cï¿½digo</th>
+				<th>Código</th>
 				<th>Nombre</th>
 				<th>PvP</th>
 				<th>PvF</th>
@@ -70,5 +89,18 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/pedidos/" class="btn btn-default">Volver</a>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+		<a href="/pedidos/" class="btn btn-default">Volver</a>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
+	<c:if test="${pedido.estadoPedido == 'Pedido'}">
+		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
+			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<button class="btn btn-default btn-right" type="submit">Enviar</button>
+		</form:form>
+	</c:if>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('proveedor')">
+		<a href="/mispedidos" class="btn btn-default">Volver</a>
+	</sec:authorize>
 </farmatic:layout>

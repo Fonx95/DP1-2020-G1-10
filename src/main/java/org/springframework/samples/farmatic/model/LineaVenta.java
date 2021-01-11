@@ -35,7 +35,6 @@ public class LineaVenta extends BaseEntity{
 	
 	public void addProducto(Producto producto) {
 		this.producto = producto;
-		//producto.getLineaVenta().add(this);
 	}
 	
 	public void addVenta(Venta venta) {

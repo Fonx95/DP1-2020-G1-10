@@ -1,14 +1,11 @@
+
 package org.springframework.samples.farmatic.web;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import javax.validation.Valid;
 import java.util.Map;
 
-import javax.validation.Valid;
-
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
@@ -26,79 +23,101 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 
 @Controller
 public class PedidoController {
-	
-	private final PedidoService pedidoService;
-	
-	private final ProductoService productoService;
-	
+
+	private final PedidoService		pedidoService;
+
+	private final ProductoService	productoService;
+
+
 	@Autowired
-	public PedidoController(PedidoService pedidoService, ProductoService productoService) {
+	public PedidoController(final PedidoService pedidoService, final ProductoService productoService) {
 		this.pedidoService = pedidoService;
 		this.productoService = productoService;
 	}
-	
+
 	@InitBinder
-	public void setAllowedFields(WebDataBinder dataBinder) {
+	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
-	
+
 	@ModelAttribute("pedidoActual")
-	public Pedido initnuevalinea(@ModelAttribute("producto") Producto producto, ModelMap model){
+	public Pedido getPedidoActual(){
 		Pedido pedido = this.pedidoService.pedidoActual();
 		return pedido;
 	}
 	
 	@GetMapping(value = {"/pedidos"})
-	public String showListaPedidos(Map<String, Object> model) {
+	public String showListaPedidos(ModelMap model) {
 		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
 		model.put("pedidos", pedidos);
 		return "pedidos/pedidoList";
 	}
+
+	@GetMapping(value = {"/mispedidos"})
+	public String miListaPedidos(final Map<String, Object> model) {
+		Pedidos pedidos = new Pedidos();
+		pedidos.getPedidoLista().addAll(this.pedidoService.findMisPedidos());
+		model.put("pedidos", pedidos);
+		return "pedidos/pedidoList";
+	}
 	
-	@GetMapping(value = {"/pedidos/{id}"})
-	public String showPedido(@PathVariable("id") int pedidoId, Map<String, Object> model) {
+	@GetMapping(value = {"/mispedidos/{id}"})
+	public String miPedido(@PathVariable("id") final int pedidoId, final Map<String, Object> model) {
 		Pedido pedido = this.pedidoService.pedido(pedidoId);
+		model.put("pedido", pedido);
+		return "pedidos/pedidoDetails";
+	}
+
+	@GetMapping(value = {"/pedidos/{id}"})
+	public String showPedido(@PathVariable("id") Pedido pedido, ModelMap model) {
 		if(pedido.getEstadoPedido() == EstadoPedido.Borrador) {
 			return "redirect:/pedidos/actual";
-		}else {
+		} else {
 			model.put("pedido", pedido);
 			return "pedidos/pedidoDetails";
 		}
-		
+	}
+	
+	@PostMapping(value="/pedidos/{id}")
+	public String pedidoRecibido(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/pedidos/" + pedido.getId();
+		}else {
+			this.pedidoService.pedidoRecibido(pedido);
+			return "redirect:/pedidos/" + pedido.getId();
+		}
 	}
 	
 	@GetMapping(value= {"/pedidos/actual"})
-	public String showPedidoActual(Map<String, Object> model) {
+	public String showPedidoActual(ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
 		return "pedidos/pedidoActual";
 	}
-	
-	@PostMapping(value= {"/pedidos/actual"})
-	public String pedidoProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") LineaPedido linea, 
-			BindingResult result, ModelMap model) {
+
+	@PostMapping(value = {"/pedidos/actual"})
+	public String pedidoProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") LineaPedido linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			return "/pedidos/pedidoActual";
-		}else if(producto.getCode()!=null){
+		} else if (producto.getCode() != null) {
 			producto = this.productoService.findProductoByCode(producto.getCode());
-			linea = pedidoService.newLinea(producto);
+			linea = pedidoService.newLinea(producto,1);
 			model.addAttribute("nuevaLinea", linea);
 			model.addAttribute("producto", producto);
 			return "pedidos/pedidoActual";
-		}else {
+		} else {
 			this.pedidoService.saveLinea(linea);
 			model.addAttribute("producto", producto);
 			return "pedidos/pedidoActual";
 		}
 	}
-	
-	@GetMapping(value= {"/pedidos/actual/{lineaId}"})
-	public String showLineaEdit(@PathVariable("lineaId") LineaPedido linea, ModelMap model) {
+
+	@GetMapping(value = {"/pedidos/actual/{lineaId}"})
+	public String showLineaEdit(@PathVariable("lineaId") final LineaPedido linea, final ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
 		model.put("editaLinea", linea);
@@ -106,35 +125,49 @@ public class PedidoController {
 	}
 	
 	@PostMapping(value= {"/pedidos/actual/{lineaId}"})
-	public String LineaEdit(@ModelAttribute("producto") Producto producto, @ModelAttribute("editarLinea") LineaPedido linea, BindingResult result, ModelMap model) {
+	public String LineaEdit(@ModelAttribute("producto") Producto producto, @ModelAttribute("editarLinea") LineaPedido linea, 
+			BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			return "/pedidos/editarLinea";
 		}else if(producto.getCode()!=null){
 			return pedidoProcessCreation(producto, linea, result, model);
+		}else if(linea.getCantidad() == 0){
+			this.pedidoService.deleteLinea(linea);
+			return "redirect:/pedidos/actual";
 		}else {
 			this.pedidoService.saveLinea(linea);
 			return "redirect:/pedidos/actual";
 		}
 	}
-	
-	/*
-	@GetMapping(value = {"/pedidos/new"})
-	public String initCreationForm(Map<String, Object> model) {
-			Pedido pedido = new Pedido();
-			model.put("pedido", pedido);
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
+
+	@GetMapping(value={"/pedidos/actual/pedir"})
+	public String sendPedido(ModelMap model) {
+		Collection<Proveedor> proveedores = pedidoService.findProveedores();
+		Proveedor proveedor = new Proveedor();
+		model.addAttribute("proveedores", proveedores);
+		model.addAttribute("proveedor", proveedor);
+		return "pedidos/enviarPedido";
 	}
 	
-	@PostMapping(value = {"/pedidos/new"})
-	public String processCreationForm(@Valid Pedido pedido, BindingResult result) {
+	@PostMapping(value={"/pedidos/actual/pedir"})
+	public String createPedido(@Valid Proveedor proveedor, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-			return VIEWS_ORDER_CREATE_OR_UPDATE_FORM;
+			return "/pedidos/actual/pedir";
+		}else {
+			this.pedidoService.enviarPedido(proveedor);
+			return "redirect:/pedidos";
 		}
-		else {
-			//creating order
-			this.pedidoService.savePedido(pedido);
-			
-			return "redirect:/pedidos/" + pedido.getId();
+	}
+	
+	
+	@PostMapping(value="/mispedidos/{id}")
+	public String pedidoEnviado(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
+		if (result.hasErrors()) {
+			return "/mispedidos/" + pedido.getId();
+		}else {
+			this.pedidoService.pedidoEnviado(pedido);
+			return "redirect:/mispedidos/" + pedido.getId();
 		}
-	}*/
+	}
+  
 }

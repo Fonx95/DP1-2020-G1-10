@@ -6,7 +6,10 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.farmatic.model.Farmaceutico;
+import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.service.ProductoService;
@@ -81,4 +84,27 @@ public class ProductController {
 		}
 	}
 
+	@GetMapping(value = {"/products/productList/{idProducto}/edit"})
+	public String showProductoEdit(@PathVariable("idProducto") int productId, final ModelMap model) {
+		//Producto product = producto;
+		
+		//model.put("product", producto);
+		Producto product = this.productService.findProductoById(productId);
+		model.put("product", product);
+		return ProductController.VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
+	}
+
+	@PostMapping(value = {"/products/productList/{idProducto}/edit"})
+	public String ProductoEdit(@ModelAttribute("idProducto") final Producto producto, final BindingResult result, final ModelMap model) {
+		if (result.hasErrors()) {
+			return "/products/productList/";
+		} else if (producto.getCode() != null) {
+			return this.processCreationForm(producto, result);
+		} else {
+			this.productService.saveProducto(producto);;
+			return "redirect:/products/productList/" + producto.getId();
+		}
+	}
+
+	
 }

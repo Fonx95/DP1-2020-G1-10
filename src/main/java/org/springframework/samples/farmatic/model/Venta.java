@@ -45,7 +45,10 @@ public class Venta extends BaseEntity{
 	
 	public void addLinea(LineaVenta linea) {
 		getLineaVenta().add(linea);
-		
+	}
+	
+	public void deleteLinea(LineaVenta linea) {
+		getLineaVenta().remove(linea);
 	}
 
 }
