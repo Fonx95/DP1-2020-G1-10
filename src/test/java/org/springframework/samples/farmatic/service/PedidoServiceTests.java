@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.transaction.TransactionScoped;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +19,8 @@ import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Proveedor;
+import org.springframework.samples.farmatic.model.User;
+import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.ProveedorRepository;
@@ -38,6 +42,9 @@ public class PedidoServiceTests {
 
 	@Autowired
 	protected ProductoRepository	productoRepository;
+	
+	@Autowired
+	protected ClienteRepository clienteRepository;
 
 	// Recordatorio: No hay un create directo en los pedidos, sino que se crean al usar enviarPedido, por lo tanto, en ese test se comprobará la creación.
 
@@ -50,7 +57,39 @@ public class PedidoServiceTests {
 		Assertions.assertNotNull(p); // Comprobamos que no sea nulo.
 		Assertions.assertTrue(p.getEstadoPedido().equals(EstadoPedido.Borrador)); // Comprobamos que está en estado Borrador.
 	}
+	
+	@Test
+	public void shouldFindAllPedidos() {// Método que comprueba que se listan los pedidos
+		Collection<Pedido> pedidos = this.pedidoService.findPedidos();
+		Pedido[] pedidosArr = pedidos.toArray(new Pedido[pedidos.size()]);
+		Collection<LineaPedido> lineasP1 = pedidosArr[1].getLineaPedido();
+		Assertions.assertTrue(pedidos.size() == 6);// Se comprueba el numero de pedidos recibidos pomr la base de datos
+		Assertions.assertTrue(lineasP1.size() == 2);// Se comprueba que uno de los pedidos (que no sea el borrador) tiene lineas de pedidos asignadas
+	}
+	
+	@Test
+	public void shouldFindPedidoById() {// Metodo que comprueba los detalles de un pedido
+		Pedido pedido = this.pedidoService.pedido(2);
+		Collection<LineaPedido> lineasP1 = pedido.getLineaPedido();
+		Assertions.assertTrue(pedido.getCodigo().equals("P-005"));// Comprueba que el codigo es el esperado
+		Assertions.assertTrue(pedido.getEstadoPedido().equals(EstadoPedido.Enviado));// Comprueba que el estado es el esperado
+		Assertions.assertNotNull(pedido.getFechaPedido());// Comprueba que la fecha del pedido esta asignada
+		Assertions.assertTrue(lineasP1.size() == 3);// Comprueba que tiene lineas de pedidos asignadas
+	}
 
+	@Test
+	public void shouldFindMiListaPedidos() {// Metodo que comprueba los pedidos que puede listar un proveedor
+		User user = this.proveedorRepository.findById(1).getUser();
+		Collection<Pedido> pedidos = this.pedidoService.findMisPedidos(user);
+		Pedido[] pedidosArr = pedidos.toArray(new Pedido[pedidos.size()]);
+		Collection<LineaPedido> lineasP1 = pedidosArr[1].getLineaPedido();
+		Assertions.assertTrue(pedidos.size() == 3);// Comprueba que el numero de pedidos es el esperado
+		for(Pedido pedido:pedidos) {
+			Assertions.assertTrue(pedido.getProveedor().getEmpresa().equals("COFARES"));// Comprueba que todos los pedidos son del proveedor logueado
+		}
+		Assertions.assertTrue(lineasP1.size() == 2);// Comprueba que uno de los pedidos tiene lineas de pedidos asignadas
+	}
+	
 	@Test
 	@Transactional
 	public void shouldInsertLineaPedido() {
@@ -68,7 +107,7 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void enviarPedidoPositivo() { // Modificamos un pedido de Borrador a Pedido.
+	public void pedirPedidoPositivo() { // Modificamos un pedido de Borrador a Pedido.
 		Proveedor prov = this.proveedorRepository.findById(1);
 		Pedido p = this.pedidoService.pedidoActual(); // Nos traemos el pedido actual para comprobar que se realizan las modificaciones.
 		Assertions.assertTrue(p.getEstadoPedido() == EstadoPedido.Borrador);
@@ -111,7 +150,25 @@ public class PedidoServiceTests {
 		}
 	}
 
+	@Test
+	@Transactional
+	public void enviarPedidoPositivo() {// Metodo que comprueba que un pedido cambai de estado a enviado por el proveedor
+		Pedido p = this.pedidoService.pedido(3);// Nos traemos un pedido en estado pedido de la BD
+		this.pedidoService.pedidoEnviado(p);
+		Pedido p1 = this.pedidoService.pedido(p.getId());
+		Assertions.assertTrue(p.getFechaEntrega() == null);// Comprobamos que la fecha de entrega continua en null
+		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Enviado);// Comprobamos que el estado se ha cambiado a estado enviado
+	}
+	
 	//Test negativos
+	
+	@Test
+	public void shouldFindMiListaPedidosNegativo() {// Caso en el que un cliente intente listar pedidos de un proveedor
+		User user = this.clienteRepository.findById(1).getUser();
+		Assertions.assertThrows(NullPointerException.class, () -> {
+			this.pedidoService.findMisPedidos(user);
+			});// El resultado del listado debe de ser null
+	}
 
 	@Test
 	@Transactional
@@ -125,7 +182,7 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void enviarPedidoNegativo() { // Probamos a mandar un pedido a un proveedor nulo
+	public void pedirPedidoNegativo() { // Probamos a mandar un pedido a un proveedor nulo
 		Pedido p = this.pedidoService.pedidoActual(); // Comprobamos que no es nulo el pedido actual.
 		Assertions.assertNotNull(p);
 
@@ -147,5 +204,14 @@ public class PedidoServiceTests {
 		} catch (Exception e) {
 			Assertions.assertNotNull(e);
 		}
+	}
+	
+	@Test
+	@Transactional
+	public void enviarPedidoNegativo() { // Probamos a mandar un pedido recien creado
+		Pedido p = new Pedido();// Creamos un pedido
+		Assertions.assertThrows(NullPointerException.class, () -> {
+			this.pedidoService.pedidoEnviado(p);
+		});// Comprobamos que se obtiene un nullPointerException
 	}
 }

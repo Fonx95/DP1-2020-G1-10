@@ -4,6 +4,8 @@ package org.springframework.samples.farmatic.service;
 import java.time.LocalDate;
 import java.util.Collection;
 
+import javax.transaction.TransactionScoped;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.LineaPedido;
@@ -150,17 +152,18 @@ public class PedidoService {
 	public Collection<Proveedor> findProveedores() {
 		return (Collection<Proveedor>) this.proveedorRepository.findAll();
 	}
-
-	private User getCurrentUser() {
+	
+	@Transactional
+	public User getCurrentUser() throws DataAccessException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
 		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Pedido> findMisPedidos() throws DataAccessException {
+	public Collection<Pedido> findMisPedidos(User user) throws DataAccessException {
 		//listado pedidos de un proveedor
-		Proveedor p = this.proveedorRepository.findByUser(this.getCurrentUser());
+		Proveedor p = this.proveedorRepository.findByUser(user);
 		return p.getPedido();
 	}
 

@@ -12,6 +12,7 @@ import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Pedidos;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.Proveedor;
+import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
@@ -60,7 +61,8 @@ public class PedidoController {
 	@GetMapping(value = {"/mispedidos"})
 	public String miListaPedidos(final Map<String, Object> model) {
 		Pedidos pedidos = new Pedidos();
-		pedidos.getPedidoLista().addAll(this.pedidoService.findMisPedidos());
+		User prov = this.pedidoService.getCurrentUser();
+		pedidos.getPedidoLista().addAll(this.pedidoService.findMisPedidos(prov));
 		model.put("pedidos", pedidos);
 		return "pedidos/pedidoList";
 	}
@@ -104,6 +106,7 @@ public class PedidoController {
 		if (result.hasErrors()) {
 			return "/pedidos/pedidoActual";
 		} else if (producto.getCode() != null) {
+			if(producto.getCode() == "") return "redirect:/pedidos/actual";
 			producto = this.productoService.findProductoByCode(producto.getCode());
 			linea = pedidoService.newLinea(producto,1);
 			model.addAttribute("nuevaLinea", linea);
