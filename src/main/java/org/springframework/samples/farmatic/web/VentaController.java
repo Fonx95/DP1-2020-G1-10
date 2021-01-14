@@ -10,6 +10,7 @@ import org.springframework.samples.farmatic.model.Comprador;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
@@ -44,9 +45,9 @@ public class VentaController {
 	}
 	
 	@ModelAttribute("pedidoActual")
-	public Pedido getVentaActual(){
-		Pedido pedido = this.ventaService.pedidoActual();
-		return pedido;
+	public Venta getVentaActual(){
+		Venta venta = this.ventaService.ventaActual();
+		return venta;
 	}
 	
 	@InitBinder
@@ -104,13 +105,21 @@ public class VentaController {
 		}
 	}
 	
+	@GetMapping(value={"/ventas/actual/pagar"})
+	public String finalizarVenta(ModelMap model) {
+		Collection<Cliente> clientes = ventaService.findClientes();
+		Cliente cliente = new Cliente();
+		model.addAttribute("clientes", clientes);
+		model.addAttribute("cliente", cliente);
+		return "ventas/finalizarVenta";
+	}
 	
 	@PostMapping(value={"/ventas/actual/pagar"})
 	public String createVenta(@Valid Venta venta, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			return "/ventas/actual/pagar";
 		}else {
-			this.ventaService.saveVenta(venta);;
+			this.ventaService.finalizarVenta(venta);;
 			return "redirect:/ventas";
 		}
 	}
