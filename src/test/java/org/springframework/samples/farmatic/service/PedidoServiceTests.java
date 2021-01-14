@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import javax.transaction.TransactionScoped;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -136,7 +134,7 @@ public class PedidoServiceTests {
 		p.getLineaPedido().stream().forEach(x -> cantidadLp.add(x.getCantidad()));
 		p.getLineaPedido().stream().forEach(x -> stockOriginal.add(x.getProducto().getStock()));
 
-		this.pedidoService.pedidoRecibido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getFechaEntrega().equals(LocalDate.now()));
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Recibido);
@@ -200,7 +198,7 @@ public class PedidoServiceTests {
 		Pedido p = new Pedido(); // Creamos un nuevo pedido.
 
 		try {
-			this.pedidoService.pedidoRecibido(p);
+			this.pedidoService.recibirPedido(p);
 		} catch (Exception e) {
 			Assertions.assertNotNull(e);
 		}
