@@ -35,12 +35,8 @@ import lombok.Data;
 @Entity
 public class Farmaceutico extends Registrado {
 
-	
 	@NotEmpty
+	@Column(name = "address")
 	protected String pharmacyAddress;
-
-	
-
-	
 
 }
