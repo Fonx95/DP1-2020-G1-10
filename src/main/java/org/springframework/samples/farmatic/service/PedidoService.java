@@ -22,6 +22,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class PedidoService {
 
@@ -56,16 +59,20 @@ public class PedidoService {
 	@Transactional
 	public Pedido pedidoActual() throws DataAccessException {
 		//pedido actual
-		return this.pedidoRepository.pedidoActual();
+		Pedido p = this.pedidoRepository.pedidoActual();
+		log.debug("El pedido acual tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
+		return p;
 	}
 
 	@Transactional
 	public Pedido pedido(final int id) throws DataAccessException {
-		return this.pedidoRepository.pedido(id);
+		Pedido p = this.pedidoRepository.pedido(id);
+		log.debug("El pedido tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
+		return p;
 	}
 
 	@Transactional
-	public void pedidoRecibido(Pedido pedido) throws DataAccessException {
+	public void recibirPedido(Pedido pedido) throws DataAccessException {
 		pedido = this.pedido(pedido.getId());
 		pedido.setEstadoPedido(EstadoPedido.Recibido);
 		pedido.setFechaEntrega(LocalDate.now());
@@ -75,6 +82,7 @@ public class PedidoService {
 			this.productoRepository.save(producto);
 		}
 		this.pedidoRepository.save(pedido);
+		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 	}
 
 	@Transactional
@@ -84,9 +92,11 @@ public class PedidoService {
 		pedido.setEstadoPedido(EstadoPedido.Pedido);
 		pedido.setFechaPedido(LocalDate.now());
 		this.pedidoRepository.save(pedido);
+		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 		Pedido nuevoPedido = new Pedido();
 		nuevoPedido.setCodigo(this.getCodigoPedidoNuevo(pedido.getCodigo()));
 		this.pedidoRepository.save(nuevoPedido);
+		log.debug("El nuevo pedido actual con codigo '" + nuevoPedido.getCodigo() + "' e id " + nuevoPedido.getId() + " tiene el estado " + nuevoPedido.getEstadoPedido());
 	}
 
 	private String getCodigoPedidoNuevo(final String codigo) {
@@ -120,8 +130,16 @@ public class PedidoService {
 	public void saveLinea(final LineaPedido linea) throws DataAccessException {
 		//guardando linea de pedido
 		this.lineaRepository.save(linea);
+		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha creado/modificado con una cantidad de " + linea.getCantidad());
 	}
 
+	@Transactional
+	public void deleteLinea(LineaPedido linea) throws DataAccessException{
+		//elimina linea de pedido
+		lineaRepository.delete(linea);
+		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha eliminado");
+	}
+	
 	@Transactional
 	public LineaPedido newLinea(final Producto producto, final Integer cantidad) throws DataAccessException {
 		//creando linea de pedido vacia
@@ -137,24 +155,27 @@ public class PedidoService {
 
 	@Transactional
 	public Proveedor proveedor(final int id) {
-		return this.proveedorRepository.findById(id);
+		Proveedor p = this.proveedorRepository.findById(id);
+		log.debug("El proveedor tiene el id '" + p.getId() + "', nombre " + p.getEmpresa() + " y cif '" + p.getCif());
+		return p;
 	}
 
 	@Transactional(readOnly = true)
 	public Collection<Proveedor> findProveedores() {
 		return (Collection<Proveedor>) this.proveedorRepository.findAll();
 	}
-
-	private User getCurrentUser() {
+	
+	@Transactional
+	public User getCurrentUser() throws DataAccessException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
 		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
 	}
 
 	@Transactional(readOnly = true)
-	public Collection<Pedido> findMisPedidos() throws DataAccessException {
+	public Collection<Pedido> findMisPedidos(User user) throws DataAccessException {
 		//listado pedidos de un proveedor
-		Proveedor p = this.proveedorRepository.findByUser(this.getCurrentUser());
+		Proveedor p = this.proveedorRepository.findByUser(user);
 		return p.getPedido();
 	}
 
@@ -163,5 +184,6 @@ public class PedidoService {
 		pedido = this.pedido(pedido.getId());
 		pedido.setEstadoPedido(EstadoPedido.Enviado);
 		this.pedidoRepository.save(pedido);
+		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 	}
 }

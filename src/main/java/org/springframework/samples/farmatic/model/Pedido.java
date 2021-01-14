@@ -43,7 +43,7 @@ public class Pedido extends BaseEntity{
 	@JoinColumn(name = "proveedor_id", referencedColumnName = "id")
 	private Proveedor proveedor;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "pedido", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "pedido", fetch = FetchType.LAZY)
 	private Collection<LineaPedido> lineaPedido;
 	
 	public enum EstadoPedido {
@@ -52,6 +52,10 @@ public class Pedido extends BaseEntity{
 	
 	public void addLinea(LineaPedido linea) {
 		getLineaPedido().add(linea);
+	}
+	
+	public void deleteLinea(LineaPedido linea) {
+		getLineaPedido().remove(linea);
 	}
 	
 	public Pedido() {
