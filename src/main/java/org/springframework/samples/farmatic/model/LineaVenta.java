@@ -3,6 +3,8 @@ package org.springframework.samples.farmatic.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -12,10 +14,11 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "lineaVentas")
+@Table(name = "lineaVenta")
 public class LineaVenta extends BaseEntity{
 	
 	@Column(name = "tipoTasa")
+	@Enumerated(EnumType.STRING)
 	private TipoTasa tipoTasa;
 	
 	@Column(name = "Cantidad")
@@ -25,12 +28,12 @@ public class LineaVenta extends BaseEntity{
 	@Column(name = "Importe")
 	private Double importe;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@ManyToOne()
 	@JoinColumn(name = "venta_id")
 	private Venta venta;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "producto_id", referencedColumnName = "id")
+	@ManyToOne()
+	@JoinColumn(name = "producto_id")
 	private Producto producto;
 	
 	public void addProducto(Producto producto) {

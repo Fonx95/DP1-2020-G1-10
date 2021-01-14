@@ -18,6 +18,8 @@
 			<th>Stock</th>
 			<th>Stock Minimo</th>
 			<th>Cantidad</th>
+			<th>Importe</th>
+			<th>T.A</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -48,8 +50,7 @@
 						<input disabled type="text" name="Importe" value="${linea.importe}"/>
 					</td>
 					<td>
-						<farmatic:selectField name="tipoTasa" label="Tipo " names="${types}" size="5"/>
-					</td>
+						<farmatic:selectField name="tipoTasa" label="Tipo" names="${types}" size="5"/>
 					<td>
 						<a class="btn btn-default btn-sm" href="/ventas/actual/${linea.id}">
 	                	<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -73,10 +74,10 @@
 							<input type="text" name="Importe" value="${nuevaLinea.importe}"/>
 						</th>
 						<th>
-							<farmatic:selectField name="tipoTasa" label="Tipo " names="${types}" size="5"/>
+							<farmatic:selectField name="tipoTasa" label="Tipo" names="${types}" size="5"/>
 						</th>
 						<th>
-							<input type="hidden" name="Venta" value="${nuevaLinea.venta.id}"/>
+							<input type="hidden" name="venta" value="${nuevaLinea.venta.id}"/>
 							<input type="hidden" name="Producto" value="${nuevaLinea.producto.id}"/>
 							<button class="btn btn-default btn-sm" type="submit">
 								<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
@@ -105,4 +106,5 @@
 			</form:form>
 		</tbody>
 	</table>
+	<a href="/ventas/actual/pagar" class="btn btn-default">Pagar</a>
 </farmatic:layout>

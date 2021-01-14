@@ -12,7 +12,6 @@ public interface VentaRepository extends CrudRepository<Venta, String>{
 	
 	Collection<Venta> findAll() throws DataAccessException;
 	
-	@Query("SELECT venta FROM Venta venta")
-	Venta ventaActual() throws DataAccessException;
+	
 
 }
