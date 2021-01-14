@@ -108,10 +108,8 @@ public class VentaController {
 	
 	@GetMapping(value={"/ventas/actual/pagar"})
 	public String finalizarVenta(ModelMap model) {
-		Collection<Cliente> clientes = ventaService.findClientes();
-		Cliente cliente = new Cliente();
-		model.addAttribute("clientes", clientes);
-		model.addAttribute("cliente", cliente);
+		Comprador comprador = new Comprador();
+		model.addAttribute("comprador", comprador);
 		return "ventas/finalizarVenta";
 	}
 	
