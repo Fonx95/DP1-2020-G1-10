@@ -1,6 +1,5 @@
 package org.springframework.samples.farmatic.model;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -21,11 +20,11 @@ public class LineaVenta extends BaseEntity{
 	@Enumerated(EnumType.STRING)
 	private TipoTasa tipoTasa;
 	
-	@Column(name = "Cantidad")
+	@Column(name = "cantidad")
 	@Min(0)
 	private Integer cantidad;
 	
-	@Column(name = "Importe")
+	@Column(name = "importe")
 	private Double importe;
 	
 	@ManyToOne()

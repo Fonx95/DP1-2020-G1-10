@@ -44,7 +44,7 @@ public class VentaController {
 		return this.ventaService.getTasaTypes();
 	}
 	
-	@ModelAttribute("pedidoActual")
+	@ModelAttribute("ventaActual")
 	public Venta getVentaActual(){
 		Venta venta = this.ventaService.ventaActual();
 		return venta;
@@ -69,6 +69,7 @@ public class VentaController {
 			System.out.println(result.getAllErrors());
 			return "/ventas/ventaActual";
 		}else if(producto.getCode()!=null){
+			if(producto.getCode() == "") return "redirect:/ventas/actual";
 			producto = this.productoService.findProductoByCode(producto.getCode());
 			linea = ventaService.newLinea(producto);
 			model.addAttribute("nuevaLinea", linea);

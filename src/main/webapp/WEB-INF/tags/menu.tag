@@ -29,7 +29,7 @@
 				</farmatic:menuItem>
 				
 				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
-					<farmatic:menuItem active="${name eq 'ventas'}" url="/"
+					<farmatic:menuItem active="${name eq 'ventas'}" url="/ventas/actual"
 						title="diseases">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Ventas</span>

@@ -14,19 +14,18 @@
 			<th>Código</th>
 			<th>Nombre</th>
 			<th>PvP</th>
-			<th>PvF</th>
 			<th>Stock</th>
-			<th>Stock Minimo</th>
+			<th>Stock Min.</th>
 			<th>Cantidad</th>
-			<th>Importe</th>
 			<th>T.A</th>
+			<th>Importe</th>
 		</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${ventaActual.lineaVenta}" var="linea">
 				<tr>
 					<td>
-						<input disabled type="text" name="code" value="${linea.producto.code}"/>
+						<input disabled type="text" class="form-control" name="code" value="${linea.producto.code}"/>
 					</td>
 					<td>
 						<c:out value="${linea.producto.name}"/>
@@ -35,22 +34,20 @@
 						<c:out value="${linea.producto.pvp}"/>
 					</td>
 					<td>
-						<c:out value="${linea.producto.pvf}"/>
-					</td>
-					<td>
 						<c:out value="${linea.producto.stock}"/>
 					</td>
 					<td>
 						<c:out value="${linea.producto.minStock}"/>
 					</td>
 					<td>
-						<input disabled type="text" name="Cantidad" value="${linea.cantidad}"/>
+						<input disabled type="text" class="form-control" name="Cantidad" value="${linea.cantidad}"/>
 					</td>
 					<td>
-						<input disabled type="text" name="Importe" value="${linea.importe}"/>
+						<input disabled type="text" class="form-control" name="tipoTasa" value="${linea.tipoTasa}"/>
 					</td>
 					<td>
-						<farmatic:selectField name="tipoTasa" label="Tipo" names="${types}" size="5"/>
+						<c:out value="${linea.importe}"/>
+					</td>
 					<td>
 						<a class="btn btn-default btn-sm" href="/ventas/actual/${linea.id}">
 	                	<span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
@@ -64,17 +61,22 @@
 						<th>${nuevaLinea.producto.code}</th>
 						<th>${nuevaLinea.producto.name}</th>
 						<th>${nuevaLinea.producto.pvp}</th>
-						<th>${nuevaLinea.producto.pvf}</th>
 						<th>${nuevaLinea.producto.stock}</th>
 						<th>${nuevaLinea.producto.minStock}</th>
 						<th>
-							<input type="text" name="Cantidad" value="${nuevaLinea.cantidad}"/>
+							<input type="text" class="form-control" name="Cantidad" value="${nuevaLinea.cantidad}"/>
 						</th>
 						<th>
-							<input type="text" name="Importe" value="${nuevaLinea.importe}"/>
+							<select class="form-control" name="tipoTasa">
+							<option value="TSI001">TSI001</option>
+							<option value="TSI002">TSI002</option>
+							<option value="TSI003">TSI003</option>
+							<option value="TSI004">TSI004</option>
+							<option value="TSI005">TSI005</option>
+						</select>
 						</th>
 						<th>
-							<farmatic:selectField name="tipoTasa" label="Tipo" names="${types}" size="5"/>
+							<c:out value="${linea.importe}"/>
 						</th>
 						<th>
 							<input type="hidden" name="venta" value="${nuevaLinea.venta.id}"/>
@@ -89,8 +91,9 @@
 			<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
 				<tr>
 					<td>
-						<input type="text" name="code"/>
+						<input class="form-control" type="text" name="code"/>
 					</td>
+					<td></td>
 					<td></td>
 					<td></td>
 					<td></td>

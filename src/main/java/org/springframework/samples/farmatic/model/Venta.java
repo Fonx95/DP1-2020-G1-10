@@ -25,11 +25,10 @@ import lombok.Data;
 public class Venta extends BaseEntity{
 	
 	@Column(name = "fecha")
-	@NotNull
 	@DateTimeFormat(pattern = "dd/MM/yyyy")
 	private LocalDate fecha;
 	
-	@Column(name = "importe total")
+	@Column(name = "importe_total")
 	@Min(0)
 	private Double importeTotal;
 	
@@ -37,18 +36,14 @@ public class Venta extends BaseEntity{
 	@Min(0)
 	private Double pagado;
 	
-	@Column(name = "por pagar")
+	@Column(name = "por_pagar")
 	private Double porPagar;
 	
-	@Column(name = "Estado")
+	@Column(name = "estado")
 	@NotNull
 	private EstadoVenta estadoVenta;
 	
-	public enum EstadoVenta {
-		enProceso, Realizada;
-	}
-	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "venta", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "venta", fetch = FetchType.LAZY)
 	private Collection<LineaVenta> lineaVenta;
 	
 	@OneToMany(cascade = CascadeType.ALL, mappedBy = "venta", fetch = FetchType.LAZY)
@@ -64,6 +59,10 @@ public class Venta extends BaseEntity{
 	
 	public void deleteLinea(LineaVenta linea) {
 		getLineaVenta().remove(linea);
+	}
+	
+	public enum EstadoVenta {
+		enProceso, Realizada;
 	}
 	
 	public Venta() {

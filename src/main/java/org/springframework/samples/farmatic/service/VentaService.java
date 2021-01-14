@@ -28,21 +28,21 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class VentaService {
 	
-	@Autowired
 	private VentaRepository ventaRepository;
 	
-	@Autowired	
 	private LineaVentaRepository lineaRepository;
 	
-	@Autowired	
 	private CompradorRepository compradorRepository;
 	
-	@Autowired
 	private ClienteRepository clienteRepository;
 	
 	@Autowired
-	public VentaService(VentaRepository ventaRepository) {
+	public VentaService(VentaRepository ventaRepository, LineaVentaRepository lineaRepository, 
+			CompradorRepository compradorRepository, ClienteRepository clienteRepository) {
 		this.ventaRepository = ventaRepository;
+		this.lineaRepository = lineaRepository;
+		this.compradorRepository = compradorRepository;
+		this.clienteRepository = clienteRepository;
 	}
 	
 	@Transactional
@@ -103,7 +103,7 @@ public class VentaService {
 	@Transactional
 	public LineaVenta newLinea(Producto producto) throws DataAccessException{
 		//creando linea de venta vacia
-		Venta venta = new Venta();
+		Venta venta = this.ventaActual();
 		LineaVenta linea = new LineaVenta();
 		linea.addProducto(producto);
 		linea.addVenta(venta);
@@ -130,7 +130,6 @@ public class VentaService {
 		tipoTasa.add(TipoTasa.TSI005);
 		
 		return tipoTasa;
-		
 	}
 
 }
