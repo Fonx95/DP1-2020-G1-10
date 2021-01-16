@@ -1,25 +1,20 @@
 package org.springframework.samples.farmatic.service;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Cliente;
-import org.springframework.samples.farmatic.model.LineaPedido;
+import org.springframework.samples.farmatic.model.Comprador;
 import org.springframework.samples.farmatic.model.LineaVenta;
-import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Producto;
-import org.springframework.samples.farmatic.model.Proveedor;
-import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
-import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.repository.CompradorRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
-import org.springframework.samples.farmatic.repository.ProveedorRepository;
 import org.springframework.samples.farmatic.repository.VentaRepository;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
@@ -56,58 +51,89 @@ public class VentaService {
 		return this.ventaRepository.venta(id);
 	}
 	
-	public Venta crearVenta() throws DataAccessException{
-		Venta venta = new Venta();
-		venta.setEstadoVenta(EstadoVenta.enProceso);
+	@Transactional
+	public void finalizarVenta(Venta venta) throws DataAccessException { //TODO: Al realizar una venta debe actualizar el stock en producto
+		venta = this.venta(venta.getId());
 		venta.setFecha(LocalDate.now());
-		venta.setImporteTotal(0.0);
-		venta.setPagado(0.0);
-		venta.setPorPagar(0.0);
-		return venta;
-		
+		if(venta.getImporteTotal() > venta.getPagado()) {
+			Double diferencia = venta.getImporteTotal() - venta.getPagado();
+			venta.setPorPagar(numberFormatter(diferencia));
+		}
+		venta.setEstadoVenta(EstadoVenta.Realizada);
+		this.ventaRepository.save(venta);
+		Venta nuevaVenta = new Venta();
+		this.ventaRepository.save(nuevaVenta);
 	}
 	
 	@Transactional
-	public void finalizarVenta(Venta venta) throws DataAccessException {
-		venta = this.venta(venta.getId());
-		venta.setFecha(LocalDate.now());
-		Double importeTotal = 0.0;
-		venta.setImporteTotal(importeTotal);
-		if(venta.getPorPagar()==0) {
-			venta.setPagado(importeTotal);
-		}else {
-			venta.setPagado(importeTotal - venta.getPorPagar());
+	public void updateVenta(Venta venta) throws DataAccessException{ //TODO: Este metodo podria controlar tambien que si ya no existe una linea de estupefaciente que elimine al comprador
+		if(venta.getImporteTotal() > venta.getPagado()) {
+			Double diferencia = venta.getImporteTotal() - venta.getPagado();
+			venta.setPorPagar(numberFormatter(diferencia));
 		}
-		venta.setEstadoVenta(EstadoVenta.Realizada);
 		this.ventaRepository.save(venta);
 	}
 	
 	@Transactional
-	public void saveVenta(Venta venta) throws DataAccessException{
-		//creando Venta
-		ventaRepository.save(venta);
-	}	
-	
-	@Transactional
 	public void saveLinea(LineaVenta linea) throws DataAccessException{
 		//guardando linea de venta
-		lineaRepository.save(linea);
+		Double pvp = linea.getProducto().getPvp();
+		
+		Double descuentoTasa = getTasaTypes(linea.getTipoTasa());
+		Double importeLinea = pvp * descuentoTasa * linea.getCantidad();
+		linea.setImporte(numberFormatter(importeLinea));
+		
+		Venta venta = this.ventaActual();
+		Double importe = numberFormatter(venta.getImporteTotal() + linea.getImporte());
+		venta.setImporteTotal(importe);
+		venta.setPagado(importe);
+		
+		this.lineaRepository.save(linea);
+		this.ventaRepository.save(venta);
+	}
+	
+	@Transactional
+	public void updateLinea(LineaVenta linea) throws DataAccessException {
+		Venta venta = this.ventaActual();
+		LineaVenta lineaVieja = this.lineaRepository.lineaVenta(linea.getId());
+		venta.setImporteTotal(venta.getImporteTotal()-lineaVieja.getImporte());
+		
+		Double pvp = linea.getProducto().getPvp();
+		Double descuentoTasa = getTasaTypes(linea.getTipoTasa());
+		Double importeLinea = pvp * descuentoTasa * linea.getCantidad();
+		linea.setImporte(numberFormatter(importeLinea));
+		
+		Double importe = numberFormatter(venta.getImporteTotal() + linea.getImporte());
+		venta.setImporteTotal(importe);
+		venta.setPagado(importe);
+		
+		this.lineaRepository.save(linea);
+		this.ventaRepository.save(venta);
+	}
+	
+	private Double numberFormatter(Double number) {
+		DecimalFormat df = new DecimalFormat("#.00");
+		String aux = df.format(number).replace(",", ".");
+		return Double.parseDouble(aux);
 	}
 	
 	@Transactional
 	public void deleteLinea(LineaVenta linea) throws DataAccessException{
 		//elimina linea de pedido
+		Venta venta = this.ventaActual();
+		Double importe = numberFormatter(venta.getImporteTotal() - linea.getImporte());
+		venta.setImporteTotal(importe);
+		venta.setPagado(importe);
+		
 		lineaRepository.delete(linea);
+		this.ventaRepository.save(venta);
 	}
 	
 	@Transactional
 	public LineaVenta newLinea(Producto producto) throws DataAccessException{
 		//creando linea de venta vacia
 		Venta venta = this.ventaActual();
-		LineaVenta linea = new LineaVenta();
-		linea.addProducto(producto);
-		linea.addVenta(venta);
-		linea.setCantidad(1);
+		LineaVenta linea = new LineaVenta(producto, venta);
 		return linea;
 	}
 	
@@ -121,15 +147,26 @@ public class VentaService {
 		return (Collection<Cliente>) this.clienteRepository.findAll();
 	}
 	
-	public Collection<TipoTasa> getTasaTypes() throws DataAccessException {
-		Collection<TipoTasa> tipoTasa = new ArrayList<TipoTasa>();
-		tipoTasa.add(TipoTasa.TSI001);
-		tipoTasa.add(TipoTasa.TSI002);
-		tipoTasa.add(TipoTasa.TSI003);
-		tipoTasa.add(TipoTasa.TSI004);
-		tipoTasa.add(TipoTasa.TSI005);
-		
-		return tipoTasa;
+	private Double getTasaTypes(TipoTasa TA) throws DataAccessException {
+		switch (TA) {
+		case TSI001:
+			return 1.0;
+		case TSI002:
+			return 0.9;
+		case TSI003:
+			return 0.85;
+		case TSI004:
+			return 0.53;
+		case TSI005:
+			return 0.30;
+		default:
+			return 1.0;
+		}
 	}
-
+	
+	@Transactional
+	public void saveComprador(Comprador comprador) {
+		//Registrando comprador de estupefaciente
+		this.compradorRepository.save(comprador);
+	}
 }

@@ -35,12 +35,12 @@ public class LineaVenta extends BaseEntity{
 	@JoinColumn(name = "producto_id")
 	private Producto producto;
 	
-	public void addProducto(Producto producto) {
+	public LineaVenta(Producto producto, Venta venta) {
+		this.cantidad = 1;
 		this.producto = producto;
-	}
-	
-	public void addVenta(Venta venta) {
 		this.venta = venta;
 	}
-
+	public LineaVenta() {
+		
+	}
 }

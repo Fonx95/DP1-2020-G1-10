@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -46,8 +47,8 @@ public class Venta extends BaseEntity{
 	@OneToMany(mappedBy = "venta", fetch = FetchType.LAZY)
 	private Collection<LineaVenta> lineaVenta;
 	
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "venta", fetch = FetchType.LAZY)
-	private Collection<Comprador> comprador;
+	@OneToOne(cascade = CascadeType.ALL, mappedBy = "venta", fetch = FetchType.LAZY)
+	private Comprador comprador;
 	
 	@ManyToOne(optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "cliente_id", referencedColumnName = "id")
@@ -67,6 +68,9 @@ public class Venta extends BaseEntity{
 	
 	public Venta() {
 		this.estadoVenta = EstadoVenta.enProceso;
+		this.importeTotal = 0.0;
+		this.pagado = 0.0;
+		this.porPagar = 0.0;
 	}
 
 }

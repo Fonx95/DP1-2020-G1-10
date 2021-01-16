@@ -8,9 +8,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.LineaVenta;
 
-public interface LineaVentaRepository extends CrudRepository<LineaVenta, String>{
+public interface LineaVentaRepository extends CrudRepository<LineaVenta, Integer>{
 	
-	@Query("SELECT linea FROM LineaVenta linea WHERE linea.venta = :venta_id")
-	Collection<LineaVenta> lineaVenta(@Param("venta_id") int id) throws DataAccessException;
+	@Query("SELECT linea FROM LineaVenta linea WHERE linea.id = :venta_id")
+	LineaVenta lineaVenta(@Param("venta_id") int id) throws DataAccessException;
 
 }
