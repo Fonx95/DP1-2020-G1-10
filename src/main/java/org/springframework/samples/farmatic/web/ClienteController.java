@@ -14,6 +14,7 @@ import org.springframework.samples.farmatic.model.Authorities;
 import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.User;
+import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.repository.AuthoritiesRepository;
 import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.stereotype.Controller;
@@ -74,6 +75,27 @@ public class ClienteController {
 		return mav;
 
 	}
+	
+	@GetMapping(value = {
+			"/misVentas"
+		})
+		public String listadoVentas( final ModelMap modelMap) {
+			
+			User user=this.clienteService.getCurrentUser();
+			Cliente cliente=this.clienteService.findClienteDetalles(user);
+			modelMap.addAttribute("cliente", cliente);
+			return "clientes/clienteVentas";
+		}
+
+//		@GetMapping("/clientes/clienteList/{idCliente}")
+//		public ModelAndView showClientes(@PathVariable("idCliente") final int idCliente) {
+//			ModelAndView mav = new ModelAndView("clientes/clienteDetails");
+//			Cliente cliente = this.clienteService.findClienteById(idCliente);
+//			mav.addObject(cliente);
+//			return mav;
+//
+//		}
+
 	
 	@GetMapping(value = "/clientes/new")
 	public String initCreationForm(final Map<String, Object> model) {
