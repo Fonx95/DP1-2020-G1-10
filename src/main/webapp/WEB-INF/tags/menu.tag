@@ -59,7 +59,13 @@
 						<span>Mis datos</span>
 					</farmatic:menuItem>
 				</sec:authorize>
-				
+				<sec:authorize access= "hasAuthority('cliente')">
+					<farmatic:menuItem active="${name eq 'clientes'}" url="/misVentas"
+						title="diseases">
+						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
+						<span>Mis Ventas</span>
+					</farmatic:menuItem>
+				</sec:authorize>
 				<sec:authorize access= "hasAuthority('farmaceutico')">
 					<farmatic:menuItem active="${name eq 'productos'}" url="/products"
 						title="diseases">

@@ -11,4 +11,5 @@ public interface CompradorRepository extends CrudRepository<Comprador, String>{
 	@Query("SELECT proveedor FROM Proveedor proveedor WHERE proveedor.id =:id")
 	public Proveedor findById(@Param("id") int id);
 
+
 }
