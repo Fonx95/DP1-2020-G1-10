@@ -8,5 +8,51 @@
 
 <farmatic:layout pageName= "ventas">
 	<h2>Nueva venta</h2>
-	${ventaActual.porPagar}
+	<label style="width: 100px">Importe Total:</label>
+	<section style="display: inline">
+		<input disabled class="marcador" type="text" name="pagado" value="${ventaActual.porPagar} &#8364"/>
+	</section>
+	<form:form modelAttribute="Cliente" class="form-horizontal" id="asing-cliente-form">
+		<label style="width: 100px">DNI cliente:</label>
+		<input type="text" class="form-control" name="Dni" value="${cliente.dni}"/>
+		<br>
+		<button class="btn btn-default" type="submit">Buscar</button>
+	</form:form>
+	<c:if test="${cliente.name != null}">
+		<br>
+		<table class="table table-striped">
+	        <tr>
+	            <th>Nombre</th>
+	            <td><c:out value="${cliente.name}"/></td>
+	        </tr>
+	        <tr>
+	            <th>Apellidos</th>
+	            <td><c:out value="${cliente.surnames}"/></td>
+	        </tr>
+	        <tr>
+	        	<th>DNI</th>
+	        	<td><c:out value="${cliente.dni}"/></td>
+	        </tr>
+	        <tr>
+	            <th>Provincia</th>
+	            <td><c:out value="${cliente.provincia}"/></td>
+	        </tr>
+	        <tr>
+	        	<th>Localidad</th>
+	        	<td><c:out value="${cliente.localidad}"/></td>
+	        </tr>
+	        <tr>
+	        	<th>Dirección</th>
+	        	<td><c:out value="${cliente.direccion}"/></td>
+	        </tr>
+	        <tr>
+	            <th>Debe:</th>
+	            <td><c:out value="${cliente.porPagarTotal}"/> &#8364</td>
+	        </tr>
+	    </table>
+	    <form:form modelAttribute="Cliente" class="form-horizontal" id="asing-cliente-form">
+	    	<input type="hidden" name="Id" value="${cliente.id}"/>
+			<button class="btn btn-default" type="submit">Aceptar</button>
+		</form:form>
+	</c:if>
 </farmatic:layout>

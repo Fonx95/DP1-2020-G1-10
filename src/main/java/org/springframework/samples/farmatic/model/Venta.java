@@ -47,10 +47,10 @@ public class Venta extends BaseEntity{
 	@OneToMany(mappedBy = "venta", fetch = FetchType.LAZY)
 	private Collection<LineaVenta> lineaVenta;
 	
-	@OneToOne(cascade = CascadeType.ALL, mappedBy = "venta", fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.REMOVE, mappedBy = "venta", fetch = FetchType.LAZY)
 	private Comprador comprador;
 	
-	@ManyToOne(optional = true, fetch = FetchType.LAZY)
+	@ManyToOne(optional = true)
 	@JoinColumn(name = "cliente_id", referencedColumnName = "id")
 	private Cliente cliente;
 	

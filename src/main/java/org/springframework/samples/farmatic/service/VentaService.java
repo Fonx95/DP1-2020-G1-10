@@ -10,6 +10,7 @@ import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.Comprador;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
@@ -55,10 +56,10 @@ public class VentaService {
 	public void finalizarVenta(Venta venta) throws DataAccessException { //TODO: Al realizar una venta debe actualizar el stock en producto
 		venta = this.venta(venta.getId());
 		venta.setFecha(LocalDate.now());
-		if(venta.getImporteTotal() > venta.getPagado()) {
-			Double diferencia = venta.getImporteTotal() - venta.getPagado();
-			venta.setPorPagar(numberFormatter(diferencia));
-		}
+		
+		Double diferencia = venta.getImporteTotal() - venta.getPagado();
+		venta.setPorPagar(numberFormatter(diferencia));
+		
 		venta.setEstadoVenta(EstadoVenta.Realizada);
 		this.ventaRepository.save(venta);
 		Venta nuevaVenta = new Venta();
@@ -66,12 +67,22 @@ public class VentaService {
 	}
 	
 	@Transactional
-	public void updateVenta(Venta venta) throws DataAccessException{ //TODO: Este metodo podria controlar tambien que si ya no existe una linea de estupefaciente que elimine al comprador
-		if(venta.getImporteTotal() > venta.getPagado()) {
-			Double diferencia = venta.getImporteTotal() - venta.getPagado();
-			venta.setPorPagar(numberFormatter(diferencia));
-		}
+	public void updateVenta(Venta venta) throws DataAccessException{
+		
+		Collection<LineaVenta> lineas = venta.getLineaVenta();
+		Double importeTotal = 0.;
+		for(LineaVenta linea:lineas) importeTotal += linea.getImporte();
+		
+		importeTotal = numberFormatter(importeTotal);
+		venta.setImporteTotal(importeTotal);
+		Double diferencia = venta.getImporteTotal() - venta.getPagado();
+		venta.setPorPagar(numberFormatter(diferencia));
+
 		this.ventaRepository.save(venta);
+		
+		if(!existeEstupefaciente(venta) && venta.getComprador() != null) {
+			this.compradorRepository.delete(venta.getComprador());
+		}
 	}
 	
 	@Transactional
@@ -83,32 +94,10 @@ public class VentaService {
 		Double importeLinea = pvp * descuentoTasa * linea.getCantidad();
 		linea.setImporte(numberFormatter(importeLinea));
 		
-		Venta venta = this.ventaActual();
-		Double importe = numberFormatter(venta.getImporteTotal() + linea.getImporte());
-		venta.setImporteTotal(importe);
-		venta.setPagado(importe);
-		
 		this.lineaRepository.save(linea);
-		this.ventaRepository.save(venta);
-	}
-	
-	@Transactional
-	public void updateLinea(LineaVenta linea) throws DataAccessException {
+		
 		Venta venta = this.ventaActual();
-		LineaVenta lineaVieja = this.lineaRepository.lineaVenta(linea.getId());
-		venta.setImporteTotal(venta.getImporteTotal()-lineaVieja.getImporte());
-		
-		Double pvp = linea.getProducto().getPvp();
-		Double descuentoTasa = getTasaTypes(linea.getTipoTasa());
-		Double importeLinea = pvp * descuentoTasa * linea.getCantidad();
-		linea.setImporte(numberFormatter(importeLinea));
-		
-		Double importe = numberFormatter(venta.getImporteTotal() + linea.getImporte());
-		venta.setImporteTotal(importe);
-		venta.setPagado(importe);
-		
-		this.lineaRepository.save(linea);
-		this.ventaRepository.save(venta);
+		this.updateVenta(venta);
 	}
 	
 	private Double numberFormatter(Double number) {
@@ -117,16 +106,22 @@ public class VentaService {
 		return Double.parseDouble(aux);
 	}
 	
+	private boolean existeEstupefaciente(Venta venta) {
+		Collection<LineaVenta> lineas = venta.getLineaVenta();
+		for(LineaVenta linea:lineas) {
+			if(linea.getProducto().getProductType() == TipoProducto.ESTUPEFACIENTE) return true;
+		}
+		return false;
+	}
+	
 	@Transactional
 	public void deleteLinea(LineaVenta linea) throws DataAccessException{
 		//elimina linea de pedido
-		Venta venta = this.ventaActual();
-		Double importe = numberFormatter(venta.getImporteTotal() - linea.getImporte());
-		venta.setImporteTotal(importe);
-		venta.setPagado(importe);
-		
 		lineaRepository.delete(linea);
-		this.ventaRepository.save(venta);
+		
+		Venta venta = this.ventaActual();
+		venta.getLineaVenta().remove(linea);
+		this.updateVenta(venta);
 	}
 	
 	@Transactional
@@ -140,6 +135,21 @@ public class VentaService {
 	@Transactional
 	public Cliente cliente(final int id) {
 		return this.clienteRepository.findById(id);
+	}
+	
+	@Transactional
+	public Cliente clienteDni(String dni) throws DataAccessException {
+		return this.clienteRepository.fingByDni(dni);
+	}
+	
+	@Transactional
+	public void asignarCliente(Cliente cliente) {
+		Venta venta = this.ventaActual();
+		cliente = this.cliente(cliente.getId());
+		cliente.setPorPagarTotal(cliente.getPorPagarTotal() + venta.getPorPagar());
+		venta.setCliente(cliente);
+		this.finalizarVenta(venta);
+		this.clienteRepository.save(cliente);
 	}
 	
 	@Transactional(readOnly = true)

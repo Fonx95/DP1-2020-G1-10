@@ -21,7 +21,7 @@
 					<br>
 					<br>
 					<label style="width: 100px">Importe:</label>
-					<input type="text" name="pagado" value="${ventaActual.pagado}"/>
+					<input type="text" name="pagado" value="${ventaActual.importeTotal}"/>
 					<br>
 					<br>
 					<input type="hidden" name="venta" value="${ventaActual.id}"/>

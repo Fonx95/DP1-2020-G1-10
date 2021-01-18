@@ -24,7 +24,7 @@ public class Comprador extends NamedEntity{
 	@NotEmpty
 	private String dni;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne()
 	@JoinColumn(name = "venta_id")
 	private Venta venta;
 

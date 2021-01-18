@@ -91,7 +91,7 @@ public class VentaController {
 			this.ventaService.deleteLinea(linea);
 			return "redirect:/ventas/actual";
 		}else {
-			this.ventaService.updateLinea(linea);
+			this.ventaService.saveLinea(linea);
 			return "redirect:/ventas/actual";
 		}
 	}
@@ -104,7 +104,7 @@ public class VentaController {
 		for(LineaVenta linea:venta.getLineaVenta()) {
 			if(linea.getProducto().getProductType() == TipoProducto.ESTUPEFACIENTE) existeEstupe = true;
 		}
-		model.put("estupefaciente", existeEstupe);
+		model.addAttribute("estupefaciente", existeEstupe);
 		model.addAttribute("comprador", comprador);
 		return "ventas/finalizarVenta";
 	}
@@ -124,7 +124,7 @@ public class VentaController {
 			}
 		}else if(venta.getPagado() < venta.getImporteTotal()){
 			this.ventaService.updateVenta(venta);
-			return debeCliente(model); //TODO: Si se deja deuda debe asignarse la venta a un cliente
+			return "redirect:/ventas/actual/cliente";
 		}else {
 			this.ventaService.finalizarVenta(venta);
 			return "redirect:/ventas/actual";
@@ -139,7 +139,14 @@ public class VentaController {
 	}
 	
 	@PostMapping(value= {"/ventas/actual/cliente"})
-	public String AsignarCliente(ModelMap model) {
-		return "ventas/finalizarVenta";
+	public String AsignarCliente(@ModelAttribute("cliente") Cliente cliente, ModelMap model) {
+		if(cliente.getDni() != null) {
+			cliente = this.ventaService.clienteDni(cliente.getDni());
+			model.put("cliente", cliente);
+			return "ventas/asignarCliente";
+		}else {
+			this.ventaService.asignarCliente(cliente);
+			return "redirect:/ventas/actual";
+		}
 	}
 }

@@ -12,8 +12,11 @@ import org.springframework.samples.farmatic.model.User;
 public interface ClienteRepository extends  CrudRepository<Cliente, String>{
 
 	@Query("SELECT cliente FROM Cliente cliente WHERE cliente.id =:id")
-	public Cliente findById(@Param("id") int id);
+	Cliente findById(@Param("id") int id);
 	
 	@Query("SELECT cliente FROM Cliente cliente WHERE cliente.user =:user")
 	Cliente findByUser(@Param("user") User user);
+	
+	@Query("SELECT cliente FROM Cliente cliente WHERE cliente.dni =:dni")
+	Cliente fingByDni(@Param("dni") String dni);
 }
