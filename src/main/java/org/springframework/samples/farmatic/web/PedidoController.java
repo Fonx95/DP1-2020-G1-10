@@ -65,8 +65,7 @@ public class PedidoController {
 	 */
 	
 	@GetMapping(value = {"/pedidos"})
-	public String showListaPedidos(ModelMap model) {
-		Pedidos pedidos = new Pedidos();
+	public String showListaPedidos(ModelMap model) {		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
 		model.put("pedidos", pedidos);
 		log.info("Se han mostrado " + pedidos.getPedidoLista().size() + " pedidos");
