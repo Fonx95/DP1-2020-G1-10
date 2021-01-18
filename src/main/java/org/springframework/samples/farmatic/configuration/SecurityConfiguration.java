@@ -39,14 +39,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasAnyAuthority("admin")
 				.antMatchers("/products/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/clientes/**").hasAnyAuthority("farmaceutico","admin")
-				.antMatchers("/profile/me/**").hasAnyAuthority("admin","cliente")
-				.antMatchers("/misVentas/**").hasAnyAuthority("admin","cliente")
+				.antMatchers("/profile/me/**").hasAnyAuthority("cliente","admin")
+				.antMatchers("/misVentas/**").hasAnyAuthority("cliente","admin")
 				.antMatchers("/pedidos/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/ventas/**").hasAnyAuthority("farmaceutico","admin")
-				
-				//.antMatchers("/products/productList/{idProducto}").hasAnyAuthority("farmaceutico","admin")
-				.antMatchers("/vets/**").authenticated()
 				.antMatchers("/mispedidos/**").hasAnyAuthority("proveedor","admin")
+				//.antMatchers("/products/productList/{idProducto}").hasAnyAuthority("farmaceutico","admin")
+				
 				.anyRequest().denyAll()
 				.and()
 				 	.formLogin()

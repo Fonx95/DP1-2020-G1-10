@@ -30,23 +30,53 @@
 				
 				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'ventas'}" url="/ventas/actual"
-						title="diseases">
-						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-						<span>Ventas</span>
+						title="ventas" dropdown="${true}">
+						<ul class="dropdown-menu">
+							<li>								
+									<div class="row">
+										<div class="text-center">																					
+												<a href="<c:url value="/ventas/actual" />" class="dropdown-item">Venta Actual</a>
+										</div>																					
+									</div>						
+							</li>
+							<li class="divider"></li>
+							<li>								
+									<div class="row">
+										<div class="text-center">																					
+												<a href="<c:url value="/ventas" />" class="dropdown-item">Historial de Ventas</a>
+										</div>																					
+									</div>						
+							</li>														
+						</ul>
 					</farmatic:menuItem>
 				</sec:authorize>
 				
 				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
-					<farmatic:menuItem active="${name eq 'pedidos'}" url="/pedidos"
-						title="diseases">
-						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-						<span>Pedidos</span>
+					<farmatic:menuItem active="${name eq 'pedidos'}" url="/pedidos/actual"
+						title="pedidos" dropdown="${true}">
+						<ul class="dropdown-menu">
+							<li>								
+									<div class="row">
+										<div class="text-center">																					
+												<a href="<c:url value="/pedidos/actual" />" class="dropdown-item">Pedido Actual</a>
+										</div>																					
+									</div>						
+							</li>
+							<li class="divider"></li>
+							<li>								
+									<div class="row">
+										<div class="text-center">																					
+												<a href="<c:url value="/pedidos" />" class="dropdown-item">Historial de Pedidos</a>
+										</div>																					
+									</div>						
+							</li>														
+						</ul>
 					</farmatic:menuItem>
 				</sec:authorize>				
 
 				<sec:authorize access= "hasAuthority('proveedor')">
 					<farmatic:menuItem active="${name eq 'pedidos'}" url="/mispedidos"
-						title="diseases">
+						title="pedidos">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Pedidos</span>
 					</farmatic:menuItem>
@@ -54,29 +84,29 @@
 				
 				<sec:authorize access= "hasAuthority('cliente')">
 					<farmatic:menuItem active="${name eq 'clientes'}" url="/profile/me"
-						title="diseases">
+						title="cliente">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Mis datos</span>
 					</farmatic:menuItem>
 				</sec:authorize>
 				<sec:authorize access= "hasAuthority('cliente')">
 					<farmatic:menuItem active="${name eq 'clientes'}" url="/misVentas"
-						title="diseases">
+						title="ventas">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Mis Ventas</span>
 					</farmatic:menuItem>
 				</sec:authorize>
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'productos'}" url="/products"
-						title="diseases">
+						title="productos">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Productos</span>
 					</farmatic:menuItem>
 				</sec:authorize>
 				
-				<sec:authorize access= "hasAuthority('farmaceutico')">
+				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
 					<farmatic:menuItem active="${name eq 'clientes'}" url="/clientes"
-						title="diseases">
+						title="clientes">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Clientes</span>
 					</farmatic:menuItem>

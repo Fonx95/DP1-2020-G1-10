@@ -34,24 +34,19 @@ public class ClienteController {
 	private static final String		VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM	= "clientes/createOrUpdateClienteForm";
 
 	private final ClienteService	clienteService;
-	
-
 
 	@Autowired
 	public ClienteController(final ClienteService clienteService) {
 		this.clienteService = clienteService;
 		
 	}
-	
 
 	@InitBinder
 	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	@GetMapping(value = {
-		"/clientes"
-	})
+	@GetMapping(value = {"/clientes"})
 	public String listadoClientes(final ModelMap modelMap) {
 		Iterable<Cliente> clientes = this.clienteService.findClientes();
 		modelMap.addAttribute("clientes", clientes);
@@ -76,16 +71,14 @@ public class ClienteController {
 
 	}
 	
-	@GetMapping(value = {
-			"/misVentas"
-		})
-		public String listadoVentas( final ModelMap modelMap) {
-			
-			User user=this.clienteService.getCurrentUser();
-			Cliente cliente=this.clienteService.findClienteDetalles(user);
-			modelMap.addAttribute("cliente", cliente);
-			return "clientes/clienteVentas";
-		}
+	@GetMapping(value = {"/misVentas"})
+	public String listadoVentas( final ModelMap modelMap) {
+		
+		User user=this.clienteService.getCurrentUser();
+		Cliente cliente=this.clienteService.findClienteDetalles(user);
+		modelMap.addAttribute("cliente", cliente);
+		return "clientes/clienteVentas";
+	}
 
 //		@GetMapping("/clientes/clienteList/{idCliente}")
 //		public ModelAndView showClientes(@PathVariable("idCliente") final int idCliente) {

@@ -64,11 +64,11 @@ INSERT INTO linea_Pedidos(cantidad,pedido_id,producto_id) VALUES (2,6,3);
 INSERT INTO linea_Pedidos(cantidad,pedido_id,producto_id) VALUES (2,6,7);
 
 --Ventas
-INSERT INTO ventas(fecha,importe_total,pagado,por_pagar,estado,cliente_id) VALUES(null,'0.0','0.0','0.0',0,null);
 INSERT INTO ventas(fecha,importe_total,pagado,por_pagar,estado,cliente_id) VALUES('2020-11-26','5.25','5.25','0.0',1,1);
+INSERT INTO ventas(fecha,importe_total,pagado,por_pagar,estado,cliente_id) VALUES(null,'0.0','0.0','0.0',0,null);
 
 --LineaVentas
-INSERT INTO linea_Venta(tipo_Tasa,cantidad,importe,venta_id,producto_id) VALUES('TSI001',1,'5.25',2,1);
+INSERT INTO linea_Venta(tipo_Tasa,cantidad,importe,venta_id,producto_id) VALUES('TSI001',1,'5.25',1,1);
 
 
 

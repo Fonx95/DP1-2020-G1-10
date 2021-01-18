@@ -26,9 +26,18 @@ public class ClienteService {
 	
 	
 	private ClienteRepository clienteRepo;
+	
 	private UserRepository			userRepository;
 	
 	private UserService			userService;
+	
+	@Autowired
+	public ClienteService(final ClienteRepository clienteRepo, final UserService userService, final AuthoritiesService	authoritiesService,final UserRepository userRepository) {
+		this.clienteRepo = clienteRepo;
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
+		this.userRepository=userRepository;
+	}
 	
 	private final AuthoritiesService	authoritiesService;
 	@Transactional
@@ -49,14 +58,6 @@ public class ClienteService {
 	public Cliente findClienteById(final int id) throws DataAccessException {
 	
 		return this.clienteRepo.findById(id);
-	}
-
-	@Autowired
-	public ClienteService(final ClienteRepository clienteRepo, final UserService userService, final AuthoritiesService	authoritiesService,final UserRepository userRepository) {
-		this.clienteRepo = clienteRepo;
-		this.userService = userService;
-		this.authoritiesService = authoritiesService;
-		this.userRepository=userRepository;
 	}
 	
 	@Transactional
