@@ -1,12 +1,10 @@
 package org.springframework.samples.farmatic.model;
 
-import java.util.Collection;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +24,7 @@ public class Comprador extends NamedEntity{
 	@NotEmpty
 	private String dni;
 	
-	@ManyToOne(cascade = CascadeType.ALL)
+	@OneToOne()
 	@JoinColumn(name = "venta_id")
 	private Venta venta;
 

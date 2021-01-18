@@ -8,17 +8,26 @@
 
 <farmatic:layout pageName= "ventas">
 	<h2> Venta en Proceso</h2>
+	<div class="row no-gutters">
+		<div class="col-12 col-sm-6 col-md-8">
+		</div>
+		<div class="col-6 col-md-4">
+			<label>Importe Total:</label>
+			<input disabled class="marcador" type="text" name="pagado" value="${ventaActual.importeTotal} &#8364"/>
+		</div>
+	</div>
+	<br>
 	<table class = "table table-striped">
 		<thead>
 		<tr>
-			<th>Código</th>
-			<th>Nombre</th>
+			<th style="width: 150px">Código</th>
+			<th style="width: 300px">Nombre</th>
+			<th>Tipo</th>
 			<th>PvP</th>
 			<th>Stock</th>
-			<th>Stock Min.</th>
-			<th>Cantidad</th>
-			<th>T.A</th>
-			<th>Importe</th>
+			<th style="width: 140px">Cantidad</th>
+			<th style="width: 140px">T.A</th>
+			<th style="width: 60px">Importe</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -31,13 +40,13 @@
 						<c:out value="${linea.producto.name}"/>
 					</td>
 					<td>
+						<c:out value="${linea.producto.productType}"/>
+					</td>
+					<td>
 						<c:out value="${linea.producto.pvp}"/>
 					</td>
 					<td>
 						<c:out value="${linea.producto.stock}"/>
-					</td>
-					<td>
-						<c:out value="${linea.producto.minStock}"/>
 					</td>
 					<td>
 						<input disabled type="text" class="form-control" name="Cantidad" value="${linea.cantidad}"/>
@@ -60,9 +69,9 @@
 					<tr>
 						<th>${nuevaLinea.producto.code}</th>
 						<th>${nuevaLinea.producto.name}</th>
+						<th>${nuevaLinea.producto.productType}</th>
 						<th>${nuevaLinea.producto.pvp}</th>
 						<th>${nuevaLinea.producto.stock}</th>
-						<th>${nuevaLinea.producto.minStock}</th>
 						<th>
 							<input type="text" class="form-control" name="Cantidad" value="${nuevaLinea.cantidad}"/>
 						</th>
@@ -97,8 +106,12 @@
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
-					<td></td>
+					<td>
+						<input disabled type="text" class="form-control" value=""/>
+					</td>
+					<td>
+						<input disabled type="text" class="form-control" value=""/>
+					</td>
 					<td></td>
 					<td>
 						<button class="btn btn-default btn-sm" type="submit">

@@ -1,18 +1,13 @@
 package org.springframework.samples.farmatic.web;
 
-import java.util.Collection;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.Comprador;
 import org.springframework.samples.farmatic.model.LineaVenta;
-import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Producto;
-import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.TipoProducto;
-import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.VentaService;
@@ -37,11 +32,6 @@ public class VentaController {
 	public VentaController(VentaService ventaService, ProductoService productoService) {
 		this.ventaService = ventaService;
 		this.productoService = productoService;
-	}
-	
-	@ModelAttribute("types")
-	public Collection<TipoTasa> tasaTypes() {
-		return this.ventaService.getTasaTypes();
 	}
 	
 	@ModelAttribute("ventaActual")
@@ -108,22 +98,55 @@ public class VentaController {
 	
 	@GetMapping(value={"/ventas/actual/pagar"})
 	public String finalizarVenta(ModelMap model) {
-		Collection<Cliente> clientes = ventaService.findClientes();
-		Cliente cliente = new Cliente();
-		model.addAttribute("clientes", clientes);
-		model.addAttribute("cliente", cliente);
+		Comprador comprador = new Comprador();
+		Venta venta = this.ventaService.ventaActual();
+		Boolean existeEstupe = false;
+		for(LineaVenta linea:venta.getLineaVenta()) {
+			if(linea.getProducto().getProductType() == TipoProducto.ESTUPEFACIENTE) existeEstupe = true;
+		}
+		model.addAttribute("estupefaciente", existeEstupe);
+		model.addAttribute("comprador", comprador);
 		return "ventas/finalizarVenta";
 	}
 	
 	@PostMapping(value={"/ventas/actual/pagar"})
-	public String createVenta(@Valid Venta venta, BindingResult result, ModelMap model) {
+	public String createVenta(@Valid Venta venta, @ModelAttribute("comprador") Comprador comprador, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-			return "/ventas/actual/pagar";
+			return "ventas/finalizarVenta";
+		}else if(comprador.getDni() != null) {
+			if(comprador.getDni() == "") {
+				model.put("estupefaciente", true);
+				return "ventas/finalizarVenta";
+			}else {
+				this.ventaService.saveComprador(comprador);
+				model.put("estupefaciente", false);
+				return "ventas/finalizarVenta";
+			}
+		}else if(venta.getPagado() < venta.getImporteTotal()){
+			this.ventaService.updateVenta(venta);
+			return "redirect:/ventas/actual/cliente";
 		}else {
-			this.ventaService.finalizarVenta(venta);;
-			return "redirect:/ventas";
+			this.ventaService.finalizarVenta(venta);
+			return "redirect:/ventas/actual";
 		}
 	}
 	
-
+	@GetMapping(value= {"/ventas/actual/cliente"})
+	public String debeCliente(ModelMap model) {
+		Cliente cliente = new Cliente();
+		model.put("cliente", cliente);
+		return "ventas/asignarCliente";
+	}
+	
+	@PostMapping(value= {"/ventas/actual/cliente"})
+	public String AsignarCliente(@ModelAttribute("cliente") Cliente cliente, ModelMap model) {
+		if(cliente.getDni() != null) {
+			cliente = this.ventaService.clienteDni(cliente.getDni());
+			model.put("cliente", cliente);
+			return "ventas/asignarCliente";
+		}else {
+			this.ventaService.asignarCliente(cliente);
+			return "redirect:/ventas/actual";
+		}
+	}
 }
