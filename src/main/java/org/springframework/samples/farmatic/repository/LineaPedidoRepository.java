@@ -13,5 +13,4 @@ public interface LineaPedidoRepository extends CrudRepository<LineaPedido, Integ
 
 	@Query("SELECT linea FROM LineaPedido linea WHERE linea.pedido = :pedido_id")
 	Collection<LineaPedido> lineaPedido(@Param("pedido_id") int id) throws DataAccessException;
-
 }

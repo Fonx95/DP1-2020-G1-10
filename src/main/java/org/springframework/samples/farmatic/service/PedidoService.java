@@ -125,12 +125,26 @@ public class PedidoService {
 		//lineas del pedido
 		return this.lineaRepository.lineaPedido(id);
 	}
+	
+	@Transactional 
+	public LineaPedido lineaById(int id) throws DataAccessException {
+		return this.lineaRepository.findById(id).get();
+	}
 
 	@Transactional
 	public void saveLinea(final LineaPedido linea) throws DataAccessException {
 		//guardando linea de pedido
 		this.lineaRepository.save(linea);
 		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha creado/modificado con una cantidad de " + linea.getCantidad());
+	}
+	
+	@Transactional
+	public Integer existelinea(Producto producto) {
+		Collection<LineaPedido> lineas = this.pedidoActual().getLineaPedido();
+		for(LineaPedido linea:lineas) {
+			if(linea.getProducto().equals(producto)) return linea.getId();
+		}
+		return null;
 	}
 
 	@Transactional

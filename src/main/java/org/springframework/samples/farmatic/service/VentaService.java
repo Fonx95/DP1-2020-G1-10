@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.Comprador;
+import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoProducto;
@@ -32,13 +33,20 @@ public class VentaService {
 	
 	private ClienteRepository clienteRepository;
 	
+	private PedidoService pedidoService;
+	
+	private ProductoService productoService;
+	
 	@Autowired
 	public VentaService(VentaRepository ventaRepository, LineaVentaRepository lineaRepository, 
-			CompradorRepository compradorRepository, ClienteRepository clienteRepository) {
+			CompradorRepository compradorRepository, ClienteRepository clienteRepository,
+			PedidoService pedidoService, ProductoService productoService) {
 		this.ventaRepository = ventaRepository;
 		this.lineaRepository = lineaRepository;
 		this.compradorRepository = compradorRepository;
 		this.clienteRepository = clienteRepository;
+		this.pedidoService = pedidoService;
+		this.productoService = productoService;
 	}
 	
 	@Transactional
@@ -48,12 +56,17 @@ public class VentaService {
 	}
 	
 	@Transactional
+	public Collection<Venta> findAllVentas() throws DataAccessException{
+		return this.ventaRepository.findAll();
+	}
+	
+	@Transactional
 	public Venta venta(final int id) throws DataAccessException {
 		return this.ventaRepository.venta(id);
 	}
 	
 	@Transactional
-	public void finalizarVenta(Venta venta) throws DataAccessException { //TODO: Al realizar una venta debe actualizar el stock en producto
+	public void finalizarVenta(Venta venta) throws DataAccessException {
 		venta = this.venta(venta.getId());
 		venta.setFecha(LocalDate.now());
 		
@@ -62,8 +75,33 @@ public class VentaService {
 		
 		venta.setEstadoVenta(EstadoVenta.Realizada);
 		this.ventaRepository.save(venta);
+		this.controlStock(venta);
 		Venta nuevaVenta = new Venta();
 		this.ventaRepository.save(nuevaVenta);
+	}
+	
+	@Transactional
+	private void controlStock(Venta venta) throws DataAccessException {
+		Collection<LineaVenta> lineas = venta.getLineaVenta();
+		for(LineaVenta linea:lineas) {
+			Producto producto = linea.getProducto();
+			producto.setStock(producto.getStock() - linea.getCantidad());
+			if(producto.getStock() < producto.getMinStock()) {
+				Integer idLinea = this.pedidoService.existelinea(producto);
+				Integer diferencia = producto.getMinStock() - producto.getStock();
+				if(idLinea!=null) {
+					LineaPedido lPedido = this.pedidoService.lineaById(idLinea);
+					if(lPedido.getCantidad() < diferencia) {
+						lPedido.setCantidad(diferencia);
+						this.pedidoService.saveLinea(lPedido);
+					}
+				}else {
+					LineaPedido lPedido = this.pedidoService.newLinea(producto, diferencia);
+					this.pedidoService.saveLinea(lPedido);
+				}
+			}
+			this.productoService.saveProducto(producto);
+		}
 	}
 	
 	@Transactional
@@ -83,6 +121,15 @@ public class VentaService {
 		if(!existeEstupefaciente(venta) && venta.getComprador() != null) {
 			this.compradorRepository.delete(venta.getComprador());
 		}
+	}
+	
+	@Transactional
+	public Integer existelinea(Producto producto) {
+		Collection<LineaVenta> lineas = this.ventaActual().getLineaVenta();
+		for(LineaVenta linea:lineas) {
+			if(linea.getProducto().equals(producto)) return linea.getId();
+		}
+		return null;
 	}
 	
 	@Transactional
@@ -162,13 +209,13 @@ public class VentaService {
 		case TSI001:
 			return 1.0;
 		case TSI002:
-			return 0.9;
+			return 0.86;
 		case TSI003:
-			return 0.85;
+			return 0.55;
 		case TSI004:
-			return 0.53;
+			return 0.13;
 		case TSI005:
-			return 0.30;
+			return 0.0;
 		default:
 			return 1.0;
 		}

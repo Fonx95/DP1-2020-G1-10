@@ -81,9 +81,8 @@ public class PedidoController {
 	
 	@GetMapping(value = {"/pedidos/{id}"})
 	public String showPedido(@PathVariable("id") Pedido pedido, ModelMap model) {
-		if(pedido.getEstadoPedido() == EstadoPedido.Borrador) {
-			return "redirect:/pedidos/actual";
-		} else {
+		if(pedido.getEstadoPedido() == EstadoPedido.Borrador) return "redirect:/pedidos/actual";
+		else {
 			model.put("pedido", pedido);
 			log.info("Se ha mostrado el pedido con el codigo '" + pedido.getCodigo() + "'");
 			return "pedidos/pedidoDetails";
@@ -122,7 +121,7 @@ public class PedidoController {
 	}
 	
 	/**
-	 * Este es un metodo @PostMapping que primero mira si ha recibido un codigo de un {@link Producto} y, si es asi, lo busca en la BD y crea la {@link LineaPedido}.
+	 * Este es un metodo @PostMapping que primero mira si ha recibido un codigo de un {@link Producto} y, si es asi, lo busca en la BD y crea la {@link LineaPedido}, pero si la linea ya exite te redireciona a su vista de edicion.
 	 * Si en cambio no recibe un codigo de un {@link Producto} entonces guarda la {@link LineaPedido} en el pedido actual.
 	 * @param producto Un tipo Producto con solo el campo "code" si procede
 	 * @param linea La linea que trae del fomulario de la vista
@@ -137,6 +136,9 @@ public class PedidoController {
 		} else if (producto.getCode() != null) {
 			if(producto.getCode() == "") return "redirect:/pedidos/actual";
 			producto = this.productoService.findProductoByCode(producto.getCode());
+			if(this.pedidoService.existelinea(producto) != null) {
+				return "redirect:/pedidos/actual/" + this.pedidoService.existelinea(producto);
+			}
 			linea = pedidoService.newLinea(producto,1);
 			model.addAttribute("nuevaLinea", linea);
 			model.addAttribute("producto", producto);

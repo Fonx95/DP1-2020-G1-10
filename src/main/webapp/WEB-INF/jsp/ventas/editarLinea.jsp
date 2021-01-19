@@ -22,7 +22,7 @@
 		<tr>
 			<th style="width: 150px">Código</th>
 			<th style="width: 300px">Nombre</th>
-			<th>Tipo</th>
+			<th style="width: 175px">Tipo</th>
 			<th>PvP</th>
 			<th>Stock</th>
 			<th style="width: 140px">Cantidad</th>

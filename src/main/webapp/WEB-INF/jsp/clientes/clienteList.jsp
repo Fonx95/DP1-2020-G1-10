@@ -29,7 +29,7 @@
 					<c:out value="${cliente.porPagarTotal}"/>
 				</td>
 				<td>
-                   	<spring:url value="/clientes/clienteList/{idCliente}" var="mostrarCliente">
+                   	<spring:url value="/clientes/{idCliente}" var="mostrarCliente">
                    	<spring:param name="idCliente" value="${cliente.id}"/>
                    	</spring:url>
                     <a href="${fn:escapeXml(mostrarCliente)}" class="btn btn-default">Detalles</a>

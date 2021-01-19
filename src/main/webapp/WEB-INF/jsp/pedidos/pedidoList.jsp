@@ -9,10 +9,6 @@
 <farmatic:layout pageName= "pedidos">
 	
 	<sec:authorize access= "hasAuthority('proveedor')"><h2>Mis </h2></sec:authorize><h2>Pedidos</h2>
-	<sec:authorize access= "hasAuthority('farmaceutico')">
-	 <a href="/pedidos/actual" class="btn btn-default btn-right">Pedido en proceso</a>
-	</sec:authorize>
-	<br/>
 	<table class = "table table-striped">
 		<thead>
 		<tr>
@@ -25,33 +21,35 @@
 		</thead>
 		<tbody>
 		<c:forEach items="${pedidos.pedidoLista}" var="pedido">
-			<tr>
-				<td>
-					<sec:authorize access= "hasAuthority('farmaceutico')">
-						<spring:url value="/pedidos/{idPedido}" var="mostrarPedido">
-                   		<spring:param name="idPedido" value="${pedido.id}"/>
-                   		</spring:url>
-                   	</sec:authorize>
-                   	<sec:authorize access= "hasAuthority('proveedor')">
-                   		<spring:url value="/mispedidos/{idPedido}" var="mostrarPedido">
-                   		<spring:param name="idPedido" value="${pedido.id}"/>
-                   		</spring:url>
-                   	</sec:authorize>
-                    <a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${pedido.codigo}"/></a>
-				</td>
-				<td>
-					<c:out value="${pedido.fechaPedido}"/>
-				</td>
-				<td>
-					<c:out value="${pedido.estadoPedido}"/>
-				</td>
-				<td>
-					<c:out value="${pedido.fechaEntrega}"/>
-				</td>
-				<td>
-					<c:out value = "${pedido.proveedor.empresa}" />
-				</td>
-			</tr>
+			<c:if test="${pedido.estadoPedido != 'Borrador'}">
+				<tr>
+					<td>
+						<sec:authorize access= "hasAuthority('farmaceutico')">
+							<spring:url value="/pedidos/{idPedido}" var="mostrarPedido">
+	                   		<spring:param name="idPedido" value="${pedido.id}"/>
+	                   		</spring:url>
+	                   	</sec:authorize>
+	                   	<sec:authorize access= "hasAuthority('proveedor')">
+	                   		<spring:url value="/mispedidos/{idPedido}" var="mostrarPedido">
+	                   		<spring:param name="idPedido" value="${pedido.id}"/>
+	                   		</spring:url>
+	                   	</sec:authorize>
+	                    <a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${pedido.codigo}"/></a>
+					</td>
+					<td>
+						<c:out value="${pedido.fechaPedido}"/>
+					</td>
+					<td>
+						<c:out value="${pedido.estadoPedido}"/>
+					</td>
+					<td>
+						<c:out value="${pedido.fechaEntrega}"/>
+					</td>
+					<td>
+						<c:out value = "${pedido.proveedor.empresa}" />
+					</td>
+				</tr>
+			</c:if>
 		</c:forEach>
 		</tbody>
 

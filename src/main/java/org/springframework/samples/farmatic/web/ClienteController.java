@@ -53,7 +53,7 @@ public class ClienteController {
 		return "clientes/clienteList";
 	}
 
-	@GetMapping("/clientes/clienteList/{idCliente}")
+	@GetMapping("/clientes/{idCliente}")
 	public ModelAndView showClientes(@PathVariable("idCliente") final int idCliente) {
 		ModelAndView mav = new ModelAndView("clientes/clienteDetails");
 		Cliente cliente = this.clienteService.findClienteById(idCliente);
