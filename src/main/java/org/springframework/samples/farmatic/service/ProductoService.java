@@ -3,19 +3,18 @@ package org.springframework.samples.farmatic.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Farmaceutico;
-import org.springframework.samples.farmatic.model.LineaPedido;
-import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Producto;
-import org.springframework.samples.farmatic.model.Proveedor;
-import org.springframework.samples.farmatic.model.TipoProducto;
+import org.springframework.samples.farmatic.model.TipoMedicamento;
 import org.springframework.samples.farmatic.repository.FarmaceuticoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
+import org.springframework.samples.farmatic.repository.TipoMedicamentoRepository;
 import org.springframework.samples.farmatic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,15 +22,21 @@ import org.springframework.stereotype.Service;
 public class ProductoService {
 
 	private ProductoRepository productoRepository;
+	
+	private TipoMedicamentoRepository tipoMedicamentoRepository;
 
 	private FarmaceuticoRepository farmaceuticoRepository;
-	private UserRepository			userRepository;
+	
+	private UserRepository userRepository;
+	
 	@Autowired
-	public ProductoService(final ProductoRepository productoRepository, final FarmaceuticoRepository farmaceuticoRepository,final UserRepository userRepository) {
+	public ProductoService(final ProductoRepository productoRepository, final TipoMedicamentoRepository tipoMedicamentoRepository, final FarmaceuticoRepository farmaceuticoRepository,final UserRepository userRepository) {
 		this.productoRepository = productoRepository;
 		this.farmaceuticoRepository = farmaceuticoRepository;
 		this.userRepository = userRepository;
+		this.tipoMedicamentoRepository = tipoMedicamentoRepository;
 	}
+	
 	@Transactional
 	public Iterable<Producto> findProducts() throws DataAccessException {
 		//lista productos
@@ -60,15 +65,11 @@ public class ProductoService {
 		return this.productoRepository.findByCode(code);
 	}
 	
-	public Collection<TipoProducto> getProductTypes() throws DataAccessException {
-		Collection<TipoProducto> productTypes = new ArrayList<TipoProducto>();
-		productTypes.add(TipoProducto.ESTUPEFACIENTE);
-		productTypes.add(TipoProducto.FARMACOCONRECETA);
-		productTypes.add(TipoProducto.FARMACOSINRECETA);
-		productTypes.add(TipoProducto.PARAFARMACIA);
+	@Transactional
+	public Collection<TipoMedicamento> getMedicamentoTypes() throws DataAccessException {
+		Collection<TipoMedicamento> tipos = this.tipoMedicamentoRepository.findAll();
 		
-		return productTypes;
-		
+		return tipos;
 	}
 
 	//------Metodo referente a Farmaceutico

@@ -11,6 +11,7 @@
 	<table id="productosTable" class = "table table-striped">
 		<thead>
 		<tr>
+			<th>Codigo</th>
 			<th>Nombre</th>
 			<th>Tipo de Producto</th>
 			<th>Stock</th>
@@ -19,6 +20,9 @@
 		<tbody>
 		<c:forEach items="${productos}" var="producto">
 			<tr>
+				<td>
+					<c:out value="${producto.code}"/>
+				</td>
 				<td>
 					<c:out value="${producto.name}"/>
 				</td>
@@ -29,7 +33,7 @@
 					<c:out value="${producto.stock}"/>
 				</td>
 				<td>
-                   	<spring:url value="/products/productList/{idProducto}" var="mostrarProducto">
+                   	<spring:url value="/productos/{idProducto}" var="mostrarProducto">
                    	<spring:param name="idProducto" value="${producto.id}"/>
                    	</spring:url>
                     <a href="${fn:escapeXml(mostrarProducto)}" class="btn btn-default">Detalles</a>
@@ -38,5 +42,6 @@
 		</c:forEach>
 		</tbody>
 	</table>
+	<a href="/productos/new" class="btn btn-default">Nuevo Producto</a>
 </farmatic:layout>
 	

@@ -90,14 +90,14 @@
 					</farmatic:menuItem>
 				</sec:authorize>
 				<sec:authorize access= "hasAuthority('cliente')">
-					<farmatic:menuItem active="${name eq 'clientes'}" url="/misVentas"
+					<farmatic:menuItem active="${name eq 'ventasCliente'}" url="/misVentas"
 						title="ventas">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Mis Ventas</span>
 					</farmatic:menuItem>
 				</sec:authorize>
 				<sec:authorize access= "hasAuthority('farmaceutico') || hasAuthority('admin')">
-					<farmatic:menuItem active="${name eq 'productos'}" url="/products"
+					<farmatic:menuItem active="${name eq 'productos'}" url="/productos"
 						title="productos">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Productos</span>
@@ -130,7 +130,7 @@
 				</sec:authorize>
 				<sec:authorize access="isAuthenticated()">
 					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span> 
+						data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span>
 							<strong><sec:authentication property="name" /></strong> <span
 							class="glyphicon glyphicon-chevron-down"></span>
 					</a>

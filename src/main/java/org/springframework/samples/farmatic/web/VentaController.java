@@ -1,5 +1,7 @@
 package org.springframework.samples.farmatic.web;
 
+import java.util.Collection;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.Venta;
+import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.VentaService;
 import org.springframework.stereotype.Controller;
@@ -34,15 +37,31 @@ public class VentaController {
 		this.productoService = productoService;
 	}
 	
+	@InitBinder
+	public void setAllowedFields(WebDataBinder dataBinder) {
+		dataBinder.setDisallowedFields("id");
+	}
+	
 	@ModelAttribute("ventaActual")
 	public Venta getVentaActual(){
 		Venta venta = this.ventaService.ventaActual();
 		return venta;
 	}
 	
-	@InitBinder
-	public void setAllowedFields(WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+	@GetMapping(value="/ventas")
+	public String listVentas(ModelMap model) {
+		Collection<Venta> ventas = this.ventaService.findAllVentas();
+		model.put("ventas", ventas);
+		return "ventas/ventaList";
+	}
+	
+	@GetMapping(value="/ventas/{ventaId}")
+	public String detallesVentas(@PathVariable("ventaId") Venta venta, ModelMap model) {
+		if(venta.getEstadoVenta() == EstadoVenta.enProceso) return "redirect:/ventas/actual";
+		else {
+			model.put("venta", venta);
+			return "ventas/ventaDetails";
+		}
 	}
 	
 	@GetMapping(value= {"/ventas/actual"})
@@ -61,6 +80,9 @@ public class VentaController {
 		}else if(producto.getCode()!=null){
 			if(producto.getCode() == "") return "redirect:/ventas/actual";
 			producto = this.productoService.findProductoByCode(producto.getCode());
+			if(this.ventaService.existelinea(producto) != null) {
+				return "redirect:/ventas/actual/" + this.ventaService.existelinea(producto);
+			}
 			linea = ventaService.newLinea(producto);
 			model.addAttribute("nuevaLinea", linea);
 			model.addAttribute("producto", producto);
