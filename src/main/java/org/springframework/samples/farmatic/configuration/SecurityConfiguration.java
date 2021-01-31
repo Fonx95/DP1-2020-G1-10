@@ -37,7 +37,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers(HttpMethod.GET, "/","/oups").permitAll()
 				.antMatchers("/users/new").permitAll()
 				.antMatchers("/admin/**").hasAnyAuthority("admin")
-				.antMatchers("/products/**").hasAnyAuthority("farmaceutico","admin")
+				.antMatchers("/productos/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/clientes/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/profile/me/**").hasAnyAuthority("cliente","admin")
 				.antMatchers("/misVentas/**").hasAnyAuthority("cliente","admin")
@@ -46,7 +46,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/mispedidos/**").hasAnyAuthority("proveedor","admin")
 				//.antMatchers("/products/productList/{idProducto}").hasAnyAuthority("farmaceutico","admin")
 				
-				.anyRequest().denyAll()
+				//.anyRequest().denyAll()
 				.and()
 				 	.formLogin()
 				 	/*.loginPage("/login")*/

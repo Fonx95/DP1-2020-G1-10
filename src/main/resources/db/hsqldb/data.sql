@@ -35,15 +35,52 @@ INSERT INTO authorities(username,authority) VALUES ('farm1','farmaceutico');
 INSERT INTO farmaceutico(name,surnames,dni,address,username) VALUES ('Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
 
 --Productos
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dalsy','PR-002','FARMACOCONRECETA','6.75','5.74','3','2');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dolocatil','PR-003','FARMACOSINRECETA','7.55','6.11','4','4');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Mariguanilla','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Cinfatos','PR-005','FARMACOSINRECETA','9.20','8.34','4','3');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Gelocatil Gripe','PR-006','FARMACOCONRECETA','6.10','5.23','15','10');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Flumil Forte','PR-007','FARMACOSINRECETA','2.60','2.03','7','7');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dentrífico Lacer','PR-008','PARAFARMACIA','2.65','1.84','7','7');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Potito Manzana y Platano','PR-009','PARAFARMACIA','1.40','0.72','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');--Analgesico, Anticoagulante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dalsy','PR-002','FARMACOSINRECETA','6.75','5.74','3','2');--Analgesico, Antipiretico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Zamene','PR-003','FARMACOCONRECETA','7.55','6.11','4','4');--Corticoide
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Morfina','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Durogesic Matrix','PR-005','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Cinfatos','PR-006','FARMACOSINRECETA','9.20','8.34','4','3');--Antitusivo
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Metformina','PR-007','FARMACOCONRECETA','6.10','5.23','15','10');--Hipoglucemiante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Ameride','PR-008','FARMACOCONRECETA','2.60','2.03','7','7');--Diuretico, Antihipertensivo
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Polaramine','PR-009','FARMACOCONRECETA','2.60','2.03','7','7');--Antihistaminico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Trinomia','PR-010','FARMACOCONRECETA','2.60','2.03','7','7');--Antiagregante Plaquetario, Antihipertensivo, Hipolipemiante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Tobradex','PR-011','FARMACOCONRECETA','2.60','2.03','7','7');--Antibiotico, Corticoide
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dentrifico Lacer','PR-012','PARAFARMACIA','2.65','1.84','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Potito Manzana y Platano','PR-013','PARAFARMACIA','1.40','0.72','7','7');
+
+--TipoMedicamento
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Analgesico','Son medicinas que reducen o alivian los dolores de cabeza, musculares, artríticos o muchos otros achaques y dolores.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Anticoagulante','Son medicamentos que previenen la formación de coágulos sanguíneos. También evitan que los coágulos de sangre ya existentes se hagan más grandes.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antipiretico','Son medicamentos que disminuyen la fiebre. Suelen ser medicamentos que tratan la fiebre de una forma sintomática, sin actuar sobre su causa.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Corticoide','Estas sustancias operan de modo fisiológico para atenuar las respuestas del cuerpo a los procesos inflamatarios, controlar situaciones de estrés, inhibir la fagocitosis y otras cuestiones.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antitusivo','Son medicamentos que se emplean para tratar la tos seca irritativa, no productiva. Los antitusígenos son compuestos que actúan sobre el sistema nervioso central o periférico para suprimir el reflejo de la tos.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Hipoglucemiante','Son un tipo de medicamentos empleados para disminuir los niveles de azúcar en la sangre, principalmente en los casos de resistencia a la insulina y la diabetes. Existen muchos tipos de medicamentos hipoglucemiantes, que se clasifican de acuerdo a su estructura molecular y su mecanismo de acción.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Diuretico','Son un tipo de medicamento que hace que los riñones produzcan más orina. Los diuréticos ayudan al cuerpo a eliminar el líquido y la sal sobrante. Se usan para tratar la presión arterial alta, el edema (líquido extra en los tejidos) y otras afecciones.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antihipertensivo','Son medicamentos utilizados para disminuir el riesgo cardiovascular en los pacientes con hipertensión arterial controlando la presión arterial hasta niveles adecuados. La hipertensión arterial es una enfermedad de la pared arterial de los vasos sanguíneos.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antihistaminico','Tipo de medicamento que bloquea la acción de la histamina, sustancia que puede causar fiebre, picazón, estornudos, mucosidad nasal y lagrimeo. Los antihistamínicos se utilizan para prevenir la fiebre en los pacientes que se someten a transfusiones de sangre y para el tratamiento de alergias, tos y resfriados.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antiagregante Plaquetario','Son un grupo de fármacos cuyo principal efecto es inhibir el funcionalismo de las plaquetas, evitando así su agregación y la consiguiente formación de trombos en el interior de los vasos sanguíneos.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Hipolipemiante','Es una sustancia farmacológicamente activa que tenga la propiedad de disminuir los niveles de lípidos en sangre. En el sistema de clasificación anatómica, terapéutica y química, forman un grupo homogéneo denominado C10.');
+INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antibiotico','Son medicamentos que combaten las infecciones bacterianas en personas y animales. Funcionan matando las bacterias o dificultando su crecimiento y multiplicación.');
+
+--Relacion_productos_tipoMedicamentos                                              tipo/producto
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (1,1);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (1,2);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (2,1);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (2,3);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (3,4);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (4,1);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (5,1);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (6,5);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (7,6);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (8,7);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (8,8);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (9,9);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (10,10);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (10,8);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (10,11);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (11,12);
+INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (11,4);
 
 --Pedidos
 INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-006',null,null,2,null);

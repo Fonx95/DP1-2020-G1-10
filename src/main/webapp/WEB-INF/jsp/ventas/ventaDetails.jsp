@@ -42,25 +42,27 @@
 					</tr>
 				</table>
 			</div>
-			<c:if test="${venta.comprador != null}">
-				<div class="col-6 col-md-4">
-					<h2>Registro de Estupefaciente</h2>
-					<table class = "table table-striped">
-						<tr>
-							<th>Nombre</th>
-							<td>${venta.comprador.name}</td>
-						</tr>
-						<tr>
-							<th>Apellidos</th>
-							<td>${venta.comprador.apellidos}</td>
-						</tr>
-						<tr>
-							<th>DNI</th>
-							<td>${venta.comprador.dni}</td>
-						</tr>
-					</table>
-				</div>
-			</c:if>
+			<sec:authorize access= "hasAuthority('farmaceutico')">
+				<c:if test="${venta.comprador != null}">
+					<div class="col-6 col-md-4">
+						<h2>Registro de Estupefaciente</h2>
+						<table class = "table table-striped">
+							<tr>
+								<th>Nombre</th>
+								<td>${venta.comprador.name}</td>
+							</tr>
+							<tr>
+								<th>Apellidos</th>
+								<td>${venta.comprador.apellidos}</td>
+							</tr>
+							<tr>
+								<th>DNI</th>
+								<td>${venta.comprador.dni}</td>
+							</tr>
+						</table>
+					</div>
+				</c:if>
+			</sec:authorize>
 		</div>
 	
 	<h2>Lineas:</h2>
@@ -108,5 +110,13 @@
 			</c:forEach>
 		</tbody>
 	</table>
-	<a href="/ventas/" class="btn btn-default">Volver</a>
+	<sec:authorize access= "hasAuthority('farmaceutico')">
+		<spring:url value="/ventas/" var="Volver">
+  		</spring:url>
+	</sec:authorize>
+	<sec:authorize access= "hasAuthority('cliente')">
+		<spring:url value="/misVentas/" var="Volver">
+  		</spring:url>
+	</sec:authorize>
+	<a href="${fn:escapeXml(Volver)}" class="btn btn-default">Volver</a>
 </farmatic:layout>

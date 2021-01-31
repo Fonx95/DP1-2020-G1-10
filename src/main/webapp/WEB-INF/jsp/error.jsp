@@ -3,12 +3,11 @@
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
 
 <farmatic:layout pageName="error">
-
-    <spring:url value="/resources/images/error.png" var="errorImage"/>
+	<spring:url value="/resources/images/error.png" var="errorImage"/>
     <img src="${errorImage}"/>
+    
+    <h2>${titulo}</h2>
 
-    <h2>Something happened...</h2>
-
-    <p>${exception.message}</p>
-
+    <p>${descripcion}</p>
+    
 </farmatic:layout>

@@ -31,12 +31,12 @@ class ProductoServiceTests {
 	@Test
 	void shouldFindProducts() {
 		Iterable<Producto> aux = this.productoService.findProducts();
-		System.out.println(aux);
+		//System.out.println(aux);
 		assertThat(aux.iterator().next() != null); // Comprobará que lo devuelto no sea nulo.
 
 		Collection<Producto> lista = new HashSet<>();
 		aux.iterator().forEachRemaining(x -> lista.add(x));
-		assertThat(lista.size()).isEqualTo(9); // Comprobará que el número de elementos de la lista sea correcto. Depende de la base de datos.
+		assertThat(lista.size()).isEqualTo(13); // Comprobará que el número de elementos de la lista sea correcto. Depende de la base de datos.
 	}
 
 	@Test

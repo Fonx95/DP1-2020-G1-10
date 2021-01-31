@@ -23,18 +23,18 @@
 		<tbody>
 			<c:forEach items="${ventas}" var="venta">
 				<c:if test="${venta.estadoVenta == 'Realizada'}">
-					<spring:url value="/ventas/{idVenta}" var="mostrarPedido">
+					<spring:url value="/ventas/{idVenta}" var="mostrarVenta">
               		<spring:param name="idVenta" value="${venta.id}"/>
               		</spring:url>
 					<tr>
 						<td>
-		                    <a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${venta.id}"/></a>
+		                    <a href="${fn:escapeXml(mostrarVenta)}"><c:out value="${venta.id}"/></a>
 						</td>
 						<td>
-							<a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${venta.fecha}"/></a>
+							<a href="${fn:escapeXml(mostrarVenta)}"><c:out value="${venta.fecha}"/></a>
 						</td>
 						<td>
-							<a href="${fn:escapeXml(mostrarPedido)}"><c:out value="${venta.cliente.name} ${venta.cliente.surnames}"/></a>
+							<a href="${fn:escapeXml(mostrarVenta)}"><c:out value="${venta.cliente.name} ${venta.cliente.surnames}"/></a>
 						</td>
 						<td>
 							<c:out value="${venta.importeTotal}"/> &#8364
