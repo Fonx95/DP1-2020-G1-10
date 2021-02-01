@@ -1,6 +1,7 @@
 
 package org.springframework.samples.farmatic.web;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -50,11 +51,36 @@ public class ProductoController {
 	@GetMapping(value = "/productos")
 	public String listadoProductos(final ModelMap modelMap) {
 		Iterable<Producto> productos = this.productoService.findProducts();
+		modelMap.addAttribute("producto", new Producto());
 		modelMap.addAttribute("productos", productos);
 		return "productos/productoList";
 	}
+	
+	@PostMapping(value = "/productos")
+	public String searchProducto(@ModelAttribute("producto") Producto producto, final BindingResult result, final ModelMap model) {
+		if(result.hasErrors()) {
+			return "productos/productoList";
+		}else if(producto.getCode() != null && producto.getCode() != "") {
+			Collection<Producto> productos = new ArrayList<Producto>();
+			producto = this.productoService.findProductoByCode(producto.getCode().toUpperCase());
+			productos.add(producto);
+			if (producto.isNew()) {
+				model.addAttribute("vacio", true); 
+				productos.clear();
+			}
+			model.addAttribute("productos", productos);
+			return "productos/productoList";
+		}else if(producto.getName() != null && producto.getName() != "") {
+			Collection<Producto> productos = this.productoService.productoPorNombre(producto.getName().toUpperCase());
+			if (productos.isEmpty()) model.addAttribute("vacio", true);
+			model.addAttribute("productos", productos);
+			return "productos/productoList";
+		}else {
+			return "redirect:/productos";
+		}
+	}
 
-	@GetMapping("/productos/{idProducto}")
+	@GetMapping(value = "/productos/{idProducto}")
 	public ModelAndView showProductos(@PathVariable("idProducto") final int idProducto) {
 		ModelAndView mav = new ModelAndView("productos/productoDetails");
 		Producto producto = this.productoService.findProductoById(idProducto);
@@ -99,6 +125,21 @@ public class ProductoController {
 			return "redirect:/productos/" + producto.getId();
 		}
 	}
-
+	
+	@GetMapping(value = {"/productos/tipo/{idTipo}"})
+	public String showProductoTipo(@PathVariable("idTipo") TipoMedicamento tipo, final ModelMap model) {
+		Collection<Producto> productos = this.productoService.findProductosByTipo(tipo);
+		model.addAttribute("productos", productos);
+		return "productos/productoList";
+	}
+	
+	@PostMapping(value = "/productos/tipo/{idTipo}")
+	public String searchProducto2(@ModelAttribute("producto") Producto producto, final BindingResult result, final ModelMap model) {
+		if(result.hasErrors()) {
+			return "productos/productoList";
+		}else {
+			return searchProducto(producto, result, model);
+		}
+	}
 	
 }

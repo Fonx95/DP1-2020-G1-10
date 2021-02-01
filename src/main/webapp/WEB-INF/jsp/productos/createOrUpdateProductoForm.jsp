@@ -16,7 +16,7 @@
             <farmatic:inputField label="Nombre" name="name"/>
             <farmatic:inputField label="Código" name="code"/>
             <farmatic:selectField label="Tipo Producto" name="productType" size="1" names="${tipoProducto}"/>
-            <farmatic:selectMultiple items="${tipoMedicamento}" values="${product.tipoMedicamento}" label="Tipo Medicamento " name="tipoMedicamento"/>
+            <farmatic:selectMultiple items="${tipoMedicamento}" values="${producto.tipoMedicamento}" label="Tipo Medicamento " name="tipoMedicamento"/>
             <farmatic:inputField label="Precio de vental al público" name="pvp"/>
             <farmatic:inputField label="Precio de venta Farmacia" name="pvf"/>
             <farmatic:inputField label="Stock" name="stock"/>

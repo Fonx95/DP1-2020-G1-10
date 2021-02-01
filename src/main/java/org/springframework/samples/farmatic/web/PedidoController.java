@@ -134,9 +134,10 @@ public class PedidoController {
 		if (result.hasErrors()) {
 			return "/pedidos/pedidoActual";
 		} else if (producto.getCode() != null) {
-			if(producto.getCode() == "") return "redirect:/pedidos/actual";
 			producto = this.productoService.findProductoByCode(producto.getCode());
+			if(producto.getCode() == "") return "redirect:/pedidos/actual";
 			if(this.pedidoService.existelinea(producto) != null) {
+				log.info("Se ha buscado el producto '" + producto.getCode() + "' con la Id: " + producto.getId());
 				return "redirect:/pedidos/actual/" + this.pedidoService.existelinea(producto);
 			}
 			linea = pedidoService.newLinea(producto,1);

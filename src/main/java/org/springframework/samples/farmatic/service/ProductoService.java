@@ -1,11 +1,10 @@
 
 package org.springframework.samples.farmatic.service;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -18,6 +17,7 @@ import org.springframework.samples.farmatic.repository.TipoMedicamentoRepository
 import org.springframework.samples.farmatic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class ProductoService {
 
@@ -44,6 +44,11 @@ public class ProductoService {
 		return this.productoRepository.findAll();
 
 	}
+	
+	@Transactional
+	public Collection<Producto> findProductosByTipo(TipoMedicamento tipo) throws DataAccessException{
+		return this.productoRepository.findByTipoMedicamento(tipo);
+	}
 
 	@Transactional
 	public Producto findProductoById(final int id) throws DataAccessException {
@@ -51,18 +56,27 @@ public class ProductoService {
 		return this.productoRepository.findById(id);
 	}
 
-	
-
 	@Transactional
-	public void saveProducto(final Producto product) throws DataAccessException {
+	public void saveProducto(final Producto producto) throws DataAccessException {
 		//creating product
-		this.productoRepository.save(product);
+		producto.setName(producto.getName().toUpperCase());
+		this.productoRepository.save(producto);
 	}
 	
 	@Transactional
 	public Producto findProductoByCode(final String code) throws DataAccessException {
 		//detalles productos (code)
-		return this.productoRepository.findByCode(code);
+		Producto producto = this.productoRepository.findByCode(code);
+		if(producto == null) {
+			producto = new Producto();
+			log.warn("El producto con el codigo '" + code + "' no existe en la BD");
+		}
+		return producto;
+	}
+	
+	@Transactional
+	public Collection<Producto> productoPorNombre(String name) throws DataAccessException {
+		return this.productoRepository.findAllByName(name);
 	}
 	
 	@Transactional
