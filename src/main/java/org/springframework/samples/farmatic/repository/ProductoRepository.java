@@ -12,7 +12,7 @@ import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoMedicamento;
 import org.springframework.samples.farmatic.model.TipoProducto;
 
-public interface ProductoRepository extends CrudRepository<Producto, String>{
+public interface ProductoRepository extends CrudRepository<Producto, Integer>{
 	
 
 	Iterable<Producto> findAll() throws DataAccessException;

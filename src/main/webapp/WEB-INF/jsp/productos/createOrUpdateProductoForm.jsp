@@ -21,6 +21,7 @@
             <farmatic:inputField label="Precio de venta Farmacia" name="pvf"/>
             <farmatic:inputField label="Stock" name="stock"/>
             <farmatic:inputField label="Stock mínimo" name="minStock"/>
+            <input type="hidden" name="Id" value="${producto.id}"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

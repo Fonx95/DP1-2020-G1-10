@@ -15,6 +15,7 @@ import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
+import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -34,11 +35,14 @@ public class PedidoController {
 	private final PedidoService		pedidoService;
 
 	private final ProductoService	productoService;
+	
+	private final UserService userService;
 
 	@Autowired
-	public PedidoController(final PedidoService pedidoService, final ProductoService productoService) {
+	public PedidoController(final PedidoService pedidoService, final ProductoService productoService, final UserService userService) {
 		this.pedidoService = pedidoService;
 		this.productoService = productoService;
+		this.userService = userService;
 	}
 
 	@InitBinder
@@ -137,18 +141,18 @@ public class PedidoController {
 			producto = this.productoService.findProductoByCode(producto.getCode());
 			if(producto.getCode() == "") return "redirect:/pedidos/actual";
 			if(this.pedidoService.existelinea(producto) != null) {
-				log.info("Se ha buscado el producto '" + producto.getCode() + "' con la Id: " + producto.getId());
+				log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
 				return "redirect:/pedidos/actual/" + this.pedidoService.existelinea(producto);
 			}
 			linea = pedidoService.newLinea(producto,1);
 			model.addAttribute("nuevaLinea", linea);
 			model.addAttribute("producto", producto);
-			log.info("Se ha buscado el producto '" + producto.getCode() + "' con la Id: " + producto.getId());
+			log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
 			return "pedidos/pedidoActual";
 		} else {
 			this.pedidoService.saveLinea(linea);
 			model.addAttribute("producto", producto);
-			log.info("Se ha guardado la linea con la cantidad '" + linea.getCantidad() + "' en el pedido borrador");
+			log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en el pedido borrador");
 			return "pedidos/pedidoActual";
 		}
 	}
@@ -239,7 +243,7 @@ public class PedidoController {
 	@GetMapping(value = {"/mispedidos"})
 	public String miListaPedidos(final Map<String, Object> model) {
 		Pedidos pedidos = new Pedidos();
-		User user = this.pedidoService.getCurrentUser();
+		User user = this.userService.getCurrentUser();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findMisPedidos(user));
 		model.put("pedidos", pedidos);
 		log.info("Se ha mostrado " + pedidos.getPedidoLista().size() + "del proveedor " + user.getUsername());

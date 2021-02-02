@@ -8,13 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.samples.farmatic.model.Farmaceutico;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoMedicamento;
-import org.springframework.samples.farmatic.repository.FarmaceuticoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.TipoMedicamentoRepository;
-import org.springframework.samples.farmatic.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -24,50 +21,37 @@ public class ProductoService {
 	private ProductoRepository productoRepository;
 	
 	private TipoMedicamentoRepository tipoMedicamentoRepository;
-
-	private FarmaceuticoRepository farmaceuticoRepository;
-	
-	private UserRepository userRepository;
 	
 	@Autowired
-	public ProductoService(final ProductoRepository productoRepository, final TipoMedicamentoRepository tipoMedicamentoRepository, final FarmaceuticoRepository farmaceuticoRepository,final UserRepository userRepository) {
+	public ProductoService(final ProductoRepository productoRepository, final TipoMedicamentoRepository tipoMedicamentoRepository) {
 		this.productoRepository = productoRepository;
-		this.farmaceuticoRepository = farmaceuticoRepository;
-		this.userRepository = userRepository;
 		this.tipoMedicamentoRepository = tipoMedicamentoRepository;
 	}
 	
 	@Transactional
 	public Iterable<Producto> findProducts() throws DataAccessException {
-		//lista productos
-
+		//busqueda de todos los productos
 		return this.productoRepository.findAll();
 
 	}
 	
 	@Transactional
 	public Collection<Producto> findProductosByTipo(TipoMedicamento tipo) throws DataAccessException{
+		//busqueda de productos por tipo de medicamento
 		return this.productoRepository.findByTipoMedicamento(tipo);
 	}
 
 	@Transactional
 	public Producto findProductoById(final int id) throws DataAccessException {
-		//detalles productos
+		//busqueda de un producto por el id
 		return this.productoRepository.findById(id);
-	}
-
-	@Transactional
-	public void saveProducto(final Producto producto) throws DataAccessException {
-		//creating product
-		producto.setName(producto.getName().toUpperCase());
-		this.productoRepository.save(producto);
 	}
 	
 	@Transactional
 	public Producto findProductoByCode(final String code) throws DataAccessException {
-		//detalles productos (code)
+		//busqueda de un producto por su codigo
 		Producto producto = this.productoRepository.findByCode(code);
-		if(producto == null) {
+		if(producto == null) {//si no existe devuelve un porducto nuevo y vacio
 			producto = new Producto();
 			log.warn("El producto con el codigo '" + code + "' no existe en la BD");
 		}
@@ -76,23 +60,22 @@ public class ProductoService {
 	
 	@Transactional
 	public Collection<Producto> productoPorNombre(String name) throws DataAccessException {
+		//busqueda de productos por coincidencias en su nombre
 		return this.productoRepository.findAllByName(name);
+	}
+
+	@Transactional
+	public void saveProducto(final Producto producto) throws DataAccessException {
+		//crear o modificar un producto
+		producto.setName(producto.getName().toUpperCase());//se guarda el nombre en mayusculas
+		log.debug("El producto '" + producto.getCode() + "' - " + producto.getName() + ", " + producto.getPvp() + "€ se ha creado o modificado");
+		this.productoRepository.save(producto);
 	}
 	
 	@Transactional
 	public Collection<TipoMedicamento> getMedicamentoTypes() throws DataAccessException {
-		Collection<TipoMedicamento> tipos = this.tipoMedicamentoRepository.findAll();
-		
-		return tipos;
+		//busqueda de todos los tipo de medicamentos
+		return this.tipoMedicamentoRepository.findAll();
 	}
 
-	//------Metodo referente a Farmaceutico
-	@Transactional
-	public Farmaceutico farmaceutico(final int id) {
-		return this.farmaceuticoRepository.findById(id);
-	}
-	@Transactional(readOnly = true)
-	public Collection<Farmaceutico> findFarmaceuticos() {
-		return (Collection<Farmaceutico>) this.farmaceuticoRepository.findAll();
-	}
 }

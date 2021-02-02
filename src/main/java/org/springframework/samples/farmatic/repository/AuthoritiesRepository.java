@@ -5,6 +5,6 @@ import org.springframework.samples.farmatic.model.Authorities;
 
 
 
-public interface AuthoritiesRepository extends  CrudRepository<Authorities, String>{
+public interface AuthoritiesRepository extends  CrudRepository<Authorities, Integer>{
 	
 }

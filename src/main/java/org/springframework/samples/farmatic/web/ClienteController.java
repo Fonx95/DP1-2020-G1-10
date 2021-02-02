@@ -7,7 +7,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Cliente;
-import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.samples.farmatic.service.VentaService;
@@ -21,6 +20,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class ClienteController {
 
@@ -41,6 +43,8 @@ public class ClienteController {
 		dataBinder.setDisallowedFields("id");
 	}
 
+	//==================== COMO FARMACEUTICO ====================
+	
 	@GetMapping(value = {"/clientes"})
 	public String listadoClientes(final ModelMap modelMap) {
 		Collection<Cliente> clientes = this.clienteService.findClientes();
@@ -56,7 +60,30 @@ public class ClienteController {
 		return mav;
 
 	}
+	
+	@GetMapping(value = "/clientes/new")
+	public String initCreationForm(final Map<String, Object> model) {
+		Cliente cliente = new Cliente();	
+		
+		model.put("cliente", cliente);
+		return VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM;
+	}
 
+	@PostMapping(value = "/clientes/new")
+	public String processCreationForm(@Valid final Cliente cliente, final BindingResult result) {
+		if (result.hasErrors()) {
+			return VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM;
+		} else {
+			//creating owner, user and authorities
+			
+			this.clienteService.saveCliente(cliente);
+
+			return "redirect:/clientes/clienteList/" + cliente.getId();
+		}
+	}
+	
+	//==================== COMO CLIENTE ====================
+	
 	@GetMapping("/profile/me")
 	public ModelAndView showCliente() {
 		ModelAndView mav = new ModelAndView("clientes/clienteDetails");
@@ -80,27 +107,4 @@ public class ClienteController {
 		mav.addObject(venta);
 		return mav;
 	}
-	
-	@GetMapping(value = "/clientes/new")
-	public String initCreationForm(final Map<String, Object> model) {
-		Cliente cliente = new Cliente();	
-		
-		model.put("cliente", cliente);
-		return VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM;
-	}
-
-	@PostMapping(value = "/clientes/new")
-	public String processCreationForm(@Valid final Cliente cliente, final BindingResult result) {
-		if (result.hasErrors()) {
-			return VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM;
-		} else {
-			//creating owner, user and authorities
-			
-			this.clienteService.saveCliente(cliente);
-
-			return "redirect:/clientes/clienteList/" + cliente.getId();
-		}
-	}
-
-
 }

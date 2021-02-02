@@ -7,7 +7,7 @@ import org.springframework.samples.farmatic.model.Farmaceutico;
 import org.springframework.samples.farmatic.model.User;
 
 
-public interface FarmaceuticoRepository extends  CrudRepository<Farmaceutico, String>{
+public interface FarmaceuticoRepository extends  CrudRepository<Farmaceutico, Integer>{
 	@Query("SELECT farmaceutico FROM Farmaceutico farmaceutico WHERE farmaceutico.id =:id")
 	Farmaceutico findById(@Param("id") int id);
 
