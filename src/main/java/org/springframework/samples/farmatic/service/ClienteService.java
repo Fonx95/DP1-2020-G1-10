@@ -30,26 +30,24 @@ public class ClienteService {
 		this.userService = userService;
 		this.authoritiesService = authoritiesService;
 		this.userRepository=userRepository;
-	}
-	
-	@Transactional
-	public int clienteCount() {
-		return (int) clienteRepository.count();
-	}
-	
+	}	
 
 	@Transactional
 	public Collection<Cliente> findClientes() throws DataAccessException {
-		//lista productos
-
+		//busqueda de todos los clientes
 		return this.clienteRepository.findAll();
-
 	}
 
 	@Transactional
 	public Cliente findClienteById(final int id) throws DataAccessException {
-	
+		//busqueda de un cliente por su id
 		return this.clienteRepository.findById(id);
+	}
+	
+	@Transactional
+	public Cliente clienteDni(String dni) throws DataAccessException {
+		//busqueda de un cliente por su dni
+		return this.clienteRepository.fingByDni(dni);
 	}
 	
 	@Transactional
@@ -59,8 +57,6 @@ public class ClienteService {
 		this.clienteRepository.save(cliente);
 		this.userService.saveUser(cliente.getUser());
 		this.authoritiesService.saveAuthorities(cliente.getUser().getUsername(), "cliente");
-		
-		
 	}
 	
 	@Transactional

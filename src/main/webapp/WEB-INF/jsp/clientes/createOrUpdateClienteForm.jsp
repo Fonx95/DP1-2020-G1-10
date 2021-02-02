@@ -20,7 +20,7 @@
             <farmatic:inputField label="Direccion" name="direccion"/>
             <farmatic:inputField label="Usuario" name="user.username"/>
             <farmatic:inputField label="Contraseña" name="user.password"/>
-            
+            <input type="hidden" name="Id" value="${cliente.id}"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

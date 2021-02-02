@@ -9,6 +9,7 @@
 <%@ attribute name="values" required="false" rtexprvalue="true" type="java.util.List"
               description="Valor de la variable a comparar" %>
 
+
 <div class="form-group">
 		<label class="col-sm-2 control-label">${label}</label>
 		<div class="col-sm-10">

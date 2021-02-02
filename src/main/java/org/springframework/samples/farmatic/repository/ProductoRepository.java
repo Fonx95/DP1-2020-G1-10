@@ -9,9 +9,10 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.Farmaceutico;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.TipoMedicamento;
 import org.springframework.samples.farmatic.model.TipoProducto;
 
-public interface ProductoRepository extends CrudRepository<Producto, String>{
+public interface ProductoRepository extends CrudRepository<Producto, Integer>{
 	
 
 	Iterable<Producto> findAll() throws DataAccessException;
@@ -22,5 +23,9 @@ public interface ProductoRepository extends CrudRepository<Producto, String>{
 	
 	@Query("SELECT producto FROM Producto producto WHERE producto.code LIKE :codigo")
 	public Producto findByCode(@Param("codigo") String codigo);
+	
+	@Query("SELECT producto FROM Producto producto WHERE (INSTR(producto.name,:name) > 0)")
+	public Collection<Producto> findAllByName(@Param("name") String name);
 
+	public Collection<Producto> findByTipoMedicamento(TipoMedicamento tipo);
 }

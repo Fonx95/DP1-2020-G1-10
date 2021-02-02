@@ -6,9 +6,12 @@ import org.springframework.samples.farmatic.model.Person;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 @Controller
 public class WelcomeController {
 	
@@ -39,6 +42,7 @@ public class WelcomeController {
 		  model.put("persons", persons);
 		  model.put("title", "Farmatic Proyect");
 		  model.put("group", "10");
+		  log.info("Se ha mostrado la pagina de inicio");
 		  return "welcome";
 	  }
 }

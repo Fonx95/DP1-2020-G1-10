@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
 
-public interface ProveedorRepository extends CrudRepository<Proveedor, String> {
+public interface ProveedorRepository extends CrudRepository<Proveedor, Integer> {
 
 	@Query("SELECT proveedor FROM Proveedor proveedor WHERE proveedor.id =:id")
 	Proveedor findById(@Param("id") int id);

@@ -16,9 +16,6 @@ import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.PedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.ProveedorRepository;
-import org.springframework.samples.farmatic.repository.UserRepository;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,29 +33,26 @@ public class PedidoService {
 
 	private ProductoRepository		productoRepository;
 
-	private UserRepository			userRepository;
-
 
 	@Autowired
-	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, final ProveedorRepository proveedorRepository, final ProductoRepository productoRepository, final UserRepository userRepository) {
+	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, final ProveedorRepository proveedorRepository, final ProductoRepository productoRepository) {
 		this.pedidoRepository = pedidoRepository;
 		this.lineaRepository = lineaRepository;
 		this.proveedorRepository = proveedorRepository;
 		this.productoRepository = productoRepository;
-		this.userRepository = userRepository;
 	}
 
 	//---------Metodos referente a PEDIDOS---------
 
 	@Transactional(readOnly = true)
 	public Collection<Pedido> findPedidos() throws DataAccessException {
-		//listado pedidos
+		//busqueda de todos los pedidos
 		return this.pedidoRepository.findAll();
 	}
 
 	@Transactional
 	public Pedido pedidoActual() throws DataAccessException {
-		//pedido actual
+		//busqueda del pedido actual
 		Pedido p = this.pedidoRepository.pedidoActual();
 		log.debug("El pedido acual tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
 		return p;
@@ -66,6 +60,7 @@ public class PedidoService {
 
 	@Transactional
 	public Pedido pedido(final int id) throws DataAccessException {
+		//busqueda de un pedido por su id
 		Pedido p = this.pedidoRepository.pedido(id);
 		log.debug("El pedido tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
 		return p;
@@ -73,10 +68,11 @@ public class PedidoService {
 
 	@Transactional
 	public void recibirPedido(Pedido pedido) throws DataAccessException {
+		//establece un pedido en recibido
 		pedido = this.pedido(pedido.getId());
-		pedido.setEstadoPedido(EstadoPedido.Recibido);
+		pedido.setEstadoPedido(EstadoPedido.Recibido);//completa la informacion del pedido recibido(actualiza el estado y añade la fecha de entrega)
 		pedido.setFechaEntrega(LocalDate.now());
-		for (LineaPedido linea : pedido.getLineaPedido()) {
+		for (LineaPedido linea : pedido.getLineaPedido()) {//actualiza el stock del producto con las cantidades recibidas
 			Producto producto = linea.getProducto();
 			producto.sumaStock(linea.getCantidad());
 			this.productoRepository.save(producto);
@@ -87,13 +83,14 @@ public class PedidoService {
 
 	@Transactional
 	public void enviarPedido(final Proveedor provedor) throws DataAccessException {
+		//establece un pedido en enviado
 		Pedido pedido = this.pedidoActual();
-		pedido.setProveedor(provedor);
+		pedido.setProveedor(provedor);//completa la informacion del pedido enviado(asigna un proveedor, actualiza el estado y añade la fecha del pedido)
 		pedido.setEstadoPedido(EstadoPedido.Pedido);
 		pedido.setFechaPedido(LocalDate.now());
 		this.pedidoRepository.save(pedido);
 		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
-		Pedido nuevoPedido = new Pedido();
+		Pedido nuevoPedido = new Pedido();//crea el nuevo pedido borrador con un codigo de pedido nuevo
 		nuevoPedido.setCodigo(this.getCodigoPedidoNuevo(pedido.getCodigo()));
 		this.pedidoRepository.save(nuevoPedido);
 		log.debug("El nuevo pedido actual con codigo '" + nuevoPedido.getCodigo() + "' e id " + nuevoPedido.getId() + " tiene el estado " + nuevoPedido.getEstadoPedido());
@@ -119,27 +116,23 @@ public class PedidoService {
 	}
 
 	//---------Metodos referente a LINEAS DE PEDIDOS---------
-
-	@Transactional
-	public Collection<LineaPedido> lineasPedido(final int id) throws DataAccessException {
-		//lineas del pedido
-		return this.lineaRepository.lineaPedido(id);
-	}
 	
 	@Transactional 
 	public LineaPedido lineaById(int id) throws DataAccessException {
+		//busqueda de una linea pedido por su id
 		return this.lineaRepository.findById(id).get();
 	}
 
 	@Transactional
 	public void saveLinea(final LineaPedido linea) throws DataAccessException {
-		//guardando linea de pedido
+		//crea o modifica una linea de pedido
 		this.lineaRepository.save(linea);
 		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha creado/modificado con una cantidad de " + linea.getCantidad());
 	}
 	
 	@Transactional
 	public Integer existelinea(Producto producto) {
+		//busca si existe un producto en las lineas de pedido del pedido actual, si es asi, devuelve su id y si no null
 		Collection<LineaPedido> lineas = this.pedidoActual().getLineaPedido();
 		for(LineaPedido linea:lineas) {
 			if(linea.getProducto().equals(producto)) return linea.getId();
@@ -156,7 +149,7 @@ public class PedidoService {
 	
 	@Transactional
 	public LineaPedido newLinea(final Producto producto, final Integer cantidad) throws DataAccessException {
-		//creando linea de pedido vacia
+		//crea una linea de pedido nueva java
 		Pedido pedido = this.pedidoActual();
 		LineaPedido linea = new LineaPedido();
 		linea.addProducto(producto);
@@ -169,6 +162,7 @@ public class PedidoService {
 
 	@Transactional
 	public Proveedor proveedor(final int id) {
+		//busqueda de un proveedor por su id
 		Proveedor p = this.proveedorRepository.findById(id);
 		log.debug("El proveedor tiene el id '" + p.getId() + "', nombre " + p.getEmpresa() + " y cif '" + p.getCif());
 		return p;
@@ -176,27 +170,22 @@ public class PedidoService {
 
 	@Transactional(readOnly = true)
 	public Collection<Proveedor> findProveedores() {
+		//busqueda de todos los proveedores
 		return (Collection<Proveedor>) this.proveedorRepository.findAll();
-	}
-	
-	@Transactional
-	public User getCurrentUser() throws DataAccessException {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
-		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
 	}
 
 	@Transactional(readOnly = true)
 	public Collection<Pedido> findMisPedidos(User user) throws DataAccessException {
-		//listado pedidos de un proveedor
+		//busqueda de todos los pedidos de un proveedor
 		Proveedor p = this.proveedorRepository.findByUser(user);
 		return p.getPedido();
 	}
 
 	@Transactional
 	public void pedidoEnviado(Pedido pedido) throws DataAccessException {
+		//estable un pedido en enviado por el proveedor
 		pedido = this.pedido(pedido.getId());
-		pedido.setEstadoPedido(EstadoPedido.Enviado);
+		pedido.setEstadoPedido(EstadoPedido.Enviado);//actualiza la informacion del estado del pedido
 		this.pedidoRepository.save(pedido);
 		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 	}

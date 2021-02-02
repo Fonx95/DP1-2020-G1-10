@@ -22,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.repository.UserRepository;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,5 +51,12 @@ public class UserService {
 	
 	public Optional<User> findUser(String username) {
 		return userRepository.findById(username);
+	}
+	
+	@Transactional
+	public User getCurrentUser() throws DataAccessException {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
+		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
 	}
 }

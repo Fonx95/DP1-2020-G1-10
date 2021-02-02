@@ -16,11 +16,12 @@
             <farmatic:inputField label="Nombre" name="name"/>
             <farmatic:inputField label="Código" name="code"/>
             <farmatic:selectField label="Tipo Producto" name="productType" size="1" names="${tipoProducto}"/>
-            <farmatic:selectMultiple items="${tipoMedicamento}" values="${product.tipoMedicamento}" label="Tipo Medicamento " name="tipoMedicamento"/>
+            <farmatic:selectMultiple items="${tipoMedicamento}" values="${producto.tipoMedicamento}" label="Tipo Medicamento " name="tipoMedicamento"/>
             <farmatic:inputField label="Precio de vental al público" name="pvp"/>
             <farmatic:inputField label="Precio de venta Farmacia" name="pvf"/>
             <farmatic:inputField label="Stock" name="stock"/>
             <farmatic:inputField label="Stock mínimo" name="minStock"/>
+            <input type="hidden" name="Id" value="${producto.id}"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

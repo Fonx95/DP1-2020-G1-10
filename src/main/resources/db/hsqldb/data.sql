@@ -35,19 +35,19 @@ INSERT INTO authorities(username,authority) VALUES ('farm1','farmaceutico');
 INSERT INTO farmaceutico(name,surnames,dni,address,username) VALUES ('Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
 
 --Productos
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Aspirina','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');--Analgesico, Anticoagulante
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dalsy','PR-002','FARMACOSINRECETA','6.75','5.74','3','2');--Analgesico, Antipiretico
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Zamene','PR-003','FARMACOCONRECETA','7.55','6.11','4','4');--Corticoide
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Morfina','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Durogesic Matrix','PR-005','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Cinfatos','PR-006','FARMACOSINRECETA','9.20','8.34','4','3');--Antitusivo
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Metformina','PR-007','FARMACOCONRECETA','6.10','5.23','15','10');--Hipoglucemiante
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Ameride','PR-008','FARMACOCONRECETA','2.60','2.03','7','7');--Diuretico, Antihipertensivo
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Polaramine','PR-009','FARMACOCONRECETA','2.60','2.03','7','7');--Antihistaminico
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Trinomia','PR-010','FARMACOCONRECETA','2.60','2.03','7','7');--Antiagregante Plaquetario, Antihipertensivo, Hipolipemiante
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Tobradex','PR-011','FARMACOCONRECETA','2.60','2.03','7','7');--Antibiotico, Corticoide
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Dentrifico Lacer','PR-012','PARAFARMACIA','2.65','1.84','7','7');
-INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('Potito Manzana y Platano','PR-013','PARAFARMACIA','1.40','0.72','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('ASPIRINA','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');--Analgesico, Anticoagulante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('DALSY','PR-002','FARMACOSINRECETA','6.75','5.74','3','2');--Analgesico, Antipiretico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('ZAMENE','PR-003','FARMACOCONRECETA','7.55','6.11','4','4');--Corticoide
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('MORFINA','PR-004','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('DUROGESIC MATRIX','PR-005','ESTUPEFACIENTE','12.60','10.68','1','1');--Analgesico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('CINFATOS','PR-006','FARMACOSINRECETA','9.20','8.34','4','3');--Antitusivo
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('METFORMINA','PR-007','FARMACOCONRECETA','6.10','5.23','15','10');--Hipoglucemiante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('AMERIDE','PR-008','FARMACOCONRECETA','2.60','2.03','7','7');--Diuretico, Antihipertensivo
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('POLARAMINE','PR-009','FARMACOCONRECETA','2.60','2.03','7','7');--Antihistaminico
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('TRINOMIA','PR-010','FARMACOCONRECETA','2.60','2.03','7','7');--Antiagregante Plaquetario, Antihipertensivo, Hipolipemiante
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('TOBRADEX','PR-011','FARMACOCONRECETA','2.60','2.03','7','7');--Antibiotico, Corticoide
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('DENTRIFICO LACER','PR-012','PARAFARMACIA','2.65','1.84','7','7');
+INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('POTITO MANZANA Y PLATANO','PR-013','PARAFARMACIA','1.40','0.72','7','7');
 
 --TipoMedicamento
 INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Analgesico','Son medicinas que reducen o alivian los dolores de cabeza, musculares, artríticos o muchos otros achaques y dolores.');

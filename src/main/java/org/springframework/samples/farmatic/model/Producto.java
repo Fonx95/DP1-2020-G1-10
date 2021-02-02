@@ -58,8 +58,4 @@ public class Producto extends NamedEntity {
 	public void sumaStock(Integer suma) {
 		this.stock += suma;
 	}
-	
-	public Producto() {
-		this.tipoMedicamento = new ArrayList<TipoMedicamento>();
-	}
 }
