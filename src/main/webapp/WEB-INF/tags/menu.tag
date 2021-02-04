@@ -32,18 +32,18 @@
 					<farmatic:menuItem active="${name eq 'ventas'}" url="/ventas/actual"
 						title="ventas" dropdown="${true}">
 						<ul class="dropdown-menu">
-							<li>								
+							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					
-												<a href="<c:url value="/ventas/actual" />" class="dropdown-item">Venta Actual</a>
+												<a href="<c:url value="/ventas/actual" />" class="btn btn-a">Venta Actual</a>
 										</div>																					
 									</div>						
 							</li>
 							<li class="divider"></li>
-							<li>								
+							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					
-												<a href="<c:url value="/ventas" />" class="dropdown-item">Historial de Ventas</a>
+												<a href="<c:url value="/ventas" />" class="btn btn-a">Historial de Ventas</a>
 										</div>																					
 									</div>						
 							</li>														
@@ -55,18 +55,18 @@
 					<farmatic:menuItem active="${name eq 'pedidos'}" url="/pedidos/actual"
 						title="pedidos" dropdown="${true}">
 						<ul class="dropdown-menu">
-							<li>								
+							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					
-												<a href="<c:url value="/pedidos/actual" />" class="dropdown-item">Pedido Actual</a>
+												<a href="<c:url value="/pedidos/actual" />" class="btn btn-a">Pedido Actual</a>
 										</div>																					
 									</div>						
 							</li>
 							<li class="divider"></li>
-							<li>								
+							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					
-												<a href="<c:url value="/pedidos" />" class="dropdown-item">Historial de Pedidos</a>
+												<a href="<c:url value="/pedidos" />" class="btn btn-a">Historial de Pedidos</a>
 										</div>																					
 									</div>						
 							</li>														
@@ -75,22 +75,14 @@
 				</sec:authorize>				
 
 				<sec:authorize access= "hasAuthority('proveedor')">
-					<farmatic:menuItem active="${name eq 'pedidos'}" url="/mispedidos"
+					<farmatic:menuItem active="${name eq 'pedidos'}" url="/proveedor"
 						title="pedidos">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Pedidos</span>
 					</farmatic:menuItem>
 				</sec:authorize>
-				
 				<sec:authorize access= "hasAuthority('cliente')">
-					<farmatic:menuItem active="${name eq 'clientes'}" url="/profile/me"
-						title="cliente">
-						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
-						<span>Mis datos</span>
-					</farmatic:menuItem>
-				</sec:authorize>
-				<sec:authorize access= "hasAuthority('cliente')">
-					<farmatic:menuItem active="${name eq 'ventasCliente'}" url="/misVentas"
+					<farmatic:menuItem active="${name eq 'ventasCliente'}" url="/cliente/ventas"
 						title="ventas">
 						<span class="glyphicon glyphicon-th-list" aria-hidden="true"></span>
 						<span>Mis Ventas</span>
@@ -125,15 +117,16 @@
 
 			<ul class="nav navbar-nav navbar-right">
 				<sec:authorize access="!isAuthenticated()">
-					<li><a href="<c:url value="/login" />">Login</a></li>
-					<li><a href="<c:url value="/users/new" />">Register</a></li>
+					
+					<farmatic:menuItem active="${name eq 'login'}" url="/login" title="login">
+						<span>Login</span>
+					</farmatic:menuItem>
+					<farmatic:menuItem active="${name eq 'registro'}" url="/users/new" title="registro">
+						<span>Register</span>
+					</farmatic:menuItem>
 				</sec:authorize>
 				<sec:authorize access="isAuthenticated()">
-					<li class="dropdown"><a href="#" class="dropdown-toggle"
-						data-toggle="dropdown"> <span class="glyphicon glyphicon-user"></span>
-							<strong><sec:authentication property="name" /></strong> <span
-							class="glyphicon glyphicon-chevron-down"></span>
-					</a>
+					<farmatic:menuItem active="${name eq 'usuario'}" url="" title="Usuario" dropdown="${true}">
 						<ul class="dropdown-menu">
 							<li>
 								<div class="navbar-login">
@@ -155,23 +148,23 @@
 									</div>
 								</div>
 							</li>
-							<li class="divider"></li>
-<!-- 							
+							<li class="divider"></li>			
                             <li> 
 								<div class="navbar-login navbar-login-session">
 									<div class="row">
 										<div class="col-lg-12">
 											<p>
-												<a href="#" class="btn btn-primary btn-block">My Profile</a>
-												<a href="#" class="btn btn-danger btn-block">Change
-													Password</a>
+												<sec:authorize access= "hasAuthority('cliente') || hasAuthority('proveedor') || hasAuthority('farmaceutico')">
+													<a href="/users" class="btn btn-primary btn-block">Mi perfil</a>
+												</sec:authorize>
+												<a href="/users/password" class="btn btn-danger btn-block">Change Password</a>
 											</p>
 										</div>
 									</div>
 								</div>
 							</li>
--->
-						</ul></li>
+						</ul>
+					</farmatic:menuItem>
 				</sec:authorize>
 			</ul>
 		</div>

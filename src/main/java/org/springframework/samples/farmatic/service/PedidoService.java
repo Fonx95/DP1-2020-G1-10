@@ -11,11 +11,9 @@ import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.Proveedor;
-import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.PedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
-import org.springframework.samples.farmatic.repository.ProveedorRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,16 +27,14 @@ public class PedidoService {
 
 	private LineaPedidoRepository	lineaRepository;
 
-	private ProveedorRepository		proveedorRepository;
-
 	private ProductoRepository		productoRepository;
 
 
 	@Autowired
-	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, final ProveedorRepository proveedorRepository, final ProductoRepository productoRepository) {
+	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, 
+			final ProductoRepository productoRepository) {
 		this.pedidoRepository = pedidoRepository;
 		this.lineaRepository = lineaRepository;
-		this.proveedorRepository = proveedorRepository;
 		this.productoRepository = productoRepository;
 	}
 
@@ -161,29 +157,8 @@ public class PedidoService {
 	//---------Metodos referente a PROVEEDOR---------
 
 	@Transactional
-	public Proveedor proveedor(final int id) {
-		//busqueda de un proveedor por su id
-		Proveedor p = this.proveedorRepository.findById(id);
-		log.debug("El proveedor tiene el id '" + p.getId() + "', nombre " + p.getEmpresa() + " y cif '" + p.getCif());
-		return p;
-	}
-
-	@Transactional(readOnly = true)
-	public Collection<Proveedor> findProveedores() {
-		//busqueda de todos los proveedores
-		return (Collection<Proveedor>) this.proveedorRepository.findAll();
-	}
-
-	@Transactional(readOnly = true)
-	public Collection<Pedido> findMisPedidos(User user) throws DataAccessException {
-		//busqueda de todos los pedidos de un proveedor
-		Proveedor p = this.proveedorRepository.findByUser(user);
-		return p.getPedido();
-	}
-
-	@Transactional
 	public void pedidoEnviado(Pedido pedido) throws DataAccessException {
-		//estable un pedido en enviado por el proveedor
+		//establece un pedido en enviado por el proveedor
 		pedido = this.pedido(pedido.getId());
 		pedido.setEstadoPedido(EstadoPedido.Enviado);//actualiza la informacion del estado del pedido
 		this.pedidoRepository.save(pedido);

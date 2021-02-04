@@ -43,6 +43,11 @@ public class AuthoritiesService {
 		this.authoritiesRepository = authoritiesRepository;
 		this.userService = userService;
 	}
+	
+	@Transactional
+	public Authorities findAuthoritiyByUser(User user) {
+		return this.authoritiesRepository.findByUser(user);
+	}
 
 	@Transactional
 	public void saveAuthorities(Authorities authorities) throws DataAccessException {

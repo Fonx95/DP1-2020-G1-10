@@ -101,6 +101,6 @@
 	</c:if>
 	</sec:authorize>
 	<sec:authorize access= "hasAuthority('proveedor')">
-		<a href="/mispedidos" class="btn btn-default">Volver</a>
+		<a href="/proveedor" class="btn btn-default">Volver</a>
 	</sec:authorize>
 </farmatic:layout>

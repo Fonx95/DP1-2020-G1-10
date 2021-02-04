@@ -6,33 +6,35 @@ INSERT INTO authorities(username,authority) VALUES ('admin1','admin');
 --Proveedores
 INSERT INTO users(username,password,enabled) VALUES ('proveedor1','Prove3dor1',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('proveedor1','proveedor');
-INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('COFARES','Direccion1','S4953142I','proveedor1');
+INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('COFARES','Poligono industrial Sevilla','F-28140119','proveedor1');
 
 INSERT INTO users(username,password,enabled) VALUES ('proveedor2','Prove3dor1',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('proveedor2','proveedor');
-INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('CECOFAR','Direccion2','W7181885J','proveedor2');
+INSERT INTO proveedors(empresa,direccion,cif,username) VALUES ('CECOFAR','Poligono industrial Sevilla','F-90280116','proveedor2');
 
 --Clientes
 INSERT INTO users(username,password,enabled) VALUES ('client1','client1',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('client1','cliente');
-INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Maria 1','0.0','client1');
+INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Luis', 'Rodriguez Mendez', '12345789H','Sevilla','Sevilla','Calle Reina Mercedes','0.0','client1');
 
 INSERT INTO users(username,password,enabled) VALUES ('client2','client2',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('client2','cliente');
-INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Pedro', 'Fernandez Perez', '987654321H','Sevilla','Sevilla','Calle Maria 1','2.36','client2');
+INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Pedro', 'Fernandez Perez', '987654321H','Sevilla','Sevilla','Calle Reina Mercedes','2.36','client2');
 
 INSERT INTO users(username,password,enabled) VALUES ('client3','client3',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('client3','cliente');
-INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Ana Maria', 'Pozo Cobos', '458796254A','Sevilla','Sevilla','Calle Maria 1','9.15','client3');
+INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Ana Maria', 'Pozo Cobos', '458796254A','Sevilla','Sevilla','Calle Reina Mercedes','9.15','client3');
 
 INSERT INTO users(username,password,enabled) VALUES ('client4','client4',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('client4','cliente');
-INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Patricia', 'Mendez Pelayo', '763154952C','Sevilla','Sevilla','Calle Maria 1','0.0','client4');
+INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total,username) VALUES ('Patricia', 'Mendez Pelayo', '763154952C','Sevilla','Sevilla','Calle Reina Mercedes','0.0','client4');
+
+INSERT INTO clientes(name,surnames,dni,provincia,localidad,direccion,por_pagar_total) VALUES ('Maria', 'Rodriguez Bonilla', '99999999C','Sevilla','Sevilla','Calle Reina Mercedes','0.0');
 
 --Farmaceutico
 INSERT INTO users(username,password,enabled) VALUES ('farm1','farm1',TRUE);
 INSERT INTO authorities(username,authority) VALUES ('farm1','farmaceutico');
-INSERT INTO farmaceutico(name,surnames,dni,address,username) VALUES ('Pepe', 'Rodriguez Rodriguez', '12345689H','Calle Vieja','farm1');
+INSERT INTO farmaceutico(name,surnames,dni,address,username) VALUES ('Jose', 'Rodriguez Garcia', '12345689H','Calle Sor Gregoria','farm1');
 
 --Productos
 INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('ASPIRINA','PR-001','FARMACOSINRECETA','5.25','4.62','15','5');--Analgesico, Anticoagulante

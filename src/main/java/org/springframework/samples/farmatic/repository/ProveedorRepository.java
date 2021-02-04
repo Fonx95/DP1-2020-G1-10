@@ -11,7 +11,7 @@ public interface ProveedorRepository extends CrudRepository<Proveedor, Integer> 
 
 	@Query("SELECT proveedor FROM Proveedor proveedor WHERE proveedor.id =:id")
 	Proveedor findById(@Param("id") int id);
-
+	
 	@Query("SELECT proveedor FROM Proveedor proveedor WHERE proveedor.user =:user")
 	Proveedor findByUser(@Param("user") User user);
 
