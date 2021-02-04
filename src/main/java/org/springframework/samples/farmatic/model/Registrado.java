@@ -18,6 +18,7 @@ package org.springframework.samples.farmatic.model;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
@@ -37,14 +38,14 @@ public class Registrado extends NamedEntity {
 	
 	@NotEmpty
 	@Column(name = "surnames")
-	protected String surnames;
+	private String surnames;
 
 	
 	@NotEmpty
 	@Column(name = "dni")
-	protected String dni;
+	private String dni;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "username", referencedColumnName = "username")
 	private User user;
 

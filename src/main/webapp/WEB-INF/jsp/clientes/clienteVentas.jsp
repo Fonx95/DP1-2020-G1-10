@@ -10,15 +10,12 @@
 	
 	<table id="productosTable" class = "table table-striped">
 		<tr>
-			<th>Nombre</th>
+			<th>Nombre: </th>
 			<td><c:out value="${cliente.name}"/></td>
-		</tr>
-		<tr>
-			<th>Apellidos</th>
 			<td><c:out value="${cliente.surnames}"/></td>
-		</tr>
-		<tr>
-			<th>Deuda Total</th>
+			<th>DNI: </th>
+			<td><c:out value="${cliente.dni}"/></td>
+			<th>Deuda Total: </th>
 			<td><c:out value="${cliente.porPagarTotal}"/> &#8364</td>
 		</tr>
 	</table>
@@ -35,7 +32,7 @@
 		</thead>
 		<tbody>
 			<c:forEach items="${cliente.venta}" var="venta">
-				<spring:url value="/misVentas/{idVenta}" var="mostrarVenta">
+				<spring:url value="/cliente/ventas/{idVenta}" var="mostrarVenta">
             	<spring:param name="idVenta" value="${venta.id}"/>
            		</spring:url>
 				<tr>

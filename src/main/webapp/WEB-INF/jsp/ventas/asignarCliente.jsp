@@ -12,11 +12,15 @@
 	<section style="display: inline">
 		<input disabled class="marcador" type="text" name="pagado" value="${ventaActual.porPagar} &#8364"/>
 	</section>
-	<form:form modelAttribute="Cliente" class="form-horizontal" id="asing-cliente-form">
-		<label style="width: 100px">DNI cliente:</label>
-		<input type="text" class="form-control" name="Dni" value="${cliente.dni}"/>
-		<br>
-		<button class="btn btn-default" type="submit">Buscar</button>
+	<br>
+	<br>
+	<form:form modelAttribute="cliente" class="form-horizontal" id="asing-cliente-form">
+		<section style="display: inline">
+			<div class="col-sm-10">
+			<farmatic:inputType label="DNI cliente:" name="dni" type="text" holder="DNI" value="${cliente.dni}"  display="2 control"/>
+			</div>
+			<button class="btn btn-default" type="submit">Buscar</button>
+		</section>
 	</form:form>
 	<c:if test="${cliente.name != null}">
 		<br>

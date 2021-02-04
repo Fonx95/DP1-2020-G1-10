@@ -16,7 +16,28 @@
 
 package org.springframework.samples.farmatic.web;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.samples.farmatic.model.Authorities;
+import org.springframework.samples.farmatic.model.Cliente;
+import org.springframework.samples.farmatic.model.Farmaceutico;
+import org.springframework.samples.farmatic.model.Proveedor;
+import org.springframework.samples.farmatic.model.User;
+import org.springframework.samples.farmatic.model.UserValidate;
+import org.springframework.samples.farmatic.service.AuthoritiesService;
+import org.springframework.samples.farmatic.service.ClienteService;
+import org.springframework.samples.farmatic.service.FarmaceuticoService;
+import org.springframework.samples.farmatic.service.ProveedorService;
+import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Juergen Hoeller
@@ -24,7 +45,123 @@ import org.springframework.stereotype.Controller;
  * @author Arjen Poutsma
  * @author Michael Isvy
  */
+@Slf4j
 @Controller
 public class UserController {
 
+	private UserService userService;
+	
+	private AuthoritiesService authoritiesService;
+	
+	private ClienteService clienteService;
+	
+	private FarmaceuticoService farmaceuticoService;
+	
+	private ProveedorService proveedorService;
+	
+	@Autowired
+	public UserController (UserService userService, AuthoritiesService authoritiesService, 
+			ClienteService clienteService, FarmaceuticoService farmaceuticoService, ProveedorService proveedorService) {
+		this.userService = userService;
+		this.authoritiesService = authoritiesService;
+		this.clienteService = clienteService;
+		this.farmaceuticoService = farmaceuticoService;
+		this.proveedorService = proveedorService;
+	}
+	
+	@InitBinder
+	public void setAllowedFields(final WebDataBinder dataBinder) {
+		dataBinder.setDisallowedFields("id");
+	}
+	
+	@GetMapping("users")
+	private String showUserDetails(Model model) {
+		User user = this.userService.getCurrentUser();
+		Authorities authority = this.authoritiesService.findAuthoritiyByUser(user);
+		
+		if(authority.getAuthority().equals("cliente")) {
+			Cliente cliente = this.clienteService.findClienteUser(user);
+			model.addAttribute("cliente", cliente);
+		}else if(authority.getAuthority().equals("proveedor")) {
+			Proveedor proveedor = this.proveedorService.findProveedorUser(user);
+			model.addAttribute("proveedor", proveedor);
+		}else if(authority.getAuthority().equals("farmaceutico")) {
+			Farmaceutico farmaceutico = this.farmaceuticoService.findFarmaceuticoByUser(user);
+			model.addAttribute("farmaceutico", farmaceutico);
+		}
+
+		log.info("El usuario '" + user.getUsername() + "' ha mostrado su informacion personal");
+		return "users/userDetails";
+	}
+	
+	@GetMapping("/users/new")
+	public String newUser(Model model) {
+		Cliente cliente = new Cliente();
+		model.addAttribute("cliente", cliente);
+		return "users/userRegister";
+	}
+	
+	@PostMapping("/users/new")
+	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			return "clientes/userRegister";
+		} else if(cliente.getUser() == null) {
+			cliente = this.clienteService.clienteDni(cliente.getDni());
+			if(cliente == null) {
+				FieldError err = new FieldError("Not Found", "dni", "El cliente no se encuentra");
+				result.addError(err);
+				log.warn("El dni introducido no existe en la BD o es invalido");
+				return "users/userRegister";
+			}
+			cliente.setUser(new User());
+			model.addAttribute("cliente", cliente);
+			return "users/userRegister";
+		}else {
+			this.userService.saveUser(cliente.getUser());
+			this.authoritiesService.saveAuthorities(cliente.getUser().getUsername(), "cliente");
+			this.clienteService.saveCliente(cliente);
+			log.info("El cliente con dni '" + cliente.getDni() + "' se ha registrado como usuario");
+			return "redirect:../";
+		}
+	}
+	
+	@GetMapping("/users/password")
+	public String initChangePassword(Model model) {
+		User currentUser = this.userService.getCurrentUser();
+		UserValidate user = new UserValidate(currentUser.getUsername(), "");
+		model.addAttribute("user", user);
+		return "users/passwordEdit";
+	}
+	
+	@PostMapping("/users/password")
+	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, Model model) {
+		if(result.hasErrors()) {
+			return "users/passwordEdit";
+		}else {
+			User CurrentUser = this.userService.getCurrentUser();
+			if(CurrentUser.getPassword().equals(user.getPassword()) && user.getNewPassword().equals(user.getValidPassword())) {
+				if(!user.getNewPassword().isEmpty()) {
+					CurrentUser.setPassword(user.getNewPassword());
+					this.userService.saveUser(CurrentUser);
+					log.info("El usuario '" + CurrentUser.getUsername() + "' ha cambiado satisfactoriamente su contraseña");
+					return "redirect:../";
+				}else {
+					FieldError err = new FieldError("PassException", "newPassword", "Introduce una nueva contraseña");
+					result.addError(err);
+					log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
+					return "users/passwordEdit";
+				}
+			}else if(!CurrentUser.getPassword().equals(user.getPassword())){
+				FieldError err = new FieldError("PassException", "password", "Contraseña incorrecta");
+				result.addError(err);
+				log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
+				return "users/passwordEdit";
+			}else {
+				FieldError err = new FieldError("PassException", "newPassword", "Las contraseñas no coinciden");
+				result.addError(err);
+				log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
+				return "users/passwordEdit";
+			}
+		}
+	}
 }

@@ -13,6 +13,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -39,18 +40,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasAnyAuthority("admin")
 				.antMatchers("/productos/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/clientes/**").hasAnyAuthority("farmaceutico","admin")
-				.antMatchers("/profile/me/**").hasAnyAuthority("cliente","admin")
-				.antMatchers("/misVentas/**").hasAnyAuthority("cliente","admin")
+				.antMatchers("/cliente/**").hasAnyAuthority("cliente","admin")
 				.antMatchers("/pedidos/**").hasAnyAuthority("farmaceutico","admin")
 				.antMatchers("/ventas/**").hasAnyAuthority("farmaceutico","admin")
-				.antMatchers("/mispedidos/**").hasAnyAuthority("proveedor","admin")
-				//.antMatchers("/products/productList/{idProducto}").hasAnyAuthority("farmaceutico","admin")
+				.antMatchers("/proveedor/**").hasAnyAuthority("proveedor","admin")
 				
 				//.anyRequest().denyAll()
 				.and()
 				 	.formLogin()
-				 	/*.loginPage("/login")*/
-				 	.failureUrl("/login-error")
 				.and()
 					.logout()
 						.logoutSuccessUrl("/"); 

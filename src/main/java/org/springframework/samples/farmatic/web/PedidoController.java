@@ -15,6 +15,7 @@ import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
+import org.springframework.samples.farmatic.service.ProveedorService;
 import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -36,13 +37,17 @@ public class PedidoController {
 
 	private final ProductoService	productoService;
 	
+	private final ProveedorService 	proveedorService;
+	
 	private final UserService userService;
 
 	@Autowired
-	public PedidoController(final PedidoService pedidoService, final ProductoService productoService, final UserService userService) {
+	public PedidoController(final PedidoService pedidoService, final ProductoService productoService, 
+			final UserService userService, final ProveedorService proveedorService) {
 		this.pedidoService = pedidoService;
 		this.productoService = productoService;
 		this.userService = userService;
+		this.proveedorService = proveedorService;
 	}
 
 	@InitBinder
@@ -207,7 +212,7 @@ public class PedidoController {
 
 	@GetMapping(value={"/pedidos/actual/pedir"})
 	public String sendPedido(ModelMap model) {
-		Collection<Proveedor> proveedores = pedidoService.findProveedores();
+		Collection<Proveedor> proveedores = this.proveedorService.findProveedores();
 		Proveedor proveedor = new Proveedor();
 		model.addAttribute("proveedores", proveedores);
 		model.addAttribute("proveedor", proveedor);
@@ -240,13 +245,13 @@ public class PedidoController {
 	 * @param model El modelo que recibe de la vista y devuelve de nuevo
 	 */
 	
-	@GetMapping(value = {"/mispedidos"})
+	@GetMapping(value = {"/proveedor"})
 	public String miListaPedidos(final Map<String, Object> model) {
 		Pedidos pedidos = new Pedidos();
 		User user = this.userService.getCurrentUser();
-		pedidos.getPedidoLista().addAll(this.pedidoService.findMisPedidos(user));
+		pedidos.getPedidoLista().addAll(this.proveedorService.findPedidosProveedor(user));
 		model.put("pedidos", pedidos);
-		log.info("Se ha mostrado " + pedidos.getPedidoLista().size() + "del proveedor " + user.getUsername());
+		log.info("Se ha mostrado " + pedidos.getPedidoLista().size() + " pedidos del proveedor " + user.getUsername());
 		return "pedidos/pedidoList";
 	}
 	
@@ -257,7 +262,7 @@ public class PedidoController {
 	 * @return
 	 */
 	
-	@GetMapping(value = {"/mispedidos/{id}"})
+	@GetMapping(value = {"/proveedor/{id}"})
 	public String miPedido(@PathVariable("id") final int pedidoId, final ModelMap model) {
 		Pedido pedido = this.pedidoService.pedido(pedidoId);
 		model.put("pedido", pedido);
@@ -272,14 +277,14 @@ public class PedidoController {
 	 * @param model El modelo que recibe de la vista y devuelve de nuevo
 	 */
 	
-	@PostMapping(value="/mispedidos/{id}")
+	@PostMapping(value="/proveedor/{id}")
 	public String pedidoEnviado(@ModelAttribute("pedido") Pedido pedido, BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-			return "/mispedidos/" + pedido.getId();
+			return "pedidos/pedidoDetails";
 		}else {
 			this.pedidoService.pedidoEnviado(pedido);
 			log.info("El pedido con el codigo: '" + pedido.getCodigo() + "' ha sido cambiado a Enviado");
-			return "redirect:/mispedidos/" + pedido.getId();
+			return "redirect:/proveedor/" + pedido.getId();
 		}
 	}
   

@@ -8,7 +8,7 @@
 
 <farmatic:layout pageName= "pedidos">
 	
-	<sec:authorize access= "hasAuthority('proveedor')"><h2>Mis </h2></sec:authorize><h2>Pedidos</h2>
+	<h2><sec:authorize access= "hasAuthority('proveedor')">Mis </sec:authorize>Pedidos</h2>
 	<table class = "table table-striped">
 		<thead>
 		<tr>
@@ -30,7 +30,7 @@
 	                   		</spring:url>
 	                   	</sec:authorize>
 	                   	<sec:authorize access= "hasAuthority('proveedor')">
-	                   		<spring:url value="/mispedidos/{idPedido}" var="mostrarPedido">
+	                   		<spring:url value="/proveedor/{idPedido}" var="mostrarPedido">
 	                   		<spring:param name="idPedido" value="${pedido.id}"/>
 	                   		</spring:url>
 	                   	</sec:authorize>

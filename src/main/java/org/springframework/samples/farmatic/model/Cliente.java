@@ -32,4 +32,8 @@ public class Cliente extends Registrado {
 	
 	@OneToMany(mappedBy = "cliente", fetch = FetchType.LAZY)
 	private Collection<Venta> venta;
+	
+	public Cliente() {
+		this.porPagarTotal = 0.;
+	}
 }
