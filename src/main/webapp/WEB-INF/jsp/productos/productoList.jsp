@@ -49,10 +49,10 @@
 		<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
 			<tr>
 				<td>
-					<input class="form-control" type="text" name="code"/>
+					<farmatic:inputTypeSimple name="code" type="text" value="${producto.code}"/>
 				</td>
 				<td>
-					<input class="form-control" type="text" name="name"/>
+					<farmatic:inputTypeSimple name="name" type="text" value="${producto.name}"/>
 				</td>
 				<td></td>
 				<td></td>
