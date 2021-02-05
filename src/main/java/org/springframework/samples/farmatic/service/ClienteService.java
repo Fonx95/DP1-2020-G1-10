@@ -2,6 +2,8 @@ package org.springframework.samples.farmatic.service;
 
 import java.util.Collection;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Cliente;
@@ -9,6 +11,7 @@ import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.FieldError;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -35,10 +38,15 @@ public class ClienteService {
 		return this.clienteRepository.findById(id);
 	}
 	
-	@Transactional
-	public Cliente clienteDni(String dni) throws DataAccessException {
+	@Transactional(rollbackFor = EntityNotFoundException.class)
+	public Cliente clienteDni(String dni) throws DataAccessException, EntityNotFoundException {
 		//busqueda de un cliente por su dni
-		return this.clienteRepository.fingByDni(dni);
+		Cliente cliente = this.clienteRepository.fingByDni(dni);
+		if(cliente == null) {
+			log.warn("El dni introducido no existe en la BD o es invalido");
+			throw new EntityNotFoundException();
+		}
+		return cliente;
 	}
 	
 	@Transactional
