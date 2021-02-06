@@ -39,7 +39,7 @@
 										</div>																					
 									</div>						
 							</li>
-							<li class="divider"></li>
+							<li class="divider1"></li>
 							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					
@@ -62,7 +62,7 @@
 										</div>																					
 									</div>						
 							</li>
-							<li class="divider"></li>
+							<li class="divider1"></li>
 							<li class="btn-menu">								
 									<div class="row">
 										<div class="text-center">																					

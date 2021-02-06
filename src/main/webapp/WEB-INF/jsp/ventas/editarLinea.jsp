@@ -52,10 +52,7 @@
 									<c:out value="${editaLinea.producto.stock}"/>
 								</th>
 								<th>
-									<div class="form-group ${error!=null ? 'has-error' : ''}">
-										<input class="form-control" name="Cantidad" type="text" value="${editaLinea.cantidad}"/>
-										<span style="position: absolute;" class="help-inline">${error}</span>
-									</div>
+									<farmatic:inputTypeSimple name="cantidad" type="text" value="${editaLinea.cantidad}"/>
 								</th>
 								<th>
 									<select class="form-control" name="tipoTasa">

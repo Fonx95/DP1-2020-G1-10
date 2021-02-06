@@ -64,7 +64,7 @@
 					</td>
 				</tr>
 			</c:forEach>
-			<c:if test="${!producto['new'] || error}">
+			<c:if test="${nuevaLinea.producto.code != null}">
 				<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
 					<tr>
 						<th>${nuevaLinea.producto.code}</th>
@@ -73,7 +73,7 @@
 						<th>${nuevaLinea.producto.pvp}</th>
 						<th>${nuevaLinea.producto.stock}</th>
 						<th>
-							<farmatic:inputTypeSimple name="Cantidad" type="text" value="${nuevaLinea.cantidad}"/>
+							<farmatic:inputTypeSimple name="cantidad" type="text" value="${nuevaLinea.cantidad}"/>
 						</th>
 						<th>
 							<select class="form-control" name="tipoTasa">

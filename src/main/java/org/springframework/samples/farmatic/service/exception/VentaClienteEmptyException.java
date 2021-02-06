@@ -1,5 +1,5 @@
 package org.springframework.samples.farmatic.service.exception;
 
-public class LineaVentaStockException extends Exception {
-	
+public class VentaClienteEmptyException extends Exception {
+
 }

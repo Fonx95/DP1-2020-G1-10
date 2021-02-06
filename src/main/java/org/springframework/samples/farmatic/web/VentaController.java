@@ -14,10 +14,13 @@ import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
+import org.springframework.samples.farmatic.model.validator.LineaVentaValidator;
 import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.VentaService;
-import org.springframework.samples.farmatic.service.exception.LineaVentaStockException;
+import org.springframework.samples.farmatic.service.exception.CompradorEmptyException;
+import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
+import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -47,10 +50,10 @@ public class VentaController {
 		this.productoService = productoService;
 		this.clienteService = clienteService;
 	}
-
-	@InitBinder
-	public void setAllowedFields(final WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+	
+	@InitBinder(value = {"nuevaLinea","editaLinea"})
+	public void initLineaVentaBinder(WebDataBinder dataBinder) {
+		dataBinder.setValidator(new LineaVentaValidator());
 	}
 
 	@ModelAttribute("ventaActual")
@@ -78,24 +81,18 @@ public class VentaController {
 		}
 	}
 
-	@GetMapping(value = {
-		"/ventas/actual"
-	})
+	@GetMapping(value = {"/ventas/actual"})
 	public String showVentaActual(final ModelMap model) {
 		Producto producto = new Producto();
-		//String codigo = null;
-		//model.put("command", "");
 		model.put("producto", producto);
 		VentaController.log.info("Se ha mostrado la venta actual");
 		return "ventas/ventaActual";
 	}
 
-	@PostMapping(value = {
-		"/ventas/actual"
-	})
-	public String ventaProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") LineaVenta linea, final BindingResult result, final ModelMap model) {
+	@PostMapping(value = {"/ventas/actual"})
+	public String ventaProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaVenta linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			System.out.println(result.getAllErrors());
+			model.put("nuevaLinea", linea);
 			return "/ventas/ventaActual";
 		} else if (producto.getCode() != null) {
 			try {
@@ -115,23 +112,15 @@ public class VentaController {
 				return "/ventas/ventaActual";
 			}
 		} else {
-			try {
 				this.ventaService.saveLinea(linea);
 				model.addAttribute("producto", producto);
+				model.remove("nuevaLinea");
 				VentaController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en la venta actual");
 				return "ventas/ventaActual";
-			} catch (LineaVentaStockException ex) {
-				model.addAttribute("ventaActual", this.getVentaActual());
-				result.rejectValue("Cantidad", "StockInsuficiente");
-				model.put("error", true);
-				return "/ventas/ventaActual";
-			}
 		}
 	}
 
-	@GetMapping(value = {
-		"/ventas/actual/{lineaId}"
-	})
+	@GetMapping(value = {"/ventas/actual/{lineaId}"})
 	public String showLineaEdit(@PathVariable("lineaId") final LineaVenta linea, final ModelMap model) {
 		Producto producto = new Producto();
 		model.put("producto", producto);
@@ -140,11 +129,11 @@ public class VentaController {
 		return "ventas/editarLinea";
 	}
 
-	@PostMapping(value = {
-		"/ventas/actual/{lineaId}"
-	})
-	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editarLinea") final LineaVenta linea, final BindingResult result, final ModelMap model) {
+	@PostMapping(value = {"/ventas/actual/{lineaId}"})
+	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editaLinea") @Valid final LineaVenta linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
+			model.addAttribute("ventaActual", this.getVentaActual());
+			model.addAttribute("editaLinea", linea);
 			return "/ventas/editarLinea";
 		} else if (producto.getCode() != null) {
 			return this.ventaProcessCreation(producto, linea, result, model);
@@ -153,22 +142,13 @@ public class VentaController {
 			VentaController.log.info("La linea con id: '" + linea.getId() + "' se ha eliminado");
 			return "redirect:/ventas/actual";
 		} else {
-			try {
-				this.ventaService.saveLinea(linea);
-				VentaController.log.info("La linea con id: '" + linea.getId() + "' se ha modificado");
-				return "redirect:/ventas/actual";
-			} catch (LineaVentaStockException ex) {
-				model.addAttribute("ventaActual", this.getVentaActual());
-				model.addAttribute("editaLinea", linea);
-				model.put("error", "Stock insuficiente");
-				return "/ventas/editarLinea";
-			}
+			this.ventaService.saveLinea(linea);
+			VentaController.log.info("La linea con id: '" + linea.getId() + "' se ha modificado");
+			return "redirect:/ventas/actual";
 		}
 	}
 
-	@GetMapping(value = {
-		"/ventas/actual/pagar"
-	})
+	@GetMapping(value = {"/ventas/actual/pagar"})
 	public String finalizarVenta(final ModelMap model) {
 		Comprador comprador = new Comprador();
 		Venta venta = this.ventaService.ventaActual();
@@ -184,36 +164,49 @@ public class VentaController {
 		return "ventas/finalizarVenta";
 	}
 
-	@PostMapping(value = {
-		"/ventas/actual/pagar"
-	})
-	public String createVenta(@Valid final Venta venta, @ModelAttribute("comprador") final Comprador comprador, final BindingResult result, final ModelMap model) {
+	@PostMapping(value = {"/ventas/actual/pagar"})
+	public String createVenta(final Venta venta, @ModelAttribute("comprador") final Comprador comprador, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			return "ventas/finalizarVenta";
 		} else if (comprador.getDni() != null) {
-			if (comprador.getDni() == "") {
-				model.put("estupefaciente", true);
-				VentaController.log.warn("No se ha introducido correctamente los datos del comprador estupefaciente");
-				return "ventas/finalizarVenta";
-			} else {
+			try {
 				this.ventaService.saveComprador(comprador);
 				model.put("estupefaciente", false);
 				VentaController.log.info("Se ha registrado el comprador estupefaceinte con DNI '" + comprador.getDni() + "'");
+				return "ventas/finalizarVenta";
+			}catch(CompradorEmptyException ex) {
+				model.put("estupefaciente", true);
+				model.addAttribute("ventaActual", this.getVentaActual());
+				result.rejectValue("dni", "compradorEmpty");
+				VentaController.log.error("No se ha introducido correctamente los datos del comprador estupefaciente");
 				return "ventas/finalizarVenta";
 			}
 		} else if (venta.getPagado() < venta.getImporteTotal()) {
 			this.ventaService.updateVenta(venta);
 			return "redirect:/ventas/actual/cliente";
 		} else {
-			this.ventaService.finalizarVenta(venta);
-			VentaController.log.info("Se ha completado la venta satisfactoriamente");
-			return "redirect:/ventas/actual";
+			try {
+				this.ventaService.finalizarVenta(venta);
+				VentaController.log.info("Se ha completado la venta satisfactoriamente");
+				return "redirect:/ventas/actual";
+			}catch(VentaCompradorEmptyException ex) {
+				result.reject("compradorNotFound", "Si existe un producto estupefaciente se debe registrar al comprador");
+				model.put("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				model.put("estupefaciente", true);
+				VentaController.log.error("No se puede finalizar la venta sin el comprador estupefaciente");
+				return "ventas/finalizarVenta";
+			}catch(VentaClienteEmptyException ex) {
+				result.reject("ClienteVentaNotFound", "Si el pago es menor al importe total se debe asignar a un cliente registrado");
+				model.put("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				log.error("No se puede finalizar la venta sin un cliente asignado");
+				return "ventas/finalizarVenta";
+			}
 		}
 	}
 
-	@GetMapping(value = {
-		"/ventas/actual/cliente"
-	})
+	@GetMapping(value = {"/ventas/actual/cliente"})
 	public String debeCliente(final ModelMap model) {
 		Cliente cliente = new Cliente();
 		model.put("cliente", cliente);
@@ -221,9 +214,7 @@ public class VentaController {
 		return "ventas/asignarCliente";
 	}
 
-	@PostMapping(value = {
-		"/ventas/actual/cliente"
-	})
+	@PostMapping(value = {"/ventas/actual/cliente"})
 	public String AsignarCliente(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, final ModelMap model) {
 		if (cliente.getDni() != null) {
 			try {
@@ -233,12 +224,27 @@ public class VentaController {
 				return "ventas/asignarCliente";
 			}
 			model.put("cliente", cliente);
-			VentaController.log.info("Se ha buscado un cliente con DNI '" + cliente.getDni() + "'");
+			log.info("Se ha buscado un cliente con DNI '" + cliente.getDni() + "'");
 			return "ventas/asignarCliente";
 		} else {
-			this.ventaService.asignarCliente(cliente.getId());
-			VentaController.log.info("Se ha asignado el cliente satisfactoriamente");
-			return "redirect:/ventas/actual";
+			try {
+				this.ventaService.asignarCliente(cliente.getId());
+				VentaController.log.info("Se ha asignado el cliente satisfactoriamente");
+				return "redirect:/ventas/actual";
+			}catch(VentaCompradorEmptyException ex) {
+				result.reject("compradorNotFound", "Si existe un producto estupefaciente se debe registrar al comprador");
+				model.put("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				model.put("estupefaciente", true);
+				VentaController.log.error("No se puede finalizar la venta sin el comprador estupefaciente");
+				return "ventas/finalizarVenta";
+			}catch(VentaClienteEmptyException ex) {
+				result.reject("ClienteVentaNotFound", "Si el pago es menor al importe total se debe asignar a un cliente registrado");
+				model.put("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				log.error("No se puede finalizar la venta sin un cliente asignado");
+				return "ventas/finalizarVenta";
+			}
 		}
 	}
 }

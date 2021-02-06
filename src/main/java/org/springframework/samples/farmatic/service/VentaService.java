@@ -20,7 +20,9 @@ import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.CompradorRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.VentaRepository;
-import org.springframework.samples.farmatic.service.exception.LineaVentaStockException;
+import org.springframework.samples.farmatic.service.exception.CompradorEmptyException;
+import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
+import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -144,16 +146,29 @@ public class VentaService {
 		return this.ventaRepository.venta(id);
 	}
 
-	@Transactional
-	public void finalizarVenta(Venta venta) throws DataAccessException {
+	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class})
+	public void finalizarVenta(Venta venta) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException {
 		//establece una venta en realizada
-		venta = this.venta(venta.getId());									//actualiza la informacion de la venta:
+		venta = this.venta(venta.getId());
+		
+		Collection<LineaVenta> lineas = venta.getLineaVenta();
+		for(LineaVenta linea : lineas) {
+			if(linea.getProducto().getProductType().equals(TipoProducto.ESTUPEFACIENTE) && venta.getComprador() == null) {
+				throw new VentaCompradorEmptyException();
+			}
+		}
+																			//actualiza la informacion de la venta:
 		venta.setFecha(LocalDate.now());									// -la fecha de la venta
 
 		Double diferencia = venta.getImporteTotal() - venta.getPagado();	// -calcula que se debe pagar en la venta
 		venta.setPorPagar(this.numberFormatter(diferencia));
-
+		
 		venta.setEstadoVenta(EstadoVenta.Realizada);						// -establece el estado en realizada
+		
+		if(diferencia > 0 && venta.getCliente() == null) {
+			throw new VentaClienteEmptyException();
+		}
+		
 		this.ventaRepository.save(venta);
 		VentaService.log.debug("La venta se ha a realizado con la fecha " + venta.getFecha() + ", un importe total de " + venta.getImporteTotal() + "€, un pago de " + venta.getPagado() + "€ y " + venta.getLineaVenta().size() + " lineas de venta");
 		this.controlStock(venta);//actualiza el stock de los productos
@@ -200,13 +215,9 @@ public class VentaService {
 		return null;
 	}
 
-	@Transactional(rollbackFor = LineaVentaStockException.class)
-	public void saveLinea(final LineaVenta linea) throws DataAccessException, LineaVentaStockException {
+	@Transactional
+	public void saveLinea(final LineaVenta linea) throws DataAccessException {
 		//crea o modifica una lina de venta
-		if (linea.getProducto().getStock() - linea.getCantidad() < 0) {
-			VentaService.log.warn("No hay Stock sficiente para el producto '" + linea.getProducto().getCode() + "'");
-			throw new LineaVentaStockException();
-		}
 
 		Double pvp = linea.getProducto().getPvp();
 
@@ -242,8 +253,8 @@ public class VentaService {
 
 	//---------Metodos referente a CLIENTES---------
 
-	@Transactional
-	public void asignarCliente(final int id) {
+	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class})
+	public void asignarCliente(final int id) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException {
 		//asigna un cliente a la venta actual
 		Venta venta = this.ventaActual();
 		Cliente cliente = this.clienteRepository.findById(id);
@@ -256,9 +267,12 @@ public class VentaService {
 
 	//---------Metodos referente a COMPRADOR---------
 
-	@Transactional
-	public void saveComprador(final Comprador comprador) {
+	@Transactional(rollbackFor = CompradorEmptyException.class)
+	public void saveComprador(final Comprador comprador) throws DataAccessException, CompradorEmptyException  {
 		//crea un comprador de estupefaciente
+		if(comprador.getDni() == "") {
+			throw new CompradorEmptyException();
+		}
 		this.compradorRepository.save(comprador);
 		VentaService.log.debug("se ha registrado a " + comprador.getName() + " " + comprador.getApellidos() + " (" + comprador.getDni() + ") en el libro de estupefaciente");
 	}
