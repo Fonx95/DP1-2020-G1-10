@@ -6,24 +6,24 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
 
-<farmatic:layout pageName="productos">
+<farmatic:layout pageName="clientes">
     <h2>
         <c:if test="${cliente['new']}">Nuevo </c:if> Cliente
     </h2>
-    <form:form modelAttribute="cliente" class="form-horizontal" id="add-owner-form">
+    <form:form modelAttribute="cliente" class="form-horizontal" id="add-cliente-form">
         <div class="form-group has-feedback">
-            <farmatic:inputField label="Nombre" name="name"/>
-            <farmatic:inputField label="Apellidos" name="surnames"/>
-            <farmatic:inputField label="DNI" name="dni"/>
-            <farmatic:inputField label="Provincia" name="provincia"/>
-            <farmatic:inputField label="Localidad" name="localidad"/>
-            <farmatic:inputField label="Direccion" name="direccion"/>
-            <farmatic:inputField label="Usuario" name="user.username"/>
-            <farmatic:inputField label="Contraseña" name="user.password"/>
+            <farmatic:inputType label="Nombre" name="name" type="text" holder="Nombre" value="${cliente.name}" display="2 control"/>
+            <farmatic:inputType label="Apellidos" name="surnames" type="text" holder="Apellidos" value="${cliente.surnames}" display="2 control"/>
+            <farmatic:inputType label="DNI" name="dni" type="text" holder="DNI" value="${cliente.dni}" display="2 control"/>
+            <farmatic:inputType label="Provincia" name="provincia" type="text" holder="Provincia" value="${cliente.provincia}" display="2 control"/>
+            <farmatic:inputType label="Localidad" name="localidad" type="text" holder="Localidad" value="${cliente.localidad}" display="2 control"/>
+            <farmatic:inputType label="Direccion" name="direccion" type="text" holder="Direccion" value="${cliente.direccion}" display="2 control"/>
+            <input type="hidden" name="user" value="${cliente.user.username}"/>
             <input type="hidden" name="Id" value="${cliente.id}"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
+            	<a href="/clientes/${not cliente['new'] ? cliente.id : ''}" class="btn btn-default">Volver</a>
                 <c:choose>
                     <c:when test="${cliente['new']}">
                         <button class="btn btn-default" type="submit">Añadir Cliente</button>

@@ -18,6 +18,7 @@ import org.springframework.samples.farmatic.service.VentaService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -182,9 +183,14 @@ public class VentaController {
 	}
 	
 	@PostMapping(value= {"/ventas/actual/cliente"})
-	public String AsignarCliente(@ModelAttribute("cliente") Cliente cliente, ModelMap model) {
+	public String AsignarCliente(@ModelAttribute("cliente") Cliente cliente, BindingResult result, ModelMap model) {
 		if(cliente.getDni() != null) {
 			cliente = this.clienteService.clienteDni(cliente.getDni());
+			if(cliente == null) {
+				FieldError err = new FieldError("Not Found", "dni", "El cliente no se encuentra");
+				result.addError(err);
+				return "ventas/asignarCliente";
+			}
 			model.put("cliente", cliente);
 			log.info("Se ha buscado un cliente con DNI '" + cliente.getDni() + "'");
 			return "ventas/asignarCliente";

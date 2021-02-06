@@ -115,7 +115,7 @@
   		</spring:url>
 	</sec:authorize>
 	<sec:authorize access= "hasAuthority('cliente')">
-		<spring:url value="/misVentas/" var="Volver">
+		<spring:url value="/cliente/ventas/" var="Volver">
   		</spring:url>
 	</sec:authorize>
 	<a href="${fn:escapeXml(Volver)}" class="btn btn-default">Volver</a>

@@ -31,7 +31,7 @@ public class Proveedor extends  BaseEntity{
 	@NotBlank
 	private String				cif;
 	
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "username", referencedColumnName = "username")
 	private User user;
 	

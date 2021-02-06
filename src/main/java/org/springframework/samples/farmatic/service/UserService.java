@@ -27,12 +27,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Mostly used as a facade for all Petclinic controllers Also a placeholder
  * for @Transactional and @Cacheable annotations
  *
  * @author Michael Isvy
  */
+@Slf4j
 @Service
 public class UserService {
 
@@ -57,6 +60,7 @@ public class UserService {
 	public User getCurrentUser() throws DataAccessException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
+		log.debug("El usuario logueado es '" + currentPrincipalName + "'");
 		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
 	}
 }

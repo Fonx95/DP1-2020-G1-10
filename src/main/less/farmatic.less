@@ -87,6 +87,38 @@
   }
 }
 
+.btn-menu {
+	display: block;
+	border-width: 2px;
+  transition: border 0.15s;
+  -webkit-transition: border 0.15s;
+  -moz-transition: border 0.15s;
+  -o-transition: border 0.15s;
+  -ms-transition: border 0.15s;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .open .dropdown-toggle& {
+    background-color: @spring-light-grey;
+    border-color: @spring-light-grey;
+    
+  }
+}
+
+.btn-a{
+	&:hover,
+  &:focus,
+  &:active,
+  &.active,
+  .open .dropdown-toggle& {
+	color: @spring-green;
+	-webkit-box-shadow: none; 
+    box-shadow: none;
+	}
+}
+
 .btn-right {
   float: right;
   margin-bottom: 10px;
