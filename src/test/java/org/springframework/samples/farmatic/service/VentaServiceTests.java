@@ -22,6 +22,7 @@ import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
+import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
@@ -107,10 +108,10 @@ public class VentaServiceTests {
 	@Transactional
 	public void updateVentaPositivo() {//comprobamos si la venta se actualiza correctamente
 		Venta v = this.ventaService.venta(2);
-		Double importe_inicial = v.getImporteTotal();
+		Double importe_inicial = v.getImporteTotal(); //establecemos los parametros iniciales
 		Double porPagar_inicial = v.getPorPagar();
 		this.ventaService.updateVenta(v);
-		Assertions.assertTrue(v.getImporteTotal() != importe_inicial);
+		Assertions.assertTrue(v.getImporteTotal() != importe_inicial); //comprobamos si los parametros se han actualizado
 		Assertions.assertTrue(v.getPorPagar() != porPagar_inicial);
 		
 		
@@ -131,5 +132,32 @@ public class VentaServiceTests {
 	@Test
 	void shouldNotFindVentaByID() {
 		assertThrows(NullPointerException.class, ()->{this.ventaService.venta(0).getClass();}); // Comprobará que se lanza un NullPointerException al realizar la acción en el corchete.
+	}
+	
+	@Test
+	@Transactional
+	public void finalizarVentaNegativo() {//Probamos a intentar finalizar una venta recien creada sin lineas de venta
+		Venta v = new Venta();
+		try {
+			this.ventaService.finalizarVenta(v);
+		}
+		catch(Exception e){
+			Assertions.assertNotNull(e);
+		}
+		
+	}
+	
+	@Test
+	@Transactional
+	public void shouldNotInsertLineaStock() {//No podemos insertar una linea de venta porque la cantidad supera al stock
+		Producto p = this.productoRepository.findById(1);
+		LineaVenta lv = this.ventaService.newLinea(p);
+		p.setStock(3);
+		try {
+			lv.setCantidad(4);
+		}catch(Exception e) {
+			Assertions.assertNotNull(e);
+		}
+		
 	}
 }
