@@ -20,6 +20,7 @@ import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Producto;
+import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
@@ -36,6 +37,7 @@ public class PedidoControllerTests {
 
 	private static final int	TEST_LINEA_ID	= 1;
 	private static final int	TEST_PEDIDO_ID	= 1;
+	private static final int	TEST_PROV_ID	= 1;
 
 	@Autowired
 	private PedidoController	pedidoController;
@@ -61,10 +63,21 @@ public class PedidoControllerTests {
 
 	private LineaPedido			lineaTest;
 
+	private Proveedor			provTest;
+
 
 	// Recordatorio: no se puede crear como tal un pedido por lo que se comprabará en la función de enviarPedido.
 	@BeforeEach
 	void setup() {
+		Proveedor prov = new Proveedor();
+		prov.setCif("CIFtest");
+		prov.setDireccion("test");
+		prov.setEmpresa("empresaTest");
+		prov.setId(PedidoControllerTests.TEST_PROV_ID);
+		this.provTest = prov;
+		Collection<Proveedor> pl = new ArrayList<>();
+		pl.add(prov);
+		BDDMockito.given(this.proveedorService.findProveedores()).willReturn(pl);
 		Pedido p = new Pedido();
 		Collection<LineaPedido> lp = new ArrayList<>();
 		p.setCodigo("P-test");
@@ -72,7 +85,6 @@ public class PedidoControllerTests {
 		p.setId(PedidoControllerTests.TEST_PEDIDO_ID);
 		p.setLineaPedido(lp);
 		this.pedidoTest = p;
-		BDDMockito.given(this.pedidoService.pedidoActual()).willReturn(this.pedidoTest);
 		BDDMockito.given(this.pedidoService.pedido(PedidoControllerTests.TEST_PEDIDO_ID)).willReturn(this.pedidoTest);
 		Producto producto = new Producto();
 		producto.setCode("Pr-test");
@@ -85,6 +97,7 @@ public class PedidoControllerTests {
 		l.setCantidad(1);
 		l.setProducto(producto);
 		this.lineaTest = l;
+		BDDMockito.given(this.pedidoService.pedidoActual()).willReturn(this.pedidoTest);
 		BDDMockito.given(this.pedidoService.newLinea(this.productoTest, 1)).willReturn(this.lineaTest);
 		BDDMockito.given(this.pedidoService.existelinea(this.productoTest)).willReturn(PedidoControllerTests.TEST_LINEA_ID);
 		BDDMockito.given(this.pedidoService.lineaById(PedidoControllerTests.TEST_LINEA_ID)).willReturn(this.lineaTest);
@@ -149,41 +162,6 @@ public class PedidoControllerTests {
 			.andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/null"));
 	}
 
-	/*
-	 * @PostMapping(value = {
-	 * "/pedidos/actual"
-	 * })
-	 * public String pedidoProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaPedido linea, final BindingResult result, final ModelMap model) {
-	 * if (result.hasErrors()) {
-	 * model.addAttribute("nuevaLinea", linea);
-	 * return "/pedidos/pedidoActual";
-	 * } else if (producto.getCode() != null) {
-	 * try {
-	 * producto = this.productoService.findProductoByCode(producto.getCode());
-	 * if (this.pedidoService.existelinea(producto) != null) {
-	 * PedidoController.log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
-	 * return "redirect:/pedidos/actual/" + this.pedidoService.existelinea(producto);
-	 * }
-	 * linea = this.pedidoService.newLinea(producto, 1);
-	 * model.addAttribute("nuevaLinea", linea);
-	 * model.addAttribute("producto", producto);
-	 * PedidoController.log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
-	 * return "pedidos/pedidoActual";
-	 * } catch (EntityNotFoundException ex) {
-	 * model.addAttribute("pedidoActual", this.getPedidoActual());
-	 * model.addAttribute("errorProducto", "El producto no existe");
-	 * return "/pedidos/pedidoActual";
-	 * }
-	 * } else {
-	 * this.pedidoService.saveLinea(linea);
-	 * model.remove("nuevaLinea");
-	 * model.addAttribute("producto", producto);
-	 * PedidoController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en el pedido borrador");
-	 * return "pedidos/pedidoActual";
-	 * }
-	 * }
-	 */
-
 	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la primera salida del segundo if de pedidoProcessCreation, producto.getCode() != null y this.pedidoService.existelinea(producto) != null
 	@Test
 	void testPedidoProcessCreationSuccess1() throws Exception {
@@ -225,28 +203,30 @@ public class PedidoControllerTests {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").with(SecurityMockMvcRequestPostProcessors.csrf()).flashAttr("producto", p).flashAttr("nuevaLinea", this.lineaTest)).andExpect(MockMvcResultMatchers.status().isOk())
 			.andExpect(MockMvcResultMatchers.model().attribute("errorProducto", Matchers.is("El producto no existe"))).andExpect(MockMvcResultMatchers.view().name("/pedidos/pedidoActual"));
 	}
-	/***
-	 * @GetMapping(value={"/pedidos/actual/pedir"})
-	 * public String sendPedido(ModelMap model) {
-	 * Collection<Proveedor> proveedores = this.proveedorService.findProveedores();
-	 * Proveedor proveedor = new Proveedor();
-	 * model.addAttribute("proveedores", proveedores);
-	 * model.addAttribute("proveedor", proveedor);
-	 * log.info("Se han mostrado los detalles del pedido actual para enviarse a un proveedor");
-	 * return "pedidos/enviarPedido";
-	 * }
-	 *
-	 *
-	 * @PostMapping(value={"/pedidos/actual/pedir"})
-	 * public String createPedido(@Valid Proveedor proveedor, BindingResult result, ModelMap model) {
-	 * if (result.hasErrors()) {
-	 * return "/pedidos/actual/pedir";
-	 * }else {
-	 * this.pedidoService.enviarPedido(proveedor);
-	 * log.info("El pedido borrador se ha pedido al proveedor " + proveedor.getEmpresa());
-	 * return "redirect:/pedidos";
-	 * }
-	 * }
-	 ***/
+
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // No se puede hacer negativo por lo que solo estará este
+	@Test
+	void testSendPedidoSuccess() throws Exception {
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/pedidos/actual/pedir").with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.model().attributeExists("proveedores"))
+			.andExpect(MockMvcResultMatchers.model().attributeExists("proveedor")).andExpect(MockMvcResultMatchers.view().name("pedidos/enviarPedido"));
+	}
+
+	@WithMockUser(value = "spring", authorities = "farmaceutico")
+	@Test
+	void testCreatePedidoSuccess() throws Exception {
+		Collection<LineaPedido> lp = this.pedidoTest.getLineaPedido();
+		lp.add(this.lineaTest);
+		this.pedidoTest.setLineaPedido(lp);
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/pedir").with(SecurityMockMvcRequestPostProcessors.csrf()).flashAttr("proveedor", this.provTest)).andExpect(MockMvcResultMatchers.status().is3xxRedirection())
+			.andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos"));
+	}
+
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // Proveedor con el CIF a null, es decir, un proveedor no válido. 
+	@Test
+	void testCreatePedidoError() throws Exception {
+		this.provTest.setCif(null);
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/pedir").with(SecurityMockMvcRequestPostProcessors.csrf()).flashAttr("proveedor", this.provTest)).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.view().name("pedidos/enviarPedido"));
+	}
 
 }
