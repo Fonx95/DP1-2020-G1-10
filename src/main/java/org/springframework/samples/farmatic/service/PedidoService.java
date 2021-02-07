@@ -33,8 +33,7 @@ public class PedidoService {
 
 
 	@Autowired
-	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, 
-			final ProductoRepository productoRepository) {
+	public PedidoService(final PedidoRepository pedidoRepository, final LineaPedidoRepository lineaRepository, final ProductoRepository productoRepository) {
 		this.pedidoRepository = pedidoRepository;
 		this.lineaRepository = lineaRepository;
 		this.productoRepository = productoRepository;
@@ -52,7 +51,7 @@ public class PedidoService {
 	public Pedido pedidoActual() throws DataAccessException {
 		//busqueda del pedido actual
 		Pedido p = this.pedidoRepository.pedidoActual();
-		log.debug("El pedido acual tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
+		PedidoService.log.debug("El pedido acual tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
 		return p;
 	}
 
@@ -60,7 +59,7 @@ public class PedidoService {
 	public Pedido pedido(final int id) throws DataAccessException {
 		//busqueda de un pedido por su id
 		Pedido p = this.pedidoRepository.pedido(id);
-		log.debug("El pedido tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
+		PedidoService.log.debug("El pedido tiene el id " + p.getId() + ", el codigo '" + p.getCodigo() + "' y el estado '" + p.getEstadoPedido() + "'");
 		return p;
 	}
 
@@ -81,7 +80,7 @@ public class PedidoService {
 			this.productoRepository.save(producto);
 		}
 		this.pedidoRepository.save(pedido);
-		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
+		PedidoService.log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 	}
 
 	@Transactional
@@ -124,9 +123,9 @@ public class PedidoService {
 	}
 
 	//---------Metodos referente a LINEAS DE PEDIDOS---------
-	
-	@Transactional 
-	public LineaPedido lineaById(int id) throws DataAccessException {
+
+	@Transactional
+	public LineaPedido lineaById(final int id) throws DataAccessException {
 		//busqueda de una linea pedido por su id
 		return this.lineaRepository.findById(id).get();
 	}
@@ -135,26 +134,28 @@ public class PedidoService {
 	public void saveLinea(final LineaPedido linea) throws DataAccessException {
 		//crea o modifica una linea de pedido
 		this.lineaRepository.save(linea);
-		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha creado/modificado con una cantidad de " + linea.getCantidad());
+		PedidoService.log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha creado/modificado con una cantidad de " + linea.getCantidad());
 	}
-	
+
 	@Transactional
-	public Integer existelinea(Producto producto) {
+	public Integer existelinea(final Producto producto) {
 		//busca si existe un producto en las lineas de pedido del pedido actual, si es asi, devuelve su id y si no null
 		Collection<LineaPedido> lineas = this.pedidoActual().getLineaPedido();
-		for(LineaPedido linea:lineas) {
-			if(linea.getProducto().equals(producto)) return linea.getId();
+		for (LineaPedido linea : lineas) {
+			if (linea.getProducto().equals(producto)) {
+				return linea.getId();
+			}
 		}
 		return null;
 	}
 
 	@Transactional
-	public void deleteLinea(LineaPedido linea) throws DataAccessException{
+	public void deleteLinea(final LineaPedido linea) throws DataAccessException {
 		//elimina linea de pedido
-		lineaRepository.delete(linea);
-		log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha eliminado");
+		this.lineaRepository.delete(linea);
+		PedidoService.log.debug("La linea con el producto '" + linea.getProducto().getName() + "' se ha eliminado");
 	}
-	
+
 	@Transactional
 	public LineaPedido newLinea(final Producto producto, final Integer cantidad) throws DataAccessException {
 		//crea una linea de pedido nueva java
@@ -179,6 +180,6 @@ public class PedidoService {
 		
 		pedido.setEstadoPedido(EstadoPedido.Enviado);//actualiza la informacion del estado del pedido
 		this.pedidoRepository.save(pedido);
-		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
+		PedidoService.log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 	}
 }
