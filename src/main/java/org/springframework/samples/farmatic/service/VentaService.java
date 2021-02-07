@@ -21,6 +21,7 @@ import org.springframework.samples.farmatic.repository.CompradorRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.VentaRepository;
 import org.springframework.samples.farmatic.service.exception.CompradorEmptyException;
+import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
 import org.springframework.stereotype.Service;
@@ -57,6 +58,23 @@ public class VentaService {
 	}
 
 	//---------METODOS AUXILIARES PRIVADOS---------
+	
+	private void validateVenta(Venta venta) throws VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException {
+		Collection<LineaVenta> lineas = venta.getLineaVenta();
+		for(LineaVenta linea : lineas) {
+			if(linea.getProducto().getProductType().equals(TipoProducto.ESTUPEFACIENTE) && venta.getComprador() == null) {
+				throw new VentaCompradorEmptyException();
+			}
+		}
+		
+		if(venta.getImporteTotal() - venta.getPagado() > 0 && venta.getCliente() == null) {
+			throw new VentaClienteEmptyException();
+		}
+		
+		if(venta.getLineaVenta().isEmpty()) {
+			throw new LineaEmptyException("Venta");
+		}
+	}
 
 	private Double numberFormatter(final Double number) {
 		//metodo auxiliar que establece que los decimales no supere las 2 cifras
@@ -103,7 +121,7 @@ public class VentaService {
 			producto.setStock(producto.getStock() - linea.getCantidad());					// - resta al stock la cantidad vendida
 			VentaService.log.debug("El nuevo stock del producto '" + producto.getCode() 					//
 				+ "' es de " + producto.getStock() + " y su stock minimo es de " 			//
-				+ producto.getMinStock());												//
+				+ producto.getMinStock());													//
 			if (producto.getStock() < producto.getMinStock()) {								// - si al hacer la operacion anterior el stock baja por debajo del minimo establecido se hace lo siguiente:
 				Integer idLinea = this.pedidoService.existelinea(producto);					//		+ Se obtiene el id de la linea de ese producto
 				Integer diferencia = producto.getMinStock() - producto.getStock();			//
@@ -146,17 +164,10 @@ public class VentaService {
 		return this.ventaRepository.venta(id);
 	}
 
-	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class})
-	public void finalizarVenta(Venta venta) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException {
+	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class, LineaEmptyException.class})
+	public void finalizarVenta(Venta venta) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException {
 		//establece una venta en realizada
 		venta = this.venta(venta.getId());
-		
-		Collection<LineaVenta> lineas = venta.getLineaVenta();
-		for(LineaVenta linea : lineas) {
-			if(linea.getProducto().getProductType().equals(TipoProducto.ESTUPEFACIENTE) && venta.getComprador() == null) {
-				throw new VentaCompradorEmptyException();
-			}
-		}
 																			//actualiza la informacion de la venta:
 		venta.setFecha(LocalDate.now());									// -la fecha de la venta
 
@@ -165,9 +176,7 @@ public class VentaService {
 		
 		venta.setEstadoVenta(EstadoVenta.Realizada);						// -establece el estado en realizada
 		
-		if(diferencia > 0 && venta.getCliente() == null) {
-			throw new VentaClienteEmptyException();
-		}
+		validateVenta(venta);
 		
 		this.ventaRepository.save(venta);
 		VentaService.log.debug("La venta se ha a realizado con la fecha " + venta.getFecha() + ", un importe total de " + venta.getImporteTotal() + "€, un pago de " + venta.getPagado() + "€ y " + venta.getLineaVenta().size() + " lineas de venta");
@@ -253,8 +262,8 @@ public class VentaService {
 
 	//---------Metodos referente a CLIENTES---------
 
-	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class})
-	public void asignarCliente(final int id) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException {
+	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class, LineaEmptyException.class})
+	public void asignarCliente(final int id) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException {
 		//asigna un cliente a la venta actual
 		Venta venta = this.ventaActual();
 		Cliente cliente = this.clienteRepository.findById(id);

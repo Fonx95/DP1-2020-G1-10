@@ -31,7 +31,7 @@ import org.springframework.samples.farmatic.service.FarmaceuticoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
 import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
@@ -77,7 +77,7 @@ public class UserController {
 	}
 	
 	@GetMapping("users")
-	private String showUserDetails(Model model) {
+	private String showUserDetails(ModelMap model) {
 		User user = this.userService.getCurrentUser();
 		Authorities authority = this.authoritiesService.findAuthoritiyByUser(user);
 		
@@ -97,7 +97,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/new")
-	public String newUser(Model model) {
+	public String newUser(ModelMap model) {
 		Cliente cliente = new Cliente();
 		model.addAttribute("cliente", cliente);
 		model.addAttribute("dni", new String());
@@ -105,7 +105,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users/new")
-	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, Model model) {
+	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			return "users/userRegister";
 		} else if(cliente.getUser() == null) {
@@ -128,7 +128,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/password")
-	public String initChangePassword(Model model) {
+	public String initChangePassword(ModelMap model) {
 		User currentUser = this.userService.getCurrentUser();
 		UserValidate user = new UserValidate(currentUser.getUsername(), "");
 		model.addAttribute("user", user);
@@ -136,7 +136,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users/password")
-	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, Model model) {
+	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
 			return "users/passwordEdit";
 		}else {

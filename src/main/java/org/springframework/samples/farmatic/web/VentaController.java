@@ -19,6 +19,7 @@ import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.VentaService;
 import org.springframework.samples.farmatic.service.exception.CompradorEmptyException;
+import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
 import org.springframework.stereotype.Controller;
@@ -64,7 +65,7 @@ public class VentaController {
 	@GetMapping(value = "/ventas")
 	public String listVentas(final ModelMap model) {
 		Collection<Venta> ventas = this.ventaService.findAllVentas();
-		model.put("ventas", ventas);
+		model.addAttribute("ventas", ventas);
 		VentaController.log.info("Se han mostrado " + ventas.size() + " ventas");
 		return "ventas/ventaList";
 	}
@@ -74,7 +75,7 @@ public class VentaController {
 		if (venta.getEstadoVenta() == EstadoVenta.enProceso) {
 			return "redirect:/ventas/actual";
 		} else {
-			model.put("venta", venta);
+			model.addAttribute("venta", venta);
 			VentaController.log.info("Se ha mostrado la venta con el id " + venta.getId() + " y " + venta.getLineaVenta().size() + " lineas");
 			return "ventas/ventaDetails";
 		}
@@ -83,7 +84,7 @@ public class VentaController {
 	@GetMapping(value = {"/ventas/actual"})
 	public String showVentaActual(final ModelMap model) {
 		Producto producto = new Producto();
-		model.put("producto", producto);
+		model.addAttribute("producto", producto);
 		VentaController.log.info("Se ha mostrado la venta actual");
 		return "ventas/ventaActual";
 	}
@@ -91,7 +92,7 @@ public class VentaController {
 	@PostMapping(value = {"/ventas/actual"})
 	public String ventaProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaVenta linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			model.put("nuevaLinea", linea);
+			model.addAttribute("nuevaLinea", linea);
 			return "/ventas/ventaActual";
 		} else if (producto.getCode() != null) {
 			try {
@@ -107,7 +108,7 @@ public class VentaController {
 				return "ventas/ventaActual";
 			} catch (EntityNotFoundException ex) {
 				model.addAttribute("ventaActual", this.getVentaActual());
-				model.put("errorProducto", "El producto no existe");
+				model.addAttribute("errorProducto", "El producto no existe");
 				return "/ventas/ventaActual";
 			}
 		} else {
@@ -127,8 +128,8 @@ public class VentaController {
 	@GetMapping(value = {"/ventas/actual/{lineaId}"})
 	public String showLineaEdit(@PathVariable("lineaId") final LineaVenta linea, final ModelMap model) {
 		Producto producto = new Producto();
-		model.put("producto", producto);
-		model.put("editaLinea", linea);
+		model.addAttribute("producto", producto);
+		model.addAttribute("editaLinea", linea);
 		VentaController.log.info("Se ha mostrado la linea con id " + linea.getId() + " para ser modificada");
 		return "ventas/editarLinea";
 	}
@@ -174,11 +175,11 @@ public class VentaController {
 		} else if (comprador.getDni() != null) {
 			try {
 				this.ventaService.saveComprador(comprador);
-				model.put("estupefaciente", false);
+				model.addAttribute("estupefaciente", false);
 				VentaController.log.info("Se ha registrado el comprador estupefaceinte con DNI '" + comprador.getDni() + "'");
 				return "ventas/finalizarVenta";
 			}catch(CompradorEmptyException ex) {
-				model.put("estupefaciente", true);
+				model.addAttribute("estupefaciente", true);
 				model.addAttribute("ventaActual", this.getVentaActual());
 				result.rejectValue("dni", "compradorEmpty");
 				VentaController.log.error("No se ha introducido correctamente los datos del comprador estupefaciente");
@@ -193,18 +194,24 @@ public class VentaController {
 				VentaController.log.info("Se ha completado la venta satisfactoriamente");
 				return "redirect:/ventas/actual";
 			}catch(VentaCompradorEmptyException ex) {
-				result.reject("compradorNotFound", "Si existe un producto estupefaciente se debe registrar al comprador");
-				model.put("errors", result.getAllErrors());
+				result.reject("compradorNotFound", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
 				model.addAttribute("ventaActual", this.getVentaActual());
-				model.put("estupefaciente", true);
+				model.addAttribute("estupefaciente", true);
 				VentaController.log.error("No se puede finalizar la venta sin el comprador estupefaciente");
 				return "ventas/finalizarVenta";
 			}catch(VentaClienteEmptyException ex) {
-				result.reject("ClienteVentaNotFound", "Si el pago es menor al importe total se debe asignar a un cliente registrado");
-				model.put("errors", result.getAllErrors());
+				result.reject("ClienteVentaNotFound", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
 				model.addAttribute("ventaActual", this.getVentaActual());
 				log.error("No se puede finalizar la venta sin un cliente asignado");
 				return "ventas/finalizarVenta";
+			}catch (LineaEmptyException ex) {
+				result.reject("lineaEmpty", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				log.error("No se puede finalizar la venta sin al menos una linea de venta");
+				return "ventas/ventaActual";
 			}
 		}
 	}
@@ -212,7 +219,7 @@ public class VentaController {
 	@GetMapping(value = {"/ventas/actual/cliente"})
 	public String debeCliente(final ModelMap model) {
 		Cliente cliente = new Cliente();
-		model.put("cliente", cliente);
+		model.addAttribute("cliente", cliente);
 		VentaController.log.info("la venta debe asignarse a un cliente");
 		return "ventas/asignarCliente";
 	}
@@ -226,7 +233,7 @@ public class VentaController {
 				result.rejectValue("dni", "clienteNotFound");
 				return "ventas/asignarCliente";
 			}
-			model.put("cliente", cliente);
+			model.addAttribute("cliente", cliente);
 			log.info("Se ha buscado un cliente con DNI '" + cliente.getDni() + "'");
 			return "ventas/asignarCliente";
 		} else {
@@ -235,18 +242,24 @@ public class VentaController {
 				VentaController.log.info("Se ha asignado el cliente satisfactoriamente");
 				return "redirect:/ventas/actual";
 			}catch(VentaCompradorEmptyException ex) {
-				result.reject("compradorNotFound", "Si existe un producto estupefaciente se debe registrar al comprador");
-				model.put("errors", result.getAllErrors());
+				result.reject("compradorNotFound", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
 				model.addAttribute("ventaActual", this.getVentaActual());
-				model.put("estupefaciente", true);
+				model.addAttribute("estupefaciente", true);
 				VentaController.log.error("No se puede finalizar la venta sin el comprador estupefaciente");
 				return "ventas/finalizarVenta";
 			}catch(VentaClienteEmptyException ex) {
-				result.reject("ClienteVentaNotFound", "Si el pago es menor al importe total se debe asignar a un cliente registrado");
-				model.put("errors", result.getAllErrors());
+				result.reject("ClienteVentaNotFound", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
 				model.addAttribute("ventaActual", this.getVentaActual());
 				log.error("No se puede finalizar la venta sin un cliente asignado");
 				return "ventas/finalizarVenta";
+			}catch (LineaEmptyException ex) {
+				result.reject("lineaEmpty", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
+				model.addAttribute("ventaActual", this.getVentaActual());
+				log.error("No se puede finalizar la venta sin al menos una linea de venta");
+				return "ventas/ventaActual";
 			}
 		}
 	}

@@ -2,8 +2,6 @@
 package org.springframework.samples.farmatic.web;
 
 import java.util.Collection;
-import java.util.Map;
-
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
@@ -21,6 +19,7 @@ import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
 import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.samples.farmatic.service.exception.EstadoPedidoException;
+import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -91,7 +90,7 @@ public class PedidoController {
 	public String showListaPedidos(final ModelMap model) {
 		Pedidos pedidos = new Pedidos();
 		pedidos.getPedidoLista().addAll(this.pedidoService.findPedidos());
-		model.put("pedidos", pedidos);
+		model.addAttribute("pedidos", pedidos);
 		PedidoController.log.info("Se han mostrado " + pedidos.getPedidoLista().size() + " pedidos");
 		return "pedidos/pedidoList";
 	}
@@ -113,7 +112,7 @@ public class PedidoController {
 		if (pedido.getEstadoPedido() == EstadoPedido.Borrador) {
 			return "redirect:/pedidos/actual";
 		} else {
-			model.put("pedido", pedido);
+			model.addAttribute("pedido", pedido);
 			PedidoController.log.info("Se ha mostrado el pedido con el codigo '" + pedido.getCodigo() + "'");
 			return "pedidos/pedidoDetails";
 		}
@@ -140,9 +139,9 @@ public class PedidoController {
 				PedidoController.log.info("El pedido con el codigo '" + pedido.getCodigo() + "' ha sido recibido");
 				return "redirect:/pedidos/" + pedido.getId();
 			}catch(EstadoPedidoException ex) {
-				model.put("codigo", "415");
-				model.put("titulo", "Error al procesar el pedido");
-				model.put("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Recibido");
+				model.addAttribute("codigo", "415");
+				model.addAttribute("titulo", "Error al procesar el pedido");
+				model.addAttribute("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Recibido");
 				return "error";
 			}
 		}
@@ -160,7 +159,7 @@ public class PedidoController {
 	})
 	public String showPedidoActual(final ModelMap model) {
 		Producto producto = new Producto();
-		model.put("producto", producto);
+		model.addAttribute("producto", producto);
 		PedidoController.log.info("Se ha mostrado el pedido actual");
 		return "pedidos/pedidoActual";
 	}
@@ -184,7 +183,7 @@ public class PedidoController {
 	})
 	public String pedidoProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaPedido linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			model.put("nuevaLinea", linea);
+			model.addAttribute("nuevaLinea", linea);
 			return "/pedidos/pedidoActual";
 		} else if (producto.getCode() != null) {
 			try {
@@ -199,8 +198,8 @@ public class PedidoController {
 				PedidoController.log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
 				return "pedidos/pedidoActual";
 			} catch (EntityNotFoundException ex) {
-				model.put("pedidoActual", this.getPedidoActual());
-				model.put("errorProducto", "El producto no existe");
+				model.addAttribute("pedidoActual", this.getPedidoActual());
+				model.addAttribute("errorProducto", "El producto no existe");
 				return "/pedidos/pedidoActual";
 			}
 		} else {
@@ -226,8 +225,8 @@ public class PedidoController {
 	})
 	public String showLineaEdit(@PathVariable("lineaId") final LineaPedido linea, final ModelMap model) {
 		Producto producto = new Producto();
-		model.put("producto", producto);
-		model.put("editaLinea", linea);
+		model.addAttribute("producto", producto);
+		model.addAttribute("editaLinea", linea);
 		PedidoController.log.info("Se ha mostrado la linea con id " + linea.getId() + " para ser modificada");
 		return "pedidos/editarLinea";
 	}
@@ -302,11 +301,18 @@ public class PedidoController {
 	})
 	public String createPedido(@Valid final Proveedor proveedor, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			return "/pedidos/actual/pedir";
+			return "pedidos/enviarPedido";
 		} else {
-			this.pedidoService.enviarPedido(proveedor);
-			PedidoController.log.info("El pedido borrador se ha pedido al proveedor " + proveedor.getEmpresa());
-			return "redirect:/pedidos";
+			try {
+				this.pedidoService.enviarPedido(proveedor);
+				PedidoController.log.info("El pedido borrador se ha pedido al proveedor " + proveedor.getEmpresa());
+				return "redirect:/pedidos";
+			}catch(LineaEmptyException ex) {
+				result.reject("lineaEmpty", ex.getMessage());
+				model.addAttribute("errors", result.getAllErrors());
+				return "pedidos/pedidoActual";
+			}
+			
 		}
 	}
 
@@ -322,11 +328,11 @@ public class PedidoController {
 	@GetMapping(value = {
 		"/proveedor"
 	})
-	public String miListaPedidos(final Map<String, Object> model) {
+	public String miListaPedidos(final ModelMap model) {
 		Pedidos pedidos = new Pedidos();
 		User user = this.userService.getCurrentUser();
 		pedidos.getPedidoLista().addAll(this.proveedorService.findPedidosProveedor(user));
-		model.put("pedidos", pedidos);
+		model.addAttribute("pedidos", pedidos);
 		PedidoController.log.info("Se ha mostrado " + pedidos.getPedidoLista().size() + " pedidos del proveedor " + user.getUsername());
 		return "pedidos/pedidoList";
 	}
@@ -346,7 +352,7 @@ public class PedidoController {
 	})
 	public String miPedido(@PathVariable("id") final int pedidoId, final ModelMap model) {
 		Pedido pedido = this.pedidoService.pedido(pedidoId);
-		model.put("pedido", pedido);
+		model.addAttribute("pedido", pedido);
 		PedidoController.log.info("Se ha mostrado el pedido con el codigo '" + pedido.getCodigo() + "'");
 		return "pedidos/pedidoDetails";
 	}
@@ -372,9 +378,9 @@ public class PedidoController {
 				PedidoController.log.info("El pedido con el codigo: '" + pedido.getCodigo() + "' ha sido cambiado a Enviado");
 				return "redirect:/proveedor/" + pedido.getId();
 			}catch(EstadoPedidoException ex) {
-				model.put("codigo", "414");
-				model.put("titulo", "Error al procesar el pedido");
-				model.put("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Enviado");
+				model.addAttribute("codigo", "414");
+				model.addAttribute("titulo", "Error al procesar el pedido");
+				model.addAttribute("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Enviado");
 				return "error";
 			}
 			

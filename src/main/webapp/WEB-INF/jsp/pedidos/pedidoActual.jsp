@@ -8,6 +8,19 @@
 
 <farmatic:layout pageName= "pedidos">
 	<h2> Pedido en Proceso</h2>
+	<br>
+	<c:if test="${errors != null}">
+		<div class="alert alert-danger" role="alert">
+			<h4>Error!</h4>
+            <div id="errors" class="errors">
+	            <ul>
+	            	<c:forEach items="${errors}" var="errorMessage">
+                    	<li><c:out value="${errorMessage.defaultMessage}"/></li>
+                    </c:forEach>
+                   </ul>
+            </div>
+        </div>
+       </c:if>
 	<table class = "table table-striped">
 		<thead>
 		<tr>
