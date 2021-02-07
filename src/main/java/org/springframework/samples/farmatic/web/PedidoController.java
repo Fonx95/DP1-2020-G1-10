@@ -203,11 +203,16 @@ public class PedidoController {
 				return "/pedidos/pedidoActual";
 			}
 		} else {
-			this.pedidoService.saveLinea(linea);
-			model.remove("nuevaLinea");
-			model.addAttribute("producto", producto);
-			PedidoController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en el pedido borrador");
-			return "pedidos/pedidoActual";
+			if(linea.getCantidad() == 0) {
+				model.remove("nuevaLinea");
+				return "/pedidos/pedidoActual";
+			}else {
+				this.pedidoService.saveLinea(linea);
+				model.remove("nuevaLinea");
+				model.addAttribute("producto", producto);
+				PedidoController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en el pedido borrador");
+				return "pedidos/pedidoActual";
+			}
 		}
 	}
 
