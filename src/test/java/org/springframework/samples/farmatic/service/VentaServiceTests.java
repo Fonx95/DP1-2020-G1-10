@@ -1,5 +1,6 @@
 package org.springframework.samples.farmatic.service;
 
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -14,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.samples.farmatic.model.Cliente;
+
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Pedido;
@@ -26,6 +29,7 @@ import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class VentaServiceTests {
 	
+
 	@Autowired
 	protected VentaService ventaService;
 
@@ -160,4 +165,5 @@ public class VentaServiceTests {
 		}
 		
 	}
+
 }
