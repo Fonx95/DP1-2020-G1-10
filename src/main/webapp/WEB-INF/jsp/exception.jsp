@@ -6,9 +6,12 @@
 
     <spring:url value="/resources/images/error.png" var="errorImage"/>
     <img src="${errorImage}"/>
-
-    <h2>Something happened...</h2>
-
-    <p>${exception.message}</p>
+	
+	<div class="alert alert-danger" role="alert">
+	
+    	<strong><h4>Something happened...</h4></strong>
+		${exception.message}
+		
+	</div>    
 
 </farmatic:layout>

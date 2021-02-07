@@ -21,12 +21,11 @@ public class ClienteService {
 
 	private ClienteRepository clienteRepository;
 
-
 	@Autowired
 	public ClienteService(final ClienteRepository clienteRepository) {
 		this.clienteRepository = clienteRepository;
 	}
-
+	
 	@Transactional
 	public Collection<Cliente> findClientes() throws DataAccessException {
 		//busqueda de todos los clientes
@@ -50,10 +49,14 @@ public class ClienteService {
 		return cliente;
 	}
 
-	@Transactional
-	public Cliente findClienteUser(final User user) throws DataAccessException {
+	@Transactional(rollbackFor = EntityNotFoundException.class)
+	public Cliente findClienteUser(final User user) throws DataAccessException, EntityNotFoundException {
 		//busqueda de un clinete por su user
-		return this.clienteRepository.findByUser(user);
+		Cliente cliente = this.clienteRepository.findByUser(user);
+		if (cliente == null){
+			throw new EntityNotFoundException();
+		}
+		return cliente;
 	}
 
 	@Transactional

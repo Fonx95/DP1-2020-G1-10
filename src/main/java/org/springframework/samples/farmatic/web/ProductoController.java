@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
@@ -14,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoMedicamento;
 import org.springframework.samples.farmatic.model.TipoProducto;
+import org.springframework.samples.farmatic.model.validator.ProductoValidator;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -47,9 +46,9 @@ public class ProductoController {
 		return this.productoService.getMedicamentoTypes();
 	}
 
-	@InitBinder
+	@InitBinder("producto")
 	public void setAllowedFields(final WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+		dataBinder.setValidator(new ProductoValidator());
 	}
 
 	@GetMapping(value = {
@@ -111,7 +110,7 @@ public class ProductoController {
 	@GetMapping(value = {
 		"/productos/new"
 	})
-	public String initCreationForm(final Map<String, Object> model) {
+	public String initCreationForm(final ModelMap model) {
 		Producto producto = new Producto();
 		List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
 		model.put("tipoProducto", tipo);
@@ -122,8 +121,12 @@ public class ProductoController {
 	@PostMapping(value = {
 		"/productos/new"
 	})
-	public String processCreationForm(@Valid final Producto producto, final BindingResult result) {
+	public String processCreationForm(@Valid final Producto producto, final BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
+			List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
+			model.put("tipoProducto", tipo);
+			model.put("tipoMedicamento", this.populateMedicamentoTypes());
+			model.put("producto", producto);
 			return ProductoController.VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 		} else {
 			this.productoService.saveProducto(producto);
@@ -148,7 +151,10 @@ public class ProductoController {
 	})
 	public String ProductoEdit(@Valid final Producto producto, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			return "/productos/productoList/";
+			List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
+			model.put("tipoProducto", tipo);
+			model.put("tipoMedicamento", this.populateMedicamentoTypes());
+			return VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 		} else {
 			this.productoService.saveProducto(producto);
 			ProductoController.log.info("Se ha modificado el producto de codigo '" + producto.getCode() + "'");
@@ -162,6 +168,7 @@ public class ProductoController {
 	public String showProductoTipo(@PathVariable("idTipo") final TipoMedicamento tipo, final ModelMap model) {
 		Collection<Producto> productos = this.productoService.findProductosByTipo(tipo);
 		model.addAttribute("productos", productos);
+		model.addAttribute("producto", new Producto());
 		ProductoController.log.info("Se han mostrado " + productos.size() + " productos del tipo " + tipo.getTipo());
 		return "productos/productoList";
 	}

@@ -21,6 +21,7 @@ import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.ProveedorRepository;
+import org.springframework.samples.farmatic.service.exception.EstadoPedidoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,8 +120,12 @@ public class PedidoServiceTests {
 		List<Integer> stockActual = new ArrayList<>();
 		p.getLineaPedido().stream().forEach(x -> cantidadLp.add(x.getCantidad()));
 		p.getLineaPedido().stream().forEach(x -> stockOriginal.add(x.getProducto().getStock()));
-
-		this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		
+		try {
+			this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		}catch(EstadoPedidoException ex) {
+			ex.printStackTrace();//el pedido no tiene el estado adecuado
+		}
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getFechaEntrega().equals(LocalDate.now()));
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Recibido);
@@ -138,7 +143,13 @@ public class PedidoServiceTests {
 	@Transactional
 	public void enviarPedidoPositivo() {// Metodo que comprueba que un pedido cambai de estado a enviado por el proveedor
 		Pedido p = this.pedidoService.pedido(3);// Nos traemos un pedido en estado pedido de la BD
-		this.pedidoService.pedidoEnviado(p);
+		
+		try {	
+			this.pedidoService.pedidoEnviado(p);
+		}catch(EstadoPedidoException ex) {
+			ex.printStackTrace();//el pedido no tiene el estado adecuado
+		}
+		
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p.getFechaEntrega() == null);// Comprobamos que la fecha de entrega continua en null
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Enviado);// Comprobamos que el estado se ha cambiado a estado enviado

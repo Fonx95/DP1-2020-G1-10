@@ -18,8 +18,9 @@
             <farmatic:inputType label="Provincia" name="provincia" type="text" holder="Provincia" value="${cliente.provincia}" display="2 control"/>
             <farmatic:inputType label="Localidad" name="localidad" type="text" holder="Localidad" value="${cliente.localidad}" display="2 control"/>
             <farmatic:inputType label="Direccion" name="direccion" type="text" holder="Direccion" value="${cliente.direccion}" display="2 control"/>
+            <form:hidden path="porPagarTotal"/>
             <input type="hidden" name="user" value="${cliente.user.username}"/>
-            <input type="hidden" name="Id" value="${cliente.id}"/>
+            <form:hidden path="id"/>
         </div>
         <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">

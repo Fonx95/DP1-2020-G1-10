@@ -43,7 +43,6 @@ public class VentaController {
 
 	private final ClienteService	clienteService;
 
-
 	@Autowired
 	public VentaController(final VentaService ventaService, final ProductoService productoService, final ClienteService clienteService) {
 		this.ventaService = ventaService;
@@ -112,11 +111,16 @@ public class VentaController {
 				return "/ventas/ventaActual";
 			}
 		} else {
+			if(linea.getCantidad() == 0) {
+				model.remove("nuevaLinea");
+				return "ventas/ventaActual";
+			}else {
 				this.ventaService.saveLinea(linea);
 				model.addAttribute("producto", producto);
 				model.remove("nuevaLinea");
 				VentaController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en la venta actual");
 				return "ventas/ventaActual";
+			}
 		}
 	}
 
@@ -132,7 +136,6 @@ public class VentaController {
 	@PostMapping(value = {"/ventas/actual/{lineaId}"})
 	public String LineaEdit(@ModelAttribute("producto") final Producto producto, @ModelAttribute("editaLinea") @Valid final LineaVenta linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
-			model.addAttribute("ventaActual", this.getVentaActual());
 			model.addAttribute("editaLinea", linea);
 			return "/ventas/editarLinea";
 		} else if (producto.getCode() != null) {

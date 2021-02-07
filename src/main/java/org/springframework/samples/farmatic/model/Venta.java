@@ -16,8 +16,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
-
 import lombok.Data;
 
 @Data

@@ -111,10 +111,8 @@
 					<td></td>
 					<td></td>
 					<td>
-						<input disabled type="text" class="form-control" value=""/>
 					</td>
 					<td>
-						<input disabled type="text" class="form-control" value=""/>
 					</td>
 					<td></td>
 					<td>

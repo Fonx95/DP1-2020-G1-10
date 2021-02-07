@@ -17,7 +17,7 @@
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
-			<th style="width: 140px">Cantidad</th>
+			<th style="width: 200px">Cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -51,7 +51,7 @@
 					</td>
 				</tr>
 			</c:forEach>
-			<c:if test="${!producto['new']}">
+			<c:if test="${nuevaLinea.producto.code != null}">
 				<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
 					<tr>
 						<th>${nuevaLinea.producto.code}</th>
@@ -61,7 +61,7 @@
 						<th>${nuevaLinea.producto.stock}</th>
 						<th>${nuevaLinea.producto.minStock}</th>
 						<th>
-							<input class="form-control" type="text" name="Cantidad" value="${nuevaLinea.cantidad}"/>
+							<farmatic:inputTypeSimple name="cantidad" type="text" value="${nuevaLinea.cantidad}"/>
 						</th>
 						<th>
 							<input type="hidden" name="Pedido" value="${nuevaLinea.pedido.id}"/>

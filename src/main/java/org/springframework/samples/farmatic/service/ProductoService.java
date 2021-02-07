@@ -76,6 +76,7 @@ public class ProductoService {
 	public void saveProducto(final Producto producto) throws DataAccessException {
 		//crear o modificar un producto
 		producto.setName(producto.getName().toUpperCase());//se guarda el nombre en mayusculas
+		if(producto.isNew()) producto.setCode(this.getCodigoProductoNuevo());//si se esta creando un producto crea y guarda el codigo
 		ProductoService.log.debug("El producto '" + producto.getCode() + "' - " + producto.getName() + ", " + producto.getPvp() + "€ se ha creado o modificado");
 		this.productoRepository.save(producto);
 	}
@@ -84,6 +85,24 @@ public class ProductoService {
 	public Collection<TipoMedicamento> getMedicamentoTypes() throws DataAccessException {
 		//busqueda de todos los tipo de medicamentos
 		return this.tipoMedicamentoRepository.findAll();
+	}
+	
+	private String getCodigoProductoNuevo() {
+		String res = "P-";
+		long num = this.productoRepository.count();
+		long n = num++, cifras = 0;
+		while (n != 0) {
+			n = n / 10;
+			cifras++;
+		}
+		if (cifras == 1) {
+			res += "00" + Long.toString(num);
+		} else if (cifras == 2) {
+			res += "0" + Long.toString(num);
+		} else {
+			res += Long.toString(num);
+		}
+		return res;
 	}
 
 }

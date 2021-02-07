@@ -17,6 +17,12 @@ public class LineaPedidoValidator implements Validator {
 		
 		if(linea.getProducto() != null) {
 			
+			//cantidad validator
+			if(linea.getCantidad() == null) {
+				errors.rejectValue("cantidad", "CantidadBlank");
+			}else if(linea.getCantidad() < 0) {
+				errors.rejectValue("cantidad", "CantidadNegativa");
+			}
 		}
 	}
 

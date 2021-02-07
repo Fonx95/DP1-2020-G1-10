@@ -10,7 +10,7 @@
               description="the text of the value" %>
 
 <%@ attribute name="readonly" required="false" rtexprvalue="true"
-              description="Label appears in red color if input is considered as invalid after submission" %>
+              description="input to be readonly (true or false)" %>
 
 <spring:bind path="${name}">
 	

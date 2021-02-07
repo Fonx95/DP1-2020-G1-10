@@ -17,7 +17,7 @@
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
-			<th style="width: 140px">Cantidad</th>
+			<th style="width: 200px">Cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -45,7 +45,7 @@
 									<c:out value="${editaLinea.producto.minStock}"/>
 								</th>
 								<th>
-									<input class="form-control" type="text" name="Cantidad" value="${editaLinea.cantidad}"/>
+									<farmatic:inputTypeSimple name="cantidad" type="text" value="${editaLinea.cantidad}"/>
 								</th>
 								<th>
 									<input type="hidden" name="Id" value="${editaLinea.id}"/>
@@ -113,4 +113,5 @@
 		</tbody>
 	</table>
 	<a href="/pedidos/actual/pedir" class="btn btn-default">Pedir</a>
+	
 </farmatic:layout>

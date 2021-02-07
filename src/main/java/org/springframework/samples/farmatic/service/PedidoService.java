@@ -14,6 +14,7 @@ import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.PedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
+import org.springframework.samples.farmatic.service.exception.EstadoPedidoException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -62,10 +63,15 @@ public class PedidoService {
 		return p;
 	}
 
-	@Transactional
-	public void recibirPedido(Pedido pedido) throws DataAccessException {
+	@Transactional(rollbackFor = EstadoPedidoException.class)
+	public void recibirPedido(Pedido pedido) throws DataAccessException, EstadoPedidoException {
 		//establece un pedido en recibido
 		pedido = this.pedido(pedido.getId());
+		
+		if(pedido.getEstadoPedido() != EstadoPedido.Enviado) {
+			throw new EstadoPedidoException();
+		}
+		
 		pedido.setEstadoPedido(EstadoPedido.Recibido);//completa la informacion del pedido recibido(actualiza el estado y añade la fecha de entrega)
 		pedido.setFechaEntrega(LocalDate.now());
 		for (LineaPedido linea : pedido.getLineaPedido()) {//actualiza el stock del producto con las cantidades recibidas
@@ -156,10 +162,15 @@ public class PedidoService {
 
 	//---------Metodos referente a PROVEEDOR---------
 
-	@Transactional
-	public void pedidoEnviado(Pedido pedido) throws DataAccessException {
+	@Transactional(rollbackFor = EstadoPedidoException.class)
+	public void pedidoEnviado(Pedido pedido) throws DataAccessException, EstadoPedidoException {
 		//establece un pedido en enviado por el proveedor
 		pedido = this.pedido(pedido.getId());
+		
+		if(pedido.getEstadoPedido() != EstadoPedido.Pedido) {
+			throw new EstadoPedidoException();
+		}
+		
 		pedido.setEstadoPedido(EstadoPedido.Enviado);//actualiza la informacion del estado del pedido
 		this.pedidoRepository.save(pedido);
 		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
