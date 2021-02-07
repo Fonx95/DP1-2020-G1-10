@@ -69,6 +69,37 @@ class ProductoServiceTests {
 		assertThat(products2.size()).isEqualTo(found + 1);
 	}
 	
+	@Test
+	@Transactional
+	public void shouldModifyProduct() {
+
+		Producto producto = this.productoService.findProductoByCode("PR-001");
+		producto.setPvp(6.0);
+                
+		this.productoService.saveProducto(producto);
+		
+		
+
+		Producto producto2 = this.productoService.findProductoByCode("PR-001");
+		assertThat(producto2.getPvp()==6.0);
+		
+	}
+	
+	@Test
+	@Transactional
+	public void shouldNotModifyProduct() {
+
+		Producto producto = this.productoService.findProductoByCode("PR-001");
+		producto.setPvp(0.0);
+                
+		this.productoService.saveProducto(producto);
+		
+		
+
+		
+		
+	}
+	
 	//Test negativos
 	
 	@Test
