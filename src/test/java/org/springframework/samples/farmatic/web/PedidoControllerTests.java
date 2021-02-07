@@ -4,6 +4,8 @@ package org.springframework.samples.farmatic.web;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -105,7 +107,7 @@ public class PedidoControllerTests {
 	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos el segundo if de lineaEdit, producto.getCode() != null
 	@Test
 	void testLineaEditSuccess1() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("producto", this.productoTest).flashAttr("editarLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("producto", this.productoTest).flashAttr("editaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/actual/" + PedidoControllerTests.TEST_LINEA_ID));
 	}
 
@@ -113,14 +115,14 @@ public class PedidoControllerTests {
 	@Test
 	void testLineaEditSuccess2() throws Exception {
 		this.lineaTest.setCantidad(0);
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("editarLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("editaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/actual"));
 	}
 
 	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la cuarta salida del if de lineaEdit
 	@Test
 	void testLineaEditSuccess3() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("editarLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).flashAttr("editaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/actual"));
 	}
 
@@ -147,25 +149,51 @@ public class PedidoControllerTests {
 			.andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/null"));
 	}
 
-	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la primera salida del segundo if de pedidoProcessCreation, producto.getCode() != null y producto.getCode() == ""
+	/*
+	 * @PostMapping(value = {
+	 * "/pedidos/actual"
+	 * })
+	 * public String pedidoProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaPedido linea, final BindingResult result, final ModelMap model) {
+	 * if (result.hasErrors()) {
+	 * model.addAttribute("nuevaLinea", linea);
+	 * return "/pedidos/pedidoActual";
+	 * } else if (producto.getCode() != null) {
+	 * try {
+	 * producto = this.productoService.findProductoByCode(producto.getCode());
+	 * if (this.pedidoService.existelinea(producto) != null) {
+	 * PedidoController.log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
+	 * return "redirect:/pedidos/actual/" + this.pedidoService.existelinea(producto);
+	 * }
+	 * linea = this.pedidoService.newLinea(producto, 1);
+	 * model.addAttribute("nuevaLinea", linea);
+	 * model.addAttribute("producto", producto);
+	 * PedidoController.log.info("Se ha buscado el producto '" + producto.getCode() + "' - " + producto.getName());
+	 * return "pedidos/pedidoActual";
+	 * } catch (EntityNotFoundException ex) {
+	 * model.addAttribute("pedidoActual", this.getPedidoActual());
+	 * model.addAttribute("errorProducto", "El producto no existe");
+	 * return "/pedidos/pedidoActual";
+	 * }
+	 * } else {
+	 * this.pedidoService.saveLinea(linea);
+	 * model.remove("nuevaLinea");
+	 * model.addAttribute("producto", producto);
+	 * PedidoController.log.info("Se ha guardado la linea con el producto '" + linea.getProducto().getCode() + "' en el pedido borrador");
+	 * return "pedidos/pedidoActual";
+	 * }
+	 * }
+	 */
+
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la primera salida del segundo if de pedidoProcessCreation, producto.getCode() != null y this.pedidoService.existelinea(producto) != null
 	@Test
 	void testPedidoProcessCreationSuccess1() throws Exception {
-		this.productoTest.setCode("");
-		BDDMockito.given(this.productoService.findProductoByCode("")).willReturn(this.productoTest);
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").flashAttr("producto", this.productoTest).flashAttr("nuevaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
-			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/actual"));
-	}
-
-	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la segunda salida del segundo if de pedidoProcessCreation, producto.getCode() != null y this.pedidoService.existelinea(producto) != null
-	@Test
-	void testPedidoProcessCreationSuccess2() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").flashAttr("producto", this.productoTest).flashAttr("nuevaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
 			.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/pedidos/actual/" + PedidoControllerTests.TEST_LINEA_ID));
 	}
 
-	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la tercera salida del segundo if de pedidoProcessCreation, producto.getCode() != null
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la segunda salida del segundo if de pedidoProcessCreation, producto.getCode() != null
 	@Test
-	void testPedidoProcessCreationSuccess3() throws Exception {
+	void testPedidoProcessCreationSuccess2() throws Exception {
 		Producto p = new Producto();
 		p.setId(2);
 		p.setCode("PR-test2");
@@ -181,17 +209,21 @@ public class PedidoControllerTests {
 			.andExpect(MockMvcResultMatchers.view().name("pedidos/pedidoActual"));
 	}
 
-	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la segunda salida del tercer if de pedidoProcessCreation
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la salida del tercer if de pedidoProcessCreation
 	@Test
-	void testPedidoProcessCreationSuccess4() throws Exception {
+	void testPedidoProcessCreationSuccess3() throws Exception {
 		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").flashAttr("producto", new Producto()).flashAttr("nuevaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.view().name("pedidos/pedidoActual"));
+			.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.model().attributeDoesNotExist("nuevaLinea")).andExpect(MockMvcResultMatchers.view().name("pedidos/pedidoActual"));
 	}
 
-	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos la segunda salida del tercer if de pedidoProcessCreation
+	@WithMockUser(value = "spring", authorities = "farmaceutico") // En este test comprabamos el catch de pedidoProcessCreation para un producto inexistente
 	@Test
 	void testPedidoProcessCreationError() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.view().name("exception"));
+		Producto p = new Producto();
+		p.setCode("12234");
+		BDDMockito.given(this.productoService.findProductoByCode(p.getCode())).willThrow(EntityNotFoundException.class);
+		this.mockMvc.perform(MockMvcRequestBuilders.post("/pedidos/actual").with(SecurityMockMvcRequestPostProcessors.csrf()).flashAttr("producto", p).flashAttr("nuevaLinea", this.lineaTest)).andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.model().attribute("errorProducto", Matchers.is("El producto no existe"))).andExpect(MockMvcResultMatchers.view().name("/pedidos/pedidoActual"));
 	}
 	/***
 	 * @GetMapping(value={"/pedidos/actual/pedir"})
