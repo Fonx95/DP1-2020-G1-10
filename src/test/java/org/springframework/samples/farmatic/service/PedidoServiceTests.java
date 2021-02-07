@@ -21,6 +21,8 @@ import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.repository.ProveedorRepository;
+import org.springframework.samples.farmatic.service.exception.EstadoPedidoException;
+import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -95,8 +97,13 @@ public class PedidoServiceTests {
 		Proveedor prov = this.proveedorRepository.findById(1);
 		Pedido p = this.pedidoService.pedidoActual(); // Nos traemos el pedido actual para comprobar que se realizan las modificaciones.
 		Assertions.assertTrue(p.getEstadoPedido() == EstadoPedido.Borrador);
-
-		this.pedidoService.enviarPedido(prov); // Función que cambia el estado de Borrador a Pedido, pone la nueva fecha de pedido y asigna el proveedor al que se pide.
+		
+		try {
+			this.pedidoService.enviarPedido(prov); // Función que cambia el estado de Borrador a Pedido, pone la nueva fecha de pedido y asigna el proveedor al que se pide.
+		}catch(LineaEmptyException ex) {
+			ex.printStackTrace();//el pedido no tiene lineas de pedido
+		}
+		
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getProveedor().equals(prov));
 		Assertions.assertTrue(p1.getFechaPedido().equals(LocalDate.now()));
@@ -119,8 +126,12 @@ public class PedidoServiceTests {
 		List<Integer> stockActual = new ArrayList<>();
 		p.getLineaPedido().stream().forEach(x -> cantidadLp.add(x.getCantidad()));
 		p.getLineaPedido().stream().forEach(x -> stockOriginal.add(x.getProducto().getStock()));
-
-		this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		
+		try {
+			this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
+		}catch(EstadoPedidoException ex) {
+			ex.printStackTrace();//el pedido no tiene el estado adecuado
+		}
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getFechaEntrega().equals(LocalDate.now()));
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Recibido);
@@ -138,7 +149,13 @@ public class PedidoServiceTests {
 	@Transactional
 	public void enviarPedidoPositivo() {// Metodo que comprueba que un pedido cambai de estado a enviado por el proveedor
 		Pedido p = this.pedidoService.pedido(3);// Nos traemos un pedido en estado pedido de la BD
-		this.pedidoService.pedidoEnviado(p);
+		
+		try {	
+			this.pedidoService.pedidoEnviado(p);
+		}catch(EstadoPedidoException ex) {
+			ex.printStackTrace();//el pedido no tiene el estado adecuado
+		}
+		
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p.getFechaEntrega() == null);// Comprobamos que la fecha de entrega continua en null
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Enviado);// Comprobamos que el estado se ha cambiado a estado enviado

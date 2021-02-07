@@ -7,9 +7,15 @@
 	<spring:url value="/resources/images/error.png" var="errorImage"/>
     <img src="${errorImage}"/>
     
-    <h2>${titulo}</h2>
-
-    <p>${descripcion}</p>
+    <div class="alert alert-danger" role="alert">
+    
+	    <strong><h2>${titulo}</h2></strong>
+	
+	    ${descripcion}
+	
+	</div>
+    
+    <br>
     
     <c:if test="${codigo == '500'}">
     	<p>${exception.message}</p>

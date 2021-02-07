@@ -8,6 +8,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.lang.NonNull;
 
 import lombok.Data;
 
@@ -21,7 +24,8 @@ public class LineaVenta extends BaseEntity{
 	private TipoTasa tipoTasa;
 	
 	@Column(name = "cantidad")
-	@Min(0)
+	//@Min(0)
+	//@NonNull
 	private Integer cantidad;
 	
 	@Column(name = "importe")
@@ -41,6 +45,5 @@ public class LineaVenta extends BaseEntity{
 		this.venta = venta;
 	}
 	public LineaVenta() {
-		
 	}
 }

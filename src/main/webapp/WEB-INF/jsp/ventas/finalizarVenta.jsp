@@ -11,12 +11,12 @@
 		
 	<div class="container">
 		<div class="row no-gutters">
-			<div class="col-12 col-sm-6 col-md-8">
+			<div class="col-12 col-sm-5">
 				<form:form modelAttribute="ventaActual" class="form-horizontal" id="new-venta-form">
 					
 					<label style="width: 100px">Importe Total:</label>
 					<section style="display: inline">
-						<input disabled class="marcador" type="text" name="pagado" value="${ventaActual.importeTotal} &#8364"/>
+						<input disabled class="marcador" type="text" name="importeTotal" value="${ventaActual.importeTotal} &#8364"/>
 					</section>
 					<br>
 					<br>
@@ -45,6 +45,21 @@
 						</form:form>
 					</c:if>
 				</c:forEach>
+			</div>
+			<div class="col-6 col-md-3">
+				<br>
+				<c:if test="${errors != null}">
+					<div class="alert alert-danger" role="alert">
+						<h4>Error!</h4>
+			            <div id="errors" class="errors">
+				            <ul>
+				            	<c:forEach items="${errors}" var="errorMessage">
+			                    	<li><c:out value="${errorMessage.defaultMessage}"/></li>
+			                    </c:forEach>
+		                    </ul>
+			            </div>
+			        </div>
+		        </c:if>
 			</div>
 		</div>
 	</div>

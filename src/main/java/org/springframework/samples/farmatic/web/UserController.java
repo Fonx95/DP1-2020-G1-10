@@ -16,6 +16,8 @@
 
 package org.springframework.samples.farmatic.web;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Authorities;
 import org.springframework.samples.farmatic.model.Cliente;
@@ -29,7 +31,7 @@ import org.springframework.samples.farmatic.service.FarmaceuticoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
 import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
@@ -75,7 +77,7 @@ public class UserController {
 	}
 	
 	@GetMapping("users")
-	private String showUserDetails(Model model) {
+	private String showUserDetails(ModelMap model) {
 		User user = this.userService.getCurrentUser();
 		Authorities authority = this.authoritiesService.findAuthoritiyByUser(user);
 		
@@ -95,22 +97,22 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/new")
-	public String newUser(Model model) {
+	public String newUser(ModelMap model) {
 		Cliente cliente = new Cliente();
 		model.addAttribute("cliente", cliente);
+		model.addAttribute("dni", new String());
 		return "users/userRegister";
 	}
 	
 	@PostMapping("/users/new")
-	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, Model model) {
+	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
-			return "clientes/userRegister";
+			return "users/userRegister";
 		} else if(cliente.getUser() == null) {
-			cliente = this.clienteService.clienteDni(cliente.getDni());
-			if(cliente == null) {
-				FieldError err = new FieldError("Not Found", "dni", "El cliente no se encuentra");
-				result.addError(err);
-				log.warn("El dni introducido no existe en la BD o es invalido");
+			try {
+				cliente = this.clienteService.clienteDni(cliente.getDni());
+			}catch(EntityNotFoundException ex) {
+				result.rejectValue("dni", "clienteNotFound");
 				return "users/userRegister";
 			}
 			cliente.setUser(new User());
@@ -126,7 +128,7 @@ public class UserController {
 	}
 	
 	@GetMapping("/users/password")
-	public String initChangePassword(Model model) {
+	public String initChangePassword(ModelMap model) {
 		User currentUser = this.userService.getCurrentUser();
 		UserValidate user = new UserValidate(currentUser.getUsername(), "");
 		model.addAttribute("user", user);
@@ -134,7 +136,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/users/password")
-	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, Model model) {
+	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
 			return "users/passwordEdit";
 		}else {
