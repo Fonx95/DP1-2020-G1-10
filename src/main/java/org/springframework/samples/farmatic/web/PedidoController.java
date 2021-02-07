@@ -2,7 +2,10 @@
 package org.springframework.samples.farmatic.web;
 
 import java.util.Collection;
+
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,11 +60,13 @@ public class PedidoController {
 	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setDisallowedFields("id");
 	}
+
 	
 	@InitBinder(value = {"nuevaLinea","editaLinea"})
 	public void initLineaVentaBinder(WebDataBinder dataBinder) {
 		dataBinder.setValidator(new LineaPedidoValidator());
 	}
+
 
 	/**
 	 * Por defecto al llamar a un @GetMapping se devuelve un modelo de {@link Pedido} que corresponde con el pedido actual.
@@ -228,9 +233,9 @@ public class PedidoController {
 	@GetMapping(value = {
 		"/pedidos/actual/{lineaId}"
 	})
-	public String showLineaEdit(@PathVariable("lineaId") final int idlinea, final ModelMap model) {
+	public String showLineaEdit(@PathVariable("lineaId") final int idLinea, final ModelMap model) {
 		Producto producto = new Producto();
-		LineaPedido linea=this.pedidoService.lineaById(idlinea);
+		LineaPedido linea = this.pedidoService.lineaById(idLinea);
 		model.addAttribute("producto", producto);
 		model.addAttribute("editaLinea", linea);
 		PedidoController.log.info("Se ha mostrado la linea con id " + linea.getId() + " para ser modificada");
@@ -318,7 +323,6 @@ public class PedidoController {
 				model.addAttribute("errors", result.getAllErrors());
 				return "pedidos/pedidoActual";
 			}
-			
 		}
 	}
 
@@ -389,7 +393,6 @@ public class PedidoController {
 				model.addAttribute("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Enviado");
 				return "error";
 			}
-			
 		}
 	}
 
