@@ -98,8 +98,10 @@ public class VentaServiceTests {
 	public void finalizarVentaPositivo() { // Modificamos una venta de en proceso a finalizada.
 		Venta v = this.ventaService.ventaActual(); // Nos traemos la venta actual para comprobar que se realizan las modificaciones.
 		Assertions.assertTrue(v.getEstadoVenta() == EstadoVenta.enProceso);
-
-		this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
+		try {
+			this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
+		}catch(Exception e){
+		}
 		Venta v1 = this.ventaService.venta(v.getId());
 		Assertions.assertTrue(v1.getFecha().equals(LocalDate.now()));
 		Assertions.assertTrue(v1.getEstadoVenta() == EstadoVenta.Realizada);

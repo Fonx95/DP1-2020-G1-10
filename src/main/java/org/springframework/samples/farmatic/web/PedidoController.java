@@ -228,8 +228,9 @@ public class PedidoController {
 	@GetMapping(value = {
 		"/pedidos/actual/{lineaId}"
 	})
-	public String showLineaEdit(@PathVariable("lineaId") final LineaPedido linea, final ModelMap model) {
+	public String showLineaEdit(@PathVariable("lineaId") final int idlinea, final ModelMap model) {
 		Producto producto = new Producto();
+		LineaPedido linea=this.pedidoService.lineaById(idlinea);
 		model.addAttribute("producto", producto);
 		model.addAttribute("editaLinea", linea);
 		PedidoController.log.info("Se ha mostrado la linea con id " + linea.getId() + " para ser modificada");
