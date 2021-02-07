@@ -11,13 +11,13 @@
 	<table class = "table table-striped">
 		<thead>
 		<tr>
-			<th>Código</th>
-			<th>Nombre</th>
+			<th style="width: 150px">Código</th>
+			<th style="width: 450px">Nombre</th>
 			<th>PvP</th>
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
-			<th>Cantidad</th>
+			<th style="width: 200px">Cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
@@ -27,7 +27,7 @@
 						<form:form modelAttribute="editaLinea" class="form-horizontal" id="edit-linea-form">
 							<tr>
 								<th>
-									<c:out value="${editaLinea.producto.code}"/>
+									<input disabled class="form-control" type="text" name="code" value="${linea.producto.code}"/>
 								</th>
 								<th>
 									<c:out value="${editaLinea.producto.name}"/>
@@ -45,7 +45,7 @@
 									<c:out value="${editaLinea.producto.minStock}"/>
 								</th>
 								<th>
-									<input type="text" name="Cantidad" value="${editaLinea.cantidad}"/>
+									<farmatic:inputTypeSimple name="cantidad" type="text" value="${editaLinea.cantidad}"/>
 								</th>
 								<th>
 									<input type="hidden" name="Id" value="${editaLinea.id}"/>
@@ -61,7 +61,7 @@
 					<c:otherwise>
 						<tr>
 							<td>
-								<input disabled type="text" name="code" value="${linea.producto.code}"/>
+								<input disabled class="form-control" type="text" name="code" value="${linea.producto.code}"/>
 							</td>
 							<td>
 								<c:out value="${linea.producto.name}"/>
@@ -79,7 +79,7 @@
 								<c:out value="${linea.producto.minStock}"/>
 							</td>
 							<td>
-								<input disabled type="text" name="Cantidad" value="${linea.cantidad}"/>
+								<input disabled class="form-control" type="text" name="Cantidad" value="${linea.cantidad}"/>
 							</td>
 							<td>
 								<a class="btn btn-default btn-sm" href="/pedidos/actual/${linea.id}">
@@ -93,7 +93,9 @@
 			<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
 				<tr>
 					<td>
-						<input type="text" name="code"/>
+						<div class="form-group ${errorProducto!=null ? 'has-error' : ''}">
+							<input class="form-control" name="code" type="text" value="${producto.code}"/>
+						</div>
 					</td>
 					<td></td>
 					<td></td>
@@ -111,4 +113,5 @@
 		</tbody>
 	</table>
 	<a href="/pedidos/actual/pedir" class="btn btn-default">Pedir</a>
+	
 </farmatic:layout>

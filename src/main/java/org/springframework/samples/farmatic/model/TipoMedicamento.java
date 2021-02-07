@@ -20,7 +20,7 @@ public class TipoMedicamento extends BaseEntity {
 	@NotNull
 	private String tipo;
 	
-	@Column(name = "descripcion", length = 5000)
+	@Column(name = "descripcion", length = 1000)
 	private String descripcion;
 	
 	@ManyToMany(mappedBy = "tipoMedicamento")

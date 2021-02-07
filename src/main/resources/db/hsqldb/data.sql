@@ -52,6 +52,7 @@ INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('D
 INSERT INTO productos(name,code,product_type,pvp,pvf,stock,min_stock) VALUES ('POTITO MANZANA Y PLATANO','PR-013','PARAFARMACIA','1.40','0.72','7','7');
 
 --TipoMedicamento
+
 INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Analgesico','Son medicinas que reducen o alivian los dolores de cabeza, musculares, artríticos o muchos otros achaques y dolores.');
 INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Anticoagulante','Son medicamentos que previenen la formación de coágulos sanguíneos. También evitan que los coágulos de sangre ya existentes se hagan más grandes.');
 INSERT INTO tipo_medicamentos(tipo,descripcion) VALUES ('Antipiretico','Son medicamentos que disminuyen la fiebre. Suelen ser medicamentos que tratan la fiebre de una forma sintomática, sin actuar sobre su causa.');
