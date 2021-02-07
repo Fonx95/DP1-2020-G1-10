@@ -4,6 +4,8 @@ package org.springframework.samples.farmatic.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.util.NoSuchElementException;
+
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
@@ -29,6 +31,8 @@ public class ClienteServiceTests {
 	@Autowired
 	protected ClienteService clienteService;
 	@Autowired
+	protected UserService UserService;
+	@Autowired
 	protected ClienteRepository clienteRepository;
 
 	//Test positivos
@@ -43,7 +47,11 @@ public class ClienteServiceTests {
 		Assertions.assertThat(this.clienteService.findClientes()).isNotEmpty();
 	}
 
-	
+	@Test
+	void shouldFinClienteUser() {
+		User user=this.UserService.findUser("client3").get();
+		Assertions.assertThat(this.clienteService.findClienteUser(user)).isNotNull();
+	}
 	@Test
 	public void saveCliente(){
 
@@ -72,6 +80,13 @@ public class ClienteServiceTests {
 		Assertions.assertThat(this.clienteService.findClienteById(-1)).isNull();
 	}
 
+	@Test
+	void shouldNotFinClienteUser() {
+		User user=this.UserService.findUser("farm1").get();
+		
+		Assertions.assertThat(this.clienteService.findClienteUser(user)).isNull();
+	
+	}
 	@Test
 	void notSaveCliente(){
 
