@@ -64,7 +64,7 @@
 					</td>
 				</tr>
 			</c:forEach>
-			<c:if test="${!producto['new']}">
+			<c:if test="${nuevaLinea.producto.code != null}">
 				<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
 					<tr>
 						<th>${nuevaLinea.producto.code}</th>
@@ -73,7 +73,7 @@
 						<th>${nuevaLinea.producto.pvp}</th>
 						<th>${nuevaLinea.producto.stock}</th>
 						<th>
-							<input type="text" class="form-control" name="Cantidad" value="${nuevaLinea.cantidad}"/>
+							<farmatic:inputTypeSimple name="cantidad" type="text" value="${nuevaLinea.cantidad}"/>
 						</th>
 						<th>
 							<select class="form-control" name="tipoTasa">
@@ -100,17 +100,19 @@
 			<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
 				<tr>
 					<td>
-						<input class="form-control" type="text" name="code"/>
+						<div class="form-group ${errorProducto!=null ? 'has-error' : ''}">
+							<input class="form-control" name="code" type="text"/>
+						</div>
+					</td>
+					<td>
+						<span class="help-inline">${errorProducto}</span>
 					</td>
 					<td></td>
 					<td></td>
 					<td></td>
-					<td></td>
 					<td>
-						<input disabled type="text" class="form-control" value=""/>
 					</td>
 					<td>
-						<input disabled type="text" class="form-control" value=""/>
 					</td>
 					<td></td>
 					<td>
@@ -122,5 +124,6 @@
 			</form:form>
 		</tbody>
 	</table>
+        
 	<a href="/ventas/actual/pagar" class="btn btn-default">Pagar</a>
 </farmatic:layout>

@@ -11,20 +11,20 @@
 	<table class = "table table-striped">
 		<thead>
 		<tr>
-			<th>Código</th>
-			<th>Nombre</th>
+			<th style="width: 150px">Código</th>
+			<th style="width: 450px">Nombre</th>
 			<th>PvP</th>
 			<th>PvF</th>
 			<th>Stock</th>
 			<th>Stock Minimo</th>
-			<th>Cantidad</th>
+			<th style="width: 200px">Cantidad</th>
 		</tr>
 		</thead>
 		<tbody>
 			<c:forEach items="${pedidoActual.lineaPedido}" var="linea">
 				<tr>
 					<td>
-						<input disabled type="text" name="code" value="${linea.producto.code}"/>
+						<input disabled class="form-control" type="text" name="code" value="${linea.producto.code}"/>
 					</td>
 					<td>
 						<c:out value="${linea.producto.name}"/>
@@ -42,7 +42,7 @@
 						<c:out value="${linea.producto.minStock}"/>
 					</td>
 					<td>
-						<input disabled type="text" name="Cantidad" value="${linea.cantidad}"/>
+						<input disabled class="form-control" type="text" name="Cantidad" value="${linea.cantidad}"/>
 					</td>
 					<td>
 						<a class="btn btn-default btn-sm" href="/pedidos/actual/${linea.id}">
@@ -51,7 +51,7 @@
 					</td>
 				</tr>
 			</c:forEach>
-			<c:if test="${!producto['new']}">
+			<c:if test="${nuevaLinea.producto.code != null}">
 				<form:form modelAttribute="nuevaLinea" class="form-horizontal" id="add-linea-form">
 					<tr>
 						<th>${nuevaLinea.producto.code}</th>
@@ -61,7 +61,7 @@
 						<th>${nuevaLinea.producto.stock}</th>
 						<th>${nuevaLinea.producto.minStock}</th>
 						<th>
-							<input type="text" name="Cantidad" value="${nuevaLinea.cantidad}"/>
+							<farmatic:inputTypeSimple name="cantidad" type="text" value="${nuevaLinea.cantidad}"/>
 						</th>
 						<th>
 							<input type="hidden" name="Pedido" value="${nuevaLinea.pedido.id}"/>
@@ -76,9 +76,13 @@
 			<form:form modelAttribute="producto" class="form-horizontal" id="search-producto-form">
 				<tr>
 					<td>
-						<input type="text" name="code"/>
+						<div class="form-group ${errorProducto!=null ? 'has-error' : ''}">
+							<input class="form-control" name="code" type="text" value="${producto.code}"/>
+						</div>
 					</td>
-					<td></td>
+					<td>
+						<span class="help-inline">${errorProducto}</span>
+					</td>
 					<td></td>
 					<td></td>
 					<td></td>

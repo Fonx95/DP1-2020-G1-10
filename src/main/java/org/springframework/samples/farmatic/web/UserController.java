@@ -16,6 +16,8 @@
 
 package org.springframework.samples.farmatic.web;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Authorities;
 import org.springframework.samples.farmatic.model.Cliente;
@@ -98,19 +100,19 @@ public class UserController {
 	public String newUser(Model model) {
 		Cliente cliente = new Cliente();
 		model.addAttribute("cliente", cliente);
+		model.addAttribute("dni", new String());
 		return "users/userRegister";
 	}
 	
 	@PostMapping("/users/new")
 	public String creationUser(@ModelAttribute("cliente") Cliente cliente, final BindingResult result, Model model) {
 		if (result.hasErrors()) {
-			return "clientes/userRegister";
+			return "users/userRegister";
 		} else if(cliente.getUser() == null) {
-			cliente = this.clienteService.clienteDni(cliente.getDni());
-			if(cliente == null) {
-				FieldError err = new FieldError("Not Found", "dni", "El cliente no se encuentra");
-				result.addError(err);
-				log.warn("El dni introducido no existe en la BD o es invalido");
+			try {
+				cliente = this.clienteService.clienteDni(cliente.getDni());
+			}catch(EntityNotFoundException ex) {
+				result.rejectValue("dni", "clienteNotFound");
 				return "users/userRegister";
 			}
 			cliente.setUser(new User());

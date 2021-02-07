@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.model.Venta;
+import org.springframework.samples.farmatic.model.validator.ClienteValidator;
 import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.samples.farmatic.service.UserService;
 import org.springframework.samples.farmatic.service.VentaService;
@@ -42,9 +43,9 @@ public class ClienteController {
 		this.userService = userService;
 	}
 
-	@InitBinder
+	@InitBinder("cliente")
 	public void setAllowedFields(final WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+		dataBinder.setValidator(new ClienteValidator());
 	}
 
 	//==================== COMO FARMACEUTICO ====================

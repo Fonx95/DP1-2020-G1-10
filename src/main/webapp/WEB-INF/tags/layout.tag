@@ -7,7 +7,7 @@
 
 <!doctype html>
 <html>
-<farmatic:htmlHeader/>
+<farmatic:htmlHeader title="${pageName}"/>
 
 <body>
 <farmatic:bodyHeader menuName="${pageName}"/>

@@ -42,9 +42,9 @@
 								<th>
 									<c:out value="${editaLinea.producto.name}"/>
 								</th>
-								<td>
+								<th>
 									<c:out value="${editaLinea.producto.productType}"/>
-								</td>
+								</th>
 								<th>
 									<c:out value="${editaLinea.producto.pvp}"/>
 								</th>
@@ -52,7 +52,7 @@
 									<c:out value="${editaLinea.producto.stock}"/>
 								</th>
 								<th>
-									<input type="text" class="form-control" name="Cantidad" value="${editaLinea.cantidad}"/>
+									<farmatic:inputTypeSimple name="cantidad" type="text" value="${editaLinea.cantidad}"/>
 								</th>
 								<th>
 									<select class="form-control" name="tipoTasa">
@@ -81,7 +81,7 @@
 					<c:otherwise>
 						<tr>
 							<td>
-								<input disabled type="text" class="form-control" name="code" value="${linea.producto.code}"/>
+								<input disabled type="text" class="form-control" name="" value="${linea.producto.code}"/>
 							</td>
 							<td>
 								<c:out value="${linea.producto.name}"/>
@@ -96,10 +96,10 @@
 								<c:out value="${linea.producto.stock}"/>
 							</td>
 							<td>
-								<input disabled type="text" class="form-control" name="Cantidad" value="${linea.cantidad}"/>
+								<input disabled type="text" class="form-control" name="" value="${linea.cantidad}"/>
 							</td>
 							<td>
-								<input disabled type="text" class="form-control" name="tipoTasa" value="${linea.tipoTasa}"/>
+								<input disabled type="text" class="form-control" name="" value="${linea.tipoTasa}"/>
 							</td>
 							<td>
 								<c:out value="${linea.importe}"/>
