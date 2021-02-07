@@ -51,11 +51,13 @@
 				<c:if test="${errors != null}">
 					<div class="alert alert-danger" role="alert">
 						<h4>Error!</h4>
-				        <c:forEach items="${errors}" var="errorMessage">
-				            <div id="errors" class="errors">
-			                    <c:out value="${errorMessage.defaultMessage}" />
-				            </div>
-				        </c:forEach>
+			            <div id="errors" class="errors">
+				            <ul>
+				            	<c:forEach items="${errors}" var="errorMessage">
+			                    	<li><c:out value="${errorMessage.defaultMessage}"/></li>
+			                    </c:forEach>
+		                    </ul>
+			            </div>
 			        </div>
 		        </c:if>
 			</div>

@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
-
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -41,23 +39,23 @@ public class ProductoController {
 		this.productoService = productService;
 	}
 
-	@ModelAttribute("tipoMedicamento")
-	public Collection<TipoMedicamento> populateMedicamentoTypes() {
-		return this.productoService.getMedicamentoTypes();
-	}
-
 	@InitBinder("producto")
 	public void setAllowedFields(final WebDataBinder dataBinder) {
 		dataBinder.setValidator(new ProductoValidator());
 	}
 
+	@ModelAttribute("tipoMedicamento")
+	public Collection<TipoMedicamento> populateMedicamentoTypes() {
+		return this.productoService.getMedicamentoTypes();
+	}
+
 	@GetMapping(value = {
 		"/productos"
 	})
-	public String listadoProductos(final ModelMap modelMap) {
+	public String listadoProductos(final ModelMap model) {
 		Iterable<Producto> productos = this.productoService.findProducts();
-		modelMap.addAttribute("producto", new Producto());
-		modelMap.addAttribute("productos", productos);
+		model.addAttribute("producto", new Producto());
+		model.addAttribute("productos", productos);
 		ProductoController.log.info("Se han mostrado todos los productos");
 		return "productos/productoList";
 	}
@@ -99,12 +97,11 @@ public class ProductoController {
 	@GetMapping(value = {
 		"/productos/{idProducto}"
 	})
-	public ModelAndView showProductos(@PathVariable("idProducto") final int idProducto) {
-		ModelAndView mav = new ModelAndView("productos/productoDetails");
+	public String showProductos(@PathVariable("idProducto") final int idProducto, ModelMap model) {
 		Producto producto = this.productoService.findProductoById(idProducto);
-		mav.addObject(producto);
+		model.addAttribute("producto", producto);
 		ProductoController.log.info("Se ha mostrado los detalles del producto con el codigo '" + producto.getCode() + "'");
-		return mav;
+		return "productos/productoDetails";
 	}
 
 	@GetMapping(value = {
@@ -113,8 +110,8 @@ public class ProductoController {
 	public String initCreationForm(final ModelMap model) {
 		Producto producto = new Producto();
 		List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
-		model.put("tipoProducto", tipo);
-		model.put("producto", producto);
+		model.addAttribute("tipoProducto", tipo);
+		model.addAttribute("producto", producto);
 		return ProductoController.VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 	}
 
@@ -124,9 +121,9 @@ public class ProductoController {
 	public String processCreationForm(@Valid final Producto producto, final BindingResult result, ModelMap model) {
 		if (result.hasErrors()) {
 			List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
-			model.put("tipoProducto", tipo);
-			model.put("tipoMedicamento", this.populateMedicamentoTypes());
-			model.put("producto", producto);
+			model.addAttribute("tipoProducto", tipo);
+			model.addAttribute("tipoMedicamento", this.populateMedicamentoTypes());
+			model.addAttribute("producto", producto);
 			return ProductoController.VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 		} else {
 			this.productoService.saveProducto(producto);
@@ -141,8 +138,8 @@ public class ProductoController {
 	public String showProductoEdit(@PathVariable("idProducto") final int productoId, final ModelMap model) {
 		Producto producto = this.productoService.findProductoById(productoId);
 		List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
-		model.put("tipoProducto", tipo);
-		model.put("producto", producto);
+		model.addAttribute("tipoProducto", tipo);
+		model.addAttribute("producto", producto);
 		return ProductoController.VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 	}
 
@@ -152,8 +149,8 @@ public class ProductoController {
 	public String ProductoEdit(@Valid final Producto producto, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			List<TipoProducto> tipo = Arrays.asList(TipoProducto.values());
-			model.put("tipoProducto", tipo);
-			model.put("tipoMedicamento", this.populateMedicamentoTypes());
+			model.addAttribute("tipoProducto", tipo);
+			model.addAttribute("tipoMedicamento", this.populateMedicamentoTypes());
 			return VIEWS_PRODUCT_CREATE_OR_UPDATE_FORM;
 		} else {
 			this.productoService.saveProducto(producto);

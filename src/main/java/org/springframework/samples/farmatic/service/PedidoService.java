@@ -15,6 +15,7 @@ import org.springframework.samples.farmatic.repository.LineaPedidoRepository;
 import org.springframework.samples.farmatic.repository.PedidoRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
 import org.springframework.samples.farmatic.service.exception.EstadoPedidoException;
+import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -84,12 +85,17 @@ public class PedidoService {
 	}
 
 	@Transactional
-	public void enviarPedido(final Proveedor provedor) throws DataAccessException {
+	public void enviarPedido(final Proveedor provedor) throws DataAccessException, LineaEmptyException {
 		//establece un pedido en enviado
 		Pedido pedido = this.pedidoActual();
 		pedido.setProveedor(provedor);//completa la informacion del pedido enviado(asigna un proveedor, actualiza el estado y añade la fecha del pedido)
 		pedido.setEstadoPedido(EstadoPedido.Pedido);
 		pedido.setFechaPedido(LocalDate.now());
+		
+		if(pedido.getLineaPedido().isEmpty()) {
+			throw new LineaEmptyException("Pedido");
+		}
+		
 		this.pedidoRepository.save(pedido);
 		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 		Pedido nuevoPedido = new Pedido();//crea el nuevo pedido borrador con un codigo de pedido nuevo

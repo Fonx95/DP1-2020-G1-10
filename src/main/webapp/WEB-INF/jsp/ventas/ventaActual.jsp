@@ -10,6 +10,19 @@
 	<h2> Venta en Proceso</h2>
 	<div class="row no-gutters">
 		<div class="col-12 col-sm-6 col-md-8">
+			<br>
+			<c:if test="${errors != null}">
+				<div class="alert alert-danger" role="alert">
+					<h4>Error!</h4>
+		            <div id="errors" class="errors">
+			            <ul>
+			            	<c:forEach items="${errors}" var="errorMessage">
+		                    	<li><c:out value="${errorMessage.defaultMessage}"/></li>
+		                    </c:forEach>
+	                    </ul>
+		            </div>
+		        </div>
+	        </c:if>
 		</div>
 		<div class="col-6 col-md-4">
 			<label>Importe Total:</label>
