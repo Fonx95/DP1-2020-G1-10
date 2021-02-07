@@ -96,13 +96,13 @@ public class PedidoServiceTests {
 	public void pedirPedidoPositivo() { // Modificamos un pedido de Borrador a Pedido.
 		Proveedor prov = this.proveedorRepository.findById(1);
 		Pedido p = this.pedidoService.pedidoActual(); // Nos traemos el pedido actual para comprobar que se realizan las modificaciones.
-		
-    try {
+
+		try {
 			this.pedidoService.enviarPedido(prov); // Función que cambia el estado de Borrador a Pedido, pone la nueva fecha de pedido y asigna el proveedor al que se pide.
-		}catch(LineaEmptyException ex) {
+		} catch (LineaEmptyException ex) {
 			ex.printStackTrace();//el pedido no tiene lineas de pedido
 		}
-		
+
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getProveedor().equals(prov));
 		Assertions.assertTrue(p1.getFechaPedido().equals(LocalDate.now()));
@@ -123,10 +123,10 @@ public class PedidoServiceTests {
 		List<Integer> stockActual = new ArrayList<>();
 		p.getLineaPedido().stream().forEach(x -> cantidadLp.add(x.getCantidad()));
 		p.getLineaPedido().stream().forEach(x -> stockOriginal.add(x.getProducto().getStock()));
-		
+
 		try {
 			this.pedidoService.recibirPedido(p); // Función que cambia el estado de Enviado a Recibido, pone fecha de entrega y suma las cantidades de producto.
-		}catch(EstadoPedidoException ex) {
+		} catch (EstadoPedidoException ex) {
 			ex.printStackTrace();//el pedido no tiene el estado adecuado
 		}
 		Pedido p1 = this.pedidoService.pedido(p.getId());
@@ -146,13 +146,13 @@ public class PedidoServiceTests {
 	@Transactional
 	public void enviarPedidoPositivo() {// Metodo que comprueba que un pedido cambia de estado a enviado por el proveedor
 		Pedido p = this.pedidoService.pedido(3);// Nos traemos un pedido en estado pedido de la BD
-		
-		try {	
+
+		try {
 			this.pedidoService.pedidoEnviado(p);
-		}catch(EstadoPedidoException ex) {
+		} catch (EstadoPedidoException ex) {
 			ex.printStackTrace();//el pedido no tiene el estado adecuado
 		}
-		
+
 		Pedido p1 = this.pedidoService.pedido(p.getId());
 		Assertions.assertTrue(p1.getEstadoPedido() == EstadoPedido.Enviado);// Comprobamos que el estado se ha cambiado a estado enviado
 	}
@@ -163,10 +163,15 @@ public class PedidoServiceTests {
 
 	@Test
 	@Transactional
-	public void pedirPedidoNegativo() { // Probamos a mandar un pedido a un proveedor nulo
+	public void pedirPedidoNegativo() { // Probamos a mandar un pedido sin lineas de pedido
 		Pedido p = this.pedidoService.pedidoActual();
-		this.pedidoService.enviarPedido(null); // No se realizarán los cambios y por lo tanto el pedido actual seguirá siendo el mismo.
-		Assertions.assertEquals(p, this.pedidoService.pedidoActual());
+		Proveedor prov = this.proveedorRepository.findById(1);
+		try {
+			this.pedidoService.enviarPedido(prov);
+		} catch (LineaEmptyException ex) {
+			ex.printStackTrace();
+		}
+		Assertions.assertThrows(LineaEmptyException.class, () -> this.pedidoService.enviarPedido(null)); // Comprobamos si salta la excepción adecuada.
 	}
 
 	@Test

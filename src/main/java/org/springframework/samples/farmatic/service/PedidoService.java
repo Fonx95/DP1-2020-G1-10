@@ -67,11 +67,11 @@ public class PedidoService {
 	public void recibirPedido(Pedido pedido) throws DataAccessException, EstadoPedidoException {
 		//establece un pedido en recibido
 		pedido = this.pedido(pedido.getId());
-		
-		if(pedido.getEstadoPedido() != EstadoPedido.Enviado) {
+
+		if (pedido.getEstadoPedido() != EstadoPedido.Enviado) {
 			throw new EstadoPedidoException();
 		}
-		
+
 		pedido.setEstadoPedido(EstadoPedido.Recibido);//completa la informacion del pedido recibido(actualiza el estado y añade la fecha de entrega)
 		pedido.setFechaEntrega(LocalDate.now());
 		for (LineaPedido linea : pedido.getLineaPedido()) {//actualiza el stock del producto con las cantidades recibidas
@@ -90,17 +90,17 @@ public class PedidoService {
 		pedido.setProveedor(provedor);//completa la informacion del pedido enviado(asigna un proveedor, actualiza el estado y añade la fecha del pedido)
 		pedido.setEstadoPedido(EstadoPedido.Pedido);
 		pedido.setFechaPedido(LocalDate.now());
-		
-		if(pedido.getLineaPedido().isEmpty()) {
+
+		if (pedido.getLineaPedido() == null || pedido.getLineaPedido().isEmpty()) {
 			throw new LineaEmptyException("Pedido");
 		}
-		
+
 		this.pedidoRepository.save(pedido);
-		log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
+		PedidoService.log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
 		Pedido nuevoPedido = new Pedido();//crea el nuevo pedido borrador con un codigo de pedido nuevo
 		nuevoPedido.setCodigo(this.getCodigoPedidoNuevo(pedido.getCodigo()));
 		this.pedidoRepository.save(nuevoPedido);
-		log.debug("El nuevo pedido actual con codigo '" + nuevoPedido.getCodigo() + "' e id " + nuevoPedido.getId() + " tiene el estado " + nuevoPedido.getEstadoPedido());
+		PedidoService.log.debug("El nuevo pedido actual con codigo '" + nuevoPedido.getCodigo() + "' e id " + nuevoPedido.getId() + " tiene el estado " + nuevoPedido.getEstadoPedido());
 	}
 
 	private String getCodigoPedidoNuevo(final String codigo) {
@@ -173,11 +173,11 @@ public class PedidoService {
 	public void pedidoEnviado(Pedido pedido) throws DataAccessException, EstadoPedidoException {
 		//establece un pedido en enviado por el proveedor
 		pedido = this.pedido(pedido.getId());
-		
-		if(pedido.getEstadoPedido() != EstadoPedido.Pedido) {
+
+		if (pedido.getEstadoPedido() != EstadoPedido.Pedido) {
 			throw new EstadoPedidoException();
 		}
-		
+
 		pedido.setEstadoPedido(EstadoPedido.Enviado);//actualiza la informacion del estado del pedido
 		this.pedidoRepository.save(pedido);
 		PedidoService.log.debug("El pedido con codigo '" + pedido.getCodigo() + "' e id " + pedido.getId() + " tiene el estado " + pedido.getEstadoPedido());
