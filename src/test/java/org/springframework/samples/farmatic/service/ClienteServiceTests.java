@@ -58,7 +58,7 @@ public class ClienteServiceTests {
 			assertThat(aux); // Comprobará que lo devuelto es una lista vacía.
 		}
 		
-		//Test positivos
+
 		
 		@Test
 		void shouldFindById() {
