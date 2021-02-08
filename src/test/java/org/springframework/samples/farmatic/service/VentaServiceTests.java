@@ -25,18 +25,17 @@ import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
+import org.springframework.samples.farmatic.model.validator.LineaVentaValidator;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
-<<<<<<< HEAD
 import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
-=======
 
->>>>>>> branch 'develop' of https://github.com/Fonx95/DP1-2020-G1-10.git
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,17 +87,14 @@ public class VentaServiceTests {
 	@Transactional
 	public void shouldInsertLineaVenta() {
 		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1)); // Generamos una nueva línea de venta con el servicio, esto le asigna la venta actual y el producto que le pasemos.
-		lv.setTipoTasa(TipoTasa.TSI002);
+		lv.setTipoTasa(TipoTasa.TSI001);
+		lv.setCantidad(1);
 
 		Assertions.assertNotNull(lv); // Comprobamos que no es nula.
 		
 		this.ventaService.saveLinea(lv); // Guardamos la linea.
-		Iterable<LineaVenta> lv2 = this.lineaRepository.findAll();
-		Collection<LineaVenta> lvs = new ArrayList<>();
-		lv2.iterator().forEachRemaining(x -> lvs.add(x)); // Todo esto es requerido para obtener la id que tiene la linea puesto que cambia sola al guardarse.
-
-		Assertions.assertTrue(this.lineaRepository.findById(lvs.size()).get().equals(lv));
-
+		Integer linea_id = lv.getId(); //obtenemos el id de la linea.
+		Assertions.assertTrue(this.lineaRepository.findById(linea_id).get().equals(lv));
 	}
 	
 	@Test
@@ -106,7 +102,6 @@ public class VentaServiceTests {
 	public void finalizarVentaPositivo() throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException { // Modificamos una venta de en proceso a finalizada.
 		Venta v = this.ventaService.ventaActual(); // Nos traemos la venta actual para comprobar que se realizan las modificaciones.
 		Assertions.assertTrue(v.getEstadoVenta() == EstadoVenta.enProceso);
-<<<<<<< HEAD
 		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1));
 		lv.setCantidad(1);
 		lv.setTipoTasa(TipoTasa.TSI001);
@@ -114,22 +109,22 @@ public class VentaServiceTests {
 		
 		v.addLinea(lv);
 		v.setCliente(this.clienteRepository.findById(1));
-		this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
-=======
-
+		
 		try {
 			this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
-		}catch(Exception e){
+		}catch(LineaEmptyException ex){
+			ex.printStackTrace();//el pedido no tiene lineas de pedido
 		}
     
->>>>>>> branch 'develop' of https://github.com/Fonx95/DP1-2020-G1-10.git
 		Venta v1 = this.ventaService.venta(v.getId());
 		Assertions.assertTrue(v1.getFecha().equals(LocalDate.now()));
 		Assertions.assertTrue(v1.getEstadoVenta() == EstadoVenta.Realizada);
-
-		Venta v2 = this.ventaService.ventaActual(); // La función anterior también crea un pedido nuevo.
+		
+		Venta v2 = this.ventaService.ventaActual(); // La función anterior también crea una venta nueva.
 		Assertions.assertNotNull(v2);
 		Assertions.assertTrue(v2.getEstadoVenta() == EstadoVenta.enProceso);
+
+		
 	}
 	
 	@Test
@@ -164,14 +159,14 @@ public class VentaServiceTests {
 	
 	@Test
 	@Transactional
-	public void finalizarVentaNegativo() {//Probamos a intentar finalizar una venta recien creada sin lineas de venta
-		Venta v = new Venta();
+	public void finalizarVentaNegativo() throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException {//Probamos a intentar finalizar una venta recien creada sin lineas de venta
+		Venta v = this.ventaService.ventaActual();
 		try {
 			this.ventaService.finalizarVenta(v);
+		} catch (LineaEmptyException ex) {
+			ex.printStackTrace();
 		}
-		catch(Exception e){
-			Assertions.assertNotNull(e);
-		}
+		Assertions.assertThrows(LineaEmptyException.class, () -> this.ventaService.finalizarVenta(v)); // Comprobamos si salta la excepción adecuada.
 		
 	}
 	
