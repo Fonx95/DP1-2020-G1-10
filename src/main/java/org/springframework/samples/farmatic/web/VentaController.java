@@ -116,6 +116,7 @@ public class VentaController {
 				model.remove("nuevaLinea");
 				return "ventas/ventaActual";
 			}else {
+				
 				this.ventaService.saveLinea(linea);
 				model.addAttribute("producto", producto);
 				model.remove("nuevaLinea");
@@ -126,8 +127,9 @@ public class VentaController {
 	}
 
 	@GetMapping(value = {"/ventas/actual/{lineaId}"})
-	public String showLineaEdit(@PathVariable("lineaId") final LineaVenta linea, final ModelMap model) {
+	public String showLineaEdit(@PathVariable("lineaId") final int idLinea, final ModelMap model) {
 		Producto producto = new Producto();
+		LineaVenta linea = this.ventaService.lineaById(idLinea);
 		model.addAttribute("producto", producto);
 		model.addAttribute("editaLinea", linea);
 		VentaController.log.info("Se ha mostrado la linea con id " + linea.getId() + " para ser modificada");

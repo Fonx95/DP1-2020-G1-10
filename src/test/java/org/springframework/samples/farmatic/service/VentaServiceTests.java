@@ -53,34 +53,34 @@ public class VentaServiceTests {
 	//Test positivo
 	
 	@Test
-	public void getVentaActual() { // Método que devuelve la venta actual auto creado por el sistema.
+	public void getVentaActual() { // Método que devuelve la venta actual creada automaticamente por el sistema
 		Venta v = this.ventaService.ventaActual();
-		Assertions.assertNotNull(v); // Comprobamos que no sea nulo.
-		Assertions.assertTrue(v.getEstadoVenta().equals(EstadoVenta.enProceso)); // Comprobamos que está en estado en proceso.
+		Assertions.assertNotNull(v); // vamos a comprobar que no sea nulo.
+		Assertions.assertTrue(v.getEstadoVenta().equals(EstadoVenta.enProceso)); // Comprobamos que está en proceso.
 	}
 	
 	@Test
-	public void shouldFindAllVentas() {// Método que comprueba que se listan las ventas
+	public void shouldFindAllVentas() {// Método que comprueba el correcto listado de las ventas
 		Collection<Venta> ventas = this.ventaService.findAllVentas();
 		Venta[] ventasArr = ventas.toArray(new Venta[ventas.size()]);
 		Collection<LineaVenta> lineasV1 = ventasArr[1].getLineaVenta();
 		Assertions.assertTrue(ventas.size() == 6);// Se comprueba el numero de ventas recibidas por la base de datos
-		Assertions.assertTrue(lineasV1.size() == 3);// Se comprueba que una de las ventas (que no sea la que esta en proceso) tiene lineas de ventas asignadas
+		Assertions.assertTrue(lineasV1.size() == 3);// Comprobamos que una de las ventas (que no sea la que esta en proceso) tiene lineas de ventas asignadas
 	}
 	
 	@Test
-	public void shouldFindVentaById() {// Metodo que comprueba los detalles de una venta
+	public void shouldFindVentaById() {// Metodo que comprueba los detalles de la venta
 		Venta venta = this.ventaService.venta(2);
 		Collection<LineaVenta> lineasV1 = venta.getLineaVenta();
-		Assertions.assertTrue(venta.getEstadoVenta().equals(EstadoVenta.Realizada));// Comprueba que el estado es el esperado
-		Assertions.assertNotNull(venta.getFecha());// Comprueba que la fecha de la venta esta asignada
+		Assertions.assertTrue(venta.getEstadoVenta().equals(EstadoVenta.Realizada));// Comprueba que tenemos el estado que queremos
+		Assertions.assertNotNull(venta.getFecha());// Comprueba que se ha asignado la fecha de la venta
 		Assertions.assertTrue(lineasV1.size() == 2);// Comprueba que tiene lineas de ventas asignadas
 	}
 	
 	@Test
 	@Transactional
 	public void shouldInsertLineaVenta() {
-		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1)); // Generamos una nueva línea de venta con el servicio, esto le asigna la venta actual y el producto que le pasemos.
+		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1)); // vamos a generar una nueva línea de venta usando el servicio
 		lv.setTipoTasa(TipoTasa.TSI001);
 		lv.setCantidad(1);
 
@@ -93,8 +93,8 @@ public class VentaServiceTests {
 	
 	@Test
 	@Transactional
-	public void finalizarVentaPositivo() throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException { // Modificamos una venta de en proceso a finalizada.
-		Venta v = this.ventaService.ventaActual(); // Nos traemos la venta actual para comprobar que se realizan las modificaciones.
+	public void finalizarVentaPositivo() throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException { // Actualizamos una venta de en proceso a finalizada.
+		Venta v = this.ventaService.ventaActual(); // cogemos la venta actual para comprobar que se han modificado los atributos
 		Assertions.assertTrue(v.getEstadoVenta() == EstadoVenta.enProceso);
 		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1));
 		lv.setCantidad(1);
@@ -107,7 +107,7 @@ public class VentaServiceTests {
 		try {
 			this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
 		}catch(LineaEmptyException ex){
-			ex.printStackTrace();//el pedido no tiene lineas de pedido
+			ex.printStackTrace();//la venta no tiene lineas de venta
 		}
     
 		Venta v1 = this.ventaService.venta(v.getId());
@@ -128,8 +128,12 @@ public class VentaServiceTests {
 		Double importe_inicial = v.getImporteTotal(); //establecemos los parametros iniciales
 		Double porPagar_inicial = v.getPorPagar();
 		this.ventaService.updateVenta(v);
-		Assertions.assertTrue(v.getImporteTotal() != importe_inicial); //comprobamos si los parametros se han actualizado
-		Assertions.assertTrue(v.getPorPagar() != porPagar_inicial);
+		Double importe_2 = v.getImporteTotal(); //establecemos los parametros actualizados
+		Double porPagar_2 = v.getPorPagar();
+		v.addLinea(this.lineaRepository.lineaVenta(1));
+		this.ventaService.updateVenta(v);
+		Assertions.assertTrue(v.getImporteTotal() != importe_inicial && v.getImporteTotal() != importe_2); //comprobamos si los parametros se han actualizado
+		Assertions.assertTrue(v.getPorPagar() != porPagar_inicial && v.getPorPagar() != porPagar_2);
 		
 		
 	}
@@ -138,7 +142,7 @@ public class VentaServiceTests {
 	
 	@Test
 	@Transactional
-	public void shouldNotInsertLineaVenta() { // No podmeos guardar porque directamente no podemos crear con el método usado por el sistema.
+	public void shouldNotInsertLineaVenta() { // No podemos guardar porque directamente no podemos crear con el método usado por el sistema.
 		try {
 			LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(0));
 		} catch (Exception e) {
