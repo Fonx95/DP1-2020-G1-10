@@ -4,7 +4,6 @@ package org.springframework.samples.farmatic.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Assertions;
@@ -17,16 +16,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Cliente;
-
-import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.LineaVenta;
-import org.springframework.samples.farmatic.model.Pedido;
-import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.TipoTasa;
 import org.springframework.samples.farmatic.model.Venta;
 import org.springframework.samples.farmatic.model.Venta.EstadoVenta;
 import org.springframework.samples.farmatic.model.validator.LineaVentaValidator;
-import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;

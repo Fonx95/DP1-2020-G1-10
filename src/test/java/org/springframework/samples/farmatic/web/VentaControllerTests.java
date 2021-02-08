@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.samples.farmatic.configuration.SecurityConfiguration;
+import org.springframework.samples.farmatic.model.Cliente;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.Venta;
@@ -32,6 +33,7 @@ public class VentaControllerTests {
 	
 	private static final int	TEST_LINEA_ID	= 1;
 	private static final int	TEST_VENTA_ID	= 1;
+	private static final int	TEST_CLT_ID		= 1;
 
 	@Autowired
 	private VentaController	ventaController;
@@ -43,7 +45,7 @@ public class VentaControllerTests {
 	private ProductoService		productoService;
 
 	@MockBean
-	private ClienteService	clienteService;
+	private ClienteService		clienteService;
 
 	@MockBean
 	private UserService			userService;
@@ -57,8 +59,18 @@ public class VentaControllerTests {
 
 	private LineaVenta			lineaTest;
 	
+	private Cliente				cltTest;
+	
 	@BeforeEach
 	void setup() {
+		Cliente clt = new Cliente();
+		clt.setDireccion("direccionTest");
+		clt.setLocalidad("localidadTest");
+		clt.setProvincia("provinciaTest");
+		clt.setId(VentaControllerTests.TEST_CLT_ID);
+		this.cltTest = clt;
+		Collection<Cliente> lc = new ArrayList<>();
+		lc.add(clt);
 		Venta v = new Venta();
 		Collection<LineaVenta> lv = new ArrayList<>();
 		v.setEstadoVenta(EstadoVenta.enProceso);
@@ -89,7 +101,7 @@ public class VentaControllerTests {
 		@Test
 		void testShowLineaEditSuccess() throws Exception {
 			this.mockMvc.perform(MockMvcRequestBuilders.get("/ventas/actual/{lineaId}", VentaControllerTests.TEST_LINEA_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
-				.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.view().name("ventas/editarLinea"));
+				.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.model().attributeExists("editaLinea")).andExpect(MockMvcResultMatchers.view().name("ventas/editarLinea"));
 		}
 
 }
