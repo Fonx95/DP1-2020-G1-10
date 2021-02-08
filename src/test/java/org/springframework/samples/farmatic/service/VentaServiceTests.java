@@ -1,5 +1,6 @@
 package org.springframework.samples.farmatic.service;
 
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.time.LocalDate;
@@ -7,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.junit.jupiter.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.Cliente;
+
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.LineaVenta;
 import org.springframework.samples.farmatic.model.Pedido;
@@ -27,9 +30,13 @@ import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.repository.ClienteRepository;
 import org.springframework.samples.farmatic.repository.LineaVentaRepository;
 import org.springframework.samples.farmatic.repository.ProductoRepository;
+<<<<<<< HEAD
 import org.springframework.samples.farmatic.service.exception.LineaEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaClienteEmptyException;
 import org.springframework.samples.farmatic.service.exception.VentaCompradorEmptyException;
+=======
+
+>>>>>>> branch 'develop' of https://github.com/Fonx95/DP1-2020-G1-10.git
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +44,7 @@ import org.springframework.transaction.annotation.Transactional;
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 public class VentaServiceTests {
 	
+
 	@Autowired
 	protected VentaService ventaService;
 
@@ -98,6 +106,7 @@ public class VentaServiceTests {
 	public void finalizarVentaPositivo() throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException { // Modificamos una venta de en proceso a finalizada.
 		Venta v = this.ventaService.ventaActual(); // Nos traemos la venta actual para comprobar que se realizan las modificaciones.
 		Assertions.assertTrue(v.getEstadoVenta() == EstadoVenta.enProceso);
+<<<<<<< HEAD
 		LineaVenta lv = this.ventaService.newLinea(this.productoRepository.findById(1));
 		lv.setCantidad(1);
 		lv.setTipoTasa(TipoTasa.TSI001);
@@ -106,6 +115,14 @@ public class VentaServiceTests {
 		v.addLinea(lv);
 		v.setCliente(this.clienteRepository.findById(1));
 		this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
+=======
+
+		try {
+			this.ventaService.finalizarVenta(v); // Función que cambia el estado de en proceso a finalizada y pone la nueva fecha de venta.
+		}catch(Exception e){
+		}
+    
+>>>>>>> branch 'develop' of https://github.com/Fonx95/DP1-2020-G1-10.git
 		Venta v1 = this.ventaService.venta(v.getId());
 		Assertions.assertTrue(v1.getFecha().equals(LocalDate.now()));
 		Assertions.assertTrue(v1.getEstadoVenta() == EstadoVenta.Realizada);
@@ -171,4 +188,5 @@ public class VentaServiceTests {
 		}
 		
 	}
+
 }
