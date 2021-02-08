@@ -36,9 +36,9 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 @WebMvcTest(controllers = VentaController.class, excludeFilters = @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = WebSecurityConfigurer.class), excludeAutoConfiguration = SecurityConfiguration.class)
 public class VentaControllerTests {
 	
-	private static final int	TEST_LINEA_ID	= 1;
-	private static final int	TEST_VENTA_ID	= 1;
-	private static final int	TEST_CLT_ID		= 1;
+	private static final int	LINEAVENTA_ID	= 1;
+	private static final int	VENTA_ID	= 1;
+	private static final int	CLT_ID		= 1;
 
 	@Autowired
 	private VentaController	ventaController;
@@ -72,7 +72,7 @@ public class VentaControllerTests {
 		clt.setDireccion("direccionTest");
 		clt.setLocalidad("localidadTest");
 		clt.setProvincia("provinciaTest");
-		clt.setId(VentaControllerTests.TEST_CLT_ID);
+		clt.setId(VentaControllerTests.CLT_ID);
 		this.cltTest = clt;
 		Collection<Cliente> lc = new ArrayList<>();
 		lc.add(clt);
@@ -80,10 +80,10 @@ public class VentaControllerTests {
 		Venta v = new Venta();
 		Collection<LineaVenta> lv = new ArrayList<>();
 		v.setEstadoVenta(EstadoVenta.enProceso);
-		v.setId(VentaControllerTests.TEST_VENTA_ID);
+		v.setId(VentaControllerTests.VENTA_ID);
 		v.setLineaVenta(lv);
 		this.ventaTest = v;
-		BDDMockito.given(this.ventaService.venta(VentaControllerTests.TEST_VENTA_ID)).willReturn(this.ventaTest);
+		BDDMockito.given(this.ventaService.venta(VentaControllerTests.VENTA_ID)).willReturn(this.ventaTest);
 		Producto producto = new Producto();
 		producto.setCode("Pr-test");
 		producto.setId(1);
@@ -91,7 +91,7 @@ public class VentaControllerTests {
 		this.productoTest = producto;
 		BDDMockito.given(this.productoService.findProductoByCode(this.productoTest.getCode())).willReturn(this.productoTest);
 		LineaVenta l = new LineaVenta();
-		l.setId(VentaControllerTests.TEST_LINEA_ID);
+		l.setId(VentaControllerTests.LINEAVENTA_ID);
 		l.setVenta(this.ventaTest);
 		l.setCantidad(1);
 		l.setProducto(producto);
@@ -100,8 +100,8 @@ public class VentaControllerTests {
 		this.lineaTest = l;
 		BDDMockito.given(this.ventaService.ventaActual()).willReturn(this.ventaTest);
 		BDDMockito.given(this.ventaService.newLinea(this.productoTest)).willReturn(this.lineaTest);
-		BDDMockito.given(this.ventaService.existelinea(this.productoTest)).willReturn(VentaControllerTests.TEST_LINEA_ID);
-		BDDMockito.given(this.ventaService.lineaById(VentaControllerTests.TEST_LINEA_ID)).willReturn(this.lineaTest);
+		BDDMockito.given(this.ventaService.existelinea(this.productoTest)).willReturn(VentaControllerTests.LINEAVENTA_ID);
+		BDDMockito.given(this.ventaService.lineaById(VentaControllerTests.LINEAVENTA_ID)).willReturn(this.lineaTest);
 		
 	}
 	
@@ -109,7 +109,7 @@ public class VentaControllerTests {
 		@WithMockUser(value = "spring", authorities = "farmaceutico")
 		@Test
 		void testShowLineaEditSuccess() throws Exception {
-			this.mockMvc.perform(MockMvcRequestBuilders.get("/ventas/actual/{lineaId}", VentaControllerTests.TEST_LINEA_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
+			this.mockMvc.perform(MockMvcRequestBuilders.get("/ventas/actual/{lineaId}", VentaControllerTests.LINEAVENTA_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
 				.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.model().attributeExists("editaLinea")).andExpect(MockMvcResultMatchers.view().name("ventas/editarLinea"));
 		}
 		
@@ -124,7 +124,7 @@ public class VentaControllerTests {
 		@Test
 		void testVentaProcessCreationSuccess1() throws Exception {
 			this.mockMvc.perform(MockMvcRequestBuilders.post("/ventas/actual").flashAttr("producto", this.productoTest).flashAttr("nuevaLinea", this.lineaTest).with(SecurityMockMvcRequestPostProcessors.csrf()))
-				.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/ventas/actual/" + VentaControllerTests.TEST_LINEA_ID));
+				.andExpect(MockMvcResultMatchers.status().is3xxRedirection()).andExpect(MockMvcResultMatchers.view().name("redirect:/ventas/actual/" + VentaControllerTests.LINEAVENTA_ID));
 		}
 		
 		@WithMockUser(value = "spring", authorities = "farmaceutico") // testeamos la finalizacion de una venta
