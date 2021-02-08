@@ -211,6 +211,12 @@ public class VentaService {
 	}
 
 	//---------Metodos referente a LINEAS DE VENTA---------
+	
+	@Transactional 
+	public LineaVenta lineaById(int id) throws DataAccessException {
+		//busqueda de una linea pedido por su id
+		return this.lineaRepository.findById(id).get();
+	}
 
 	@Transactional
 	public Integer existelinea(final Producto producto) {
