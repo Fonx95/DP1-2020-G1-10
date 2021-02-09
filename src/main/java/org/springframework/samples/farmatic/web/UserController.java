@@ -17,6 +17,7 @@
 package org.springframework.samples.farmatic.web;
 
 import javax.persistence.EntityNotFoundException;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.Authorities;
@@ -25,15 +26,17 @@ import org.springframework.samples.farmatic.model.Farmaceutico;
 import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.model.UserValidate;
+import org.springframework.samples.farmatic.model.validator.UserValidator;
 import org.springframework.samples.farmatic.service.AuthoritiesService;
 import org.springframework.samples.farmatic.service.ClienteService;
 import org.springframework.samples.farmatic.service.FarmaceuticoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
 import org.springframework.samples.farmatic.service.UserService;
+import org.springframework.samples.farmatic.service.exception.MatchPasswordException;
+import org.springframework.samples.farmatic.service.exception.UserAlreadyExit;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -71,9 +74,9 @@ public class UserController {
 		this.proveedorService = proveedorService;
 	}
 	
-	@InitBinder
+	@InitBinder("user")
 	public void setAllowedFields(final WebDataBinder dataBinder) {
-		dataBinder.setDisallowedFields("id");
+		dataBinder.setValidator(new UserValidator(this.userService.getCurrentUser()));
 	}
 	
 	@GetMapping("users")
@@ -100,7 +103,6 @@ public class UserController {
 	public String newUser(ModelMap model) {
 		Cliente cliente = new Cliente();
 		model.addAttribute("cliente", cliente);
-		model.addAttribute("dni", new String());
 		return "users/userRegister";
 	}
 	
@@ -115,15 +117,32 @@ public class UserController {
 				result.rejectValue("dni", "clienteNotFound");
 				return "users/userRegister";
 			}
-			cliente.setUser(new User());
-			model.addAttribute("cliente", cliente);
-			return "users/userRegister";
+			if(cliente.getUser() != null) {
+				result.rejectValue("dni", "clienteAlreadyExit", "Este cliente ya tiene cuenta de usuario");
+				return "users/userRegister";
+			}else {
+				cliente.setUser(new User());
+				model.addAttribute("cliente", cliente);
+				return "users/userRegister";
+			}
 		}else {
-			this.userService.saveUser(cliente.getUser());
-			this.authoritiesService.saveAuthorities(cliente.getUser().getUsername(), "cliente");
-			this.clienteService.saveCliente(cliente);
-			log.info("El cliente con dni '" + cliente.getDni() + "' se ha registrado como usuario");
-			return "redirect:../";
+			try {
+				this.userService.createUser(cliente.getUser());
+				this.authoritiesService.saveAuthorities(cliente.getUser().getUsername(), "cliente");
+				this.clienteService.saveCliente(cliente);
+				log.info("El cliente con dni '" + cliente.getDni() + "' se ha registrado como usuario");
+				return "redirect:../";
+			}catch(UserAlreadyExit ex) {
+				result.rejectValue("user.username", "UserFault", ex.getMessage());
+				model.addAttribute("cliente", cliente);
+				log.warn("Se ha introducido un username ya existente");
+				return "users/userRegister";
+			}catch(MatchPasswordException ex) {
+				result.rejectValue("user.password", "required");
+				model.addAttribute("cliente", cliente);
+				log.warn("Se ha introducido una contraseña incorrecta");
+				return "users/userRegister";
+			}
 		}
 	}
 	
@@ -136,34 +155,16 @@ public class UserController {
 	}
 	
 	@PostMapping("/users/password")
-	public String changePassword(@ModelAttribute("user") UserValidate user, final BindingResult result, ModelMap model) {
+	public String changePassword(@ModelAttribute("user") @Valid UserValidate user, final BindingResult result, ModelMap model) {
 		if(result.hasErrors()) {
+			log.warn("El usuario '" + user.getUsername() + "' ha tenido " + result.getFieldErrorCount() + " errores al intentar cambiar la contraseña");
 			return "users/passwordEdit";
 		}else {
 			User CurrentUser = this.userService.getCurrentUser();
-			if(CurrentUser.getPassword().equals(user.getPassword()) && user.getNewPassword().equals(user.getValidPassword())) {
-				if(!user.getNewPassword().isEmpty()) {
-					CurrentUser.setPassword(user.getNewPassword());
-					this.userService.saveUser(CurrentUser);
-					log.info("El usuario '" + CurrentUser.getUsername() + "' ha cambiado satisfactoriamente su contraseña");
-					return "redirect:../";
-				}else {
-					FieldError err = new FieldError("PassException", "newPassword", "Introduce una nueva contraseña");
-					result.addError(err);
-					log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
-					return "users/passwordEdit";
-				}
-			}else if(!CurrentUser.getPassword().equals(user.getPassword())){
-				FieldError err = new FieldError("PassException", "password", "Contraseña incorrecta");
-				result.addError(err);
-				log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
-				return "users/passwordEdit";
-			}else {
-				FieldError err = new FieldError("PassException", "newPassword", "Las contraseñas no coinciden");
-				result.addError(err);
-				log.warn("El usuario '" + CurrentUser.getUsername() + "' ha tenido un error 'PassException'");
-				return "users/passwordEdit";
-			}
+			CurrentUser.setPassword(user.getNewPassword());
+			this.userService.updateUser(CurrentUser);
+			log.info("El usuario '" + CurrentUser.getUsername() + "' ha cambiado satisfactoriamente su contraseña");
+			return "redirect:../";
 		}
 	}
 }

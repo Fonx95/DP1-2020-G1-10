@@ -14,7 +14,7 @@
 		<c:choose>
 			<c:when test="${cliente['new']}">
 				<form:form modelAttribute="cliente" class="form-horizontal" id="add-cliente-form">
-					<farmatic:inputType label="DNI" name="dni" type="text" holder="DNI" display="2 control"/>
+					<farmatic:inputType label="DNI" name="dni" type="text" holder="DNI" display="2 control" value="${cliente.dni}"/>
 					<button class="btn btn-default" type="submit">Aceptar</button>
 				</form:form>
 			</c:when>
@@ -56,9 +56,23 @@
 							<input readonly class="form-control" type="text" name="direccion" value="${cliente.direccion}">
 						</div>
 					</div>
-					<farmatic:inputType label="Usuario: " name="user.username" type="text" holder="Usuario" display="5 left"/>
+					<form:hidden path="Id"/>
+					<hr>
+					<farmatic:inputType label="Usuario: " name="user.username" type="text" value="${cliente.user.username}" holder="Usuario" display="5 left"/>
 					<farmatic:inputType label="Contraseña: " name="user.password" type="password" holder="Contraseña" display="5 left"/>
-					<input type="hidden" name="Id" value="${cliente.id}"/>
+					<spring:bind path="user.password">
+						<c:if test="${status.error}">
+			                <div class="alert alert-danger" role="alert">
+			                	<h4>La contraseña debe:</h4>
+			                	<ul>
+				                    <li>Tener entre 5 y 16 caracteres</li>
+				                    <li>Al menos un numero</li>
+				                    <li>Al menos una minuscula</li>
+				                    <li>Al menos una mayuscula</li>
+				            	</ul>
+			                </div>
+			            </c:if>
+					</spring:bind>
 					<button class="btn btn-default" type="submit">Aceptar</button>
 				</form:form>
 			</c:otherwise>

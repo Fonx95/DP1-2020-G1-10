@@ -90,7 +90,8 @@ public class VentaController {
 	}
 
 	@PostMapping(value = {"/ventas/actual"})
-	public String ventaProcessCreation(@ModelAttribute("producto") Producto producto, @ModelAttribute("nuevaLinea") @Valid LineaVenta linea, final BindingResult result, final ModelMap model) {
+	public String ventaProcessCreation(@ModelAttribute("producto") Producto producto, 
+			@ModelAttribute("nuevaLinea") @Valid LineaVenta linea, final BindingResult result, final ModelMap model) {
 		if (result.hasErrors()) {
 			model.addAttribute("nuevaLinea", linea);
 			return "/ventas/ventaActual";

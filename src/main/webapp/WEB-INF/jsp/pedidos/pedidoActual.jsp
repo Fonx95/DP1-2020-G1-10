@@ -17,7 +17,7 @@
 	            	<c:forEach items="${errors}" var="errorMessage">
                     	<li><c:out value="${errorMessage.defaultMessage}"/></li>
                     </c:forEach>
-                   </ul>
+            	</ul>
             </div>
         </div>
        </c:if>
