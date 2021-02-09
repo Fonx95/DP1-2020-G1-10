@@ -6,17 +6,15 @@ import java.util.Collection;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
-import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.samples.farmatic.model.LineaPedido;
 import org.springframework.samples.farmatic.model.Pedido;
 import org.springframework.samples.farmatic.model.Pedido.EstadoPedido;
-import org.springframework.samples.farmatic.model.validator.LineaPedidoValidator;
 import org.springframework.samples.farmatic.model.Pedidos;
 import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.Proveedor;
 import org.springframework.samples.farmatic.model.User;
+import org.springframework.samples.farmatic.model.validator.LineaPedidoValidator;
 import org.springframework.samples.farmatic.service.PedidoService;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.samples.farmatic.service.ProveedorService;
@@ -32,6 +30,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -61,16 +60,16 @@ public class PedidoController {
 		dataBinder.setDisallowedFields("id");
 	}
 
-	
-	@InitBinder(value = {"nuevaLinea","editaLinea"})
-	public void initLineaVentaBinder(WebDataBinder dataBinder) {
+	@InitBinder(value = {
+		"nuevaLinea", "editaLinea"
+	})
+	public void initLineaVentaBinder(final WebDataBinder dataBinder) {
 		dataBinder.setValidator(new LineaPedidoValidator());
 	}
 
-
 	/**
 	 * Por defecto al llamar a un @GetMapping se devuelve un modelo de {@link Pedido} que corresponde con el pedido actual.
-	 * 
+	 *
 	 * @return Un pedido con el estado Borrador
 	 */
 
@@ -84,7 +83,7 @@ public class PedidoController {
 
 	/**
 	 * Este metodo lista todos los {@link Pedidos} y los muestra en la vista pedidoList.jsp.
-	 * 
+	 *
 	 * @param model
 	 *            El modelo que trae de la vista
 	 */
@@ -103,7 +102,7 @@ public class PedidoController {
 	/**
 	 * Este metodo es un @GetMapping que, pasandole un Id, devuelve un {@link Pedido} a la vista pedidoDetails.jsp.
 	 * Pero si el pedido es de tipo borrador te redirecciona a "pedidos/actual".
-	 * 
+	 *
 	 * @param pedido
 	 *            El pedido que se contruye al pasarle el id de la vista
 	 * @param model
@@ -125,7 +124,7 @@ public class PedidoController {
 
 	/**
 	 * Este metodo es un @PostMapping en el que se modifica un {@link Pedido} el estado a Recibido.
-	 * 
+	 *
 	 * @param pedido
 	 *            El pedido que recibe del formulario de la vista
 	 * @param result
@@ -135,15 +134,19 @@ public class PedidoController {
 	 */
 
 	@PostMapping(value = "/pedidos/{id}")
-	public String pedidoRecibido(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model) {
+	public String pedidoRecibido(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model, @RequestParam(value = "version", required = false) final Integer version) {
 		if (result.hasErrors()) {
 			return "/pedidos/" + pedido.getId();
 		} else {
 			try {
+				if (pedido.getVersion() != version) {
+					model.addAttribute("message", "Concurrent modfication of pedido");
+					return "redirect:/pedidos/" + pedido.getId();
+				}
 				this.pedidoService.recibirPedido(pedido);
 				PedidoController.log.info("El pedido con el codigo '" + pedido.getCodigo() + "' ha sido recibido");
 				return "redirect:/pedidos/" + pedido.getId();
-			}catch(EstadoPedidoException ex) {
+			} catch (EstadoPedidoException ex) {
 				model.addAttribute("codigo", "415");
 				model.addAttribute("titulo", "Error al procesar el pedido");
 				model.addAttribute("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Recibido");
@@ -154,7 +157,7 @@ public class PedidoController {
 
 	/**
 	 * Este metodo es un @GetMapping que muestra una vista con el pedido actual
-	 * 
+	 *
 	 * @param model
 	 *            El modelo que trae de la vista
 	 */
@@ -172,7 +175,7 @@ public class PedidoController {
 	/**
 	 * Este es un metodo @PostMapping que primero mira si ha recibido un codigo de un {@link Producto} y, si es asi, lo busca en la BD y crea la {@link LineaPedido}, pero si la linea ya exite te redireciona a su vista de edicion.
 	 * Si en cambio no recibe un codigo de un {@link Producto} entonces guarda la {@link LineaPedido} en el pedido actual.
-	 * 
+	 *
 	 * @param producto
 	 *            Un tipo Producto con solo el campo "code" si procede
 	 * @param linea
@@ -208,10 +211,10 @@ public class PedidoController {
 				return "/pedidos/pedidoActual";
 			}
 		} else {
-			if(linea.getCantidad() == 0) {
+			if (linea.getCantidad() == 0) {
 				model.remove("nuevaLinea");
 				return "/pedidos/pedidoActual";
-			}else {
+			} else {
 				this.pedidoService.saveLinea(linea);
 				model.remove("nuevaLinea");
 				model.addAttribute("producto", producto);
@@ -223,7 +226,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @GetMapping que muestra una vista preparada para editar una {@link LineaPedido}
-	 * 
+	 *
 	 * @param linea
 	 *            La linea de pedido que recibe de la vista y devuelve de nuevo
 	 * @param model
@@ -246,7 +249,7 @@ public class PedidoController {
 	 * Este es un metodo @PostMapping que primero mira si se ha introducido un codigo de {@link Producto} y lo redirecciona
 	 * al metodo que buscaria el producto. Si no es asi miraria se ha actualizado la linea con cantidad 0 la eliminaria de la BD.
 	 * Si no es ninguna de las anteriores actualizaria la {@link LineaPedido} con la nueva cantidad introducida
-	 * 
+	 *
 	 * @param producto
 	 *            Un tipo Producto con solo el campo "code" si procede
 	 * @param linea
@@ -279,7 +282,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @GetMapping que muestra la vista de detalles del pedido actual para para seleccionar un {@link Proveedor} y pedir el {@link Pedido}
-	 * 
+	 *
 	 * @param model
 	 *            El modelo que recibe de la vista y devuelve de nuevo
 	 */
@@ -298,7 +301,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @PostMapping que recibe un {@link Proveedor} seleccionado en la vista y cambiaria el estado del {@link Pedido} borrador a pedido
-	 * 
+	 *
 	 * @param proveedor
 	 *            Un proveedor que recibe de la vista
 	 * @param result
@@ -310,15 +313,20 @@ public class PedidoController {
 	@PostMapping(value = {
 		"/pedidos/actual/pedir"
 	})
-	public String createPedido(@Valid final Proveedor proveedor, final BindingResult result, final ModelMap model) {
+	public String createPedido(@Valid final Proveedor proveedor, final BindingResult result, final ModelMap model, @RequestParam(value = "version", required = false) final Integer version) {
 		if (result.hasErrors()) {
 			return "pedidos/enviarPedido";
 		} else {
 			try {
+				Pedido pedido = this.pedidoService.pedidoActual();
+				if (pedido.getVersion() != version) {
+					model.addAttribute("message", "Concurrent modfication of pedido");
+					return "pedidos/enviarPedido";
+				}
 				this.pedidoService.enviarPedido(proveedor);
 				PedidoController.log.info("El pedido borrador se ha pedido al proveedor " + proveedor.getEmpresa());
 				return "redirect:/pedidos";
-			}catch(LineaEmptyException ex) {
+			} catch (LineaEmptyException ex) {
 				result.reject("lineaEmpty", ex.getMessage());
 				model.addAttribute("errors", result.getAllErrors());
 				return "pedidos/pedidoActual";
@@ -330,7 +338,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @GetMapping que muestra los {@link Pedidos} del {@link Proveedor} que ha iniciado sesion en el sistema
-	 * 
+	 *
 	 * @param model
 	 *            El modelo que recibe de la vista y devuelve de nuevo
 	 */
@@ -349,7 +357,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @GetMapping que muestra los detalles de un {@link Pedido} recibido por el {@link Proveedor} que ha iniciado sesion en el sistema
-	 * 
+	 *
 	 * @param pedidoId
 	 *            Id de un pedido
 	 * @param model
@@ -369,7 +377,7 @@ public class PedidoController {
 
 	/**
 	 * Este es un metodo @PostMapping que cambia el estado de un {@link Pedido} a enviado por parte de un {@link Proveedor} que ha inicado sesion en el sistema
-	 * 
+	 *
 	 * @param pedido
 	 *            Un pedido que recibe del formulario de la vista
 	 * @param result
@@ -379,15 +387,19 @@ public class PedidoController {
 	 */
 
 	@PostMapping(value = "/proveedor/{id}")
-	public String pedidoEnviado(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model) {
+	public String pedidoEnviado(@ModelAttribute("pedido") final Pedido pedido, final BindingResult result, final ModelMap model, @RequestParam(value = "version", required = false) final Integer version) {
 		if (result.hasErrors()) {
 			return "pedidos/pedidoDetails";
 		} else {
 			try {
+				if (pedido.getVersion() != version) {
+					model.addAttribute("message", "Concurrent modfication of pedido");
+					return "redirect:/proveedor/" + pedido.getId();
+				}
 				this.pedidoService.pedidoEnviado(pedido);
 				PedidoController.log.info("El pedido con el codigo: '" + pedido.getCodigo() + "' ha sido cambiado a Enviado");
 				return "redirect:/proveedor/" + pedido.getId();
-			}catch(EstadoPedidoException ex) {
+			} catch (EstadoPedidoException ex) {
 				model.addAttribute("codigo", "414");
 				model.addAttribute("titulo", "Error al procesar el pedido");
 				model.addAttribute("descripcion", "No se puede cambiar el estado del pedido de " + pedido.getEstadoPedido() + " a Enviado");

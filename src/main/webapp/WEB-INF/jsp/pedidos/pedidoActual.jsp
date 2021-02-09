@@ -9,6 +9,7 @@
 <farmatic:layout pageName= "pedidos">
 	<h2> Pedido en Proceso</h2>
 	<br>
+	<input type="hidden" name="version" value="${pedidoActual.version}"/>
 	<c:if test="${errors != null}">
 		<div class="alert alert-danger" role="alert">
 			<h4>Error!</h4>

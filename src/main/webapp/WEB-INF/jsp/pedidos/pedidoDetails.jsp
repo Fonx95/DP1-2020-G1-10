@@ -39,6 +39,7 @@
 	<c:if test="${pedido.estadoPedido == 'Enviado'}">
 		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
 			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<input type="hidden" name="version" value="${pedido.version}"/>
 			<label class="control-label">Pedido recibido: </label>
 			<button class="btn btn-default btn-sm" type="submit">
            		<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
@@ -96,6 +97,7 @@
 	<c:if test="${pedido.estadoPedido == 'Pedido'}">
 		<form:form modelAttribute="pedido" class="form-horizontal" id="edit-pedido-form">
 			<input type="hidden" name="Id" value="${pedido.id}"/>
+			<input type="hidden" name="version" value="${pedido.version}"/>
 			<button class="btn btn-default btn-right" type="submit">Enviar</button>
 		</form:form>
 	</c:if>

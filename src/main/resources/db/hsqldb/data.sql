@@ -86,12 +86,12 @@ INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VAL
 INSERT INTO rel_productos_tipo_medicamentos(Id_producto,Id_tipo_medicamento) VALUES (11,4);
 
 --Pedidos
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-006',null,null,2,null);
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-005','2020-11-30',null,0,1);
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-004','2020-11-29',null,3,1);
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-003','2020-11-28','2020-11-29',1,1);
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-002','2020-11-27','2020-11-28',1,2);
-INSERT INTO pedidos(codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES ('P-001','2020-11-26','2020-11-27',1,2);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-006',null,null,2,null);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-005','2020-11-30',null,0,1);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-004','2020-11-29',null,3,1);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-003','2020-11-28','2020-11-29',1,1);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-002','2020-11-27','2020-11-28',1,2);
+INSERT INTO pedidos(version,codigo,fecha_pedido,fecha_entrega,Estado,proveedor_id) VALUES (1,'P-001','2020-11-26','2020-11-27',1,2);
 
 --LineaPedidos
 INSERT INTO linea_Pedidos(cantidad,pedido_id,producto_id) VALUES (2,1,1);

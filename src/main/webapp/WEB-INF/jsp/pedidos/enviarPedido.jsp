@@ -8,6 +8,7 @@
 
 <farmatic:layout pageName= "pedidos">
 	<h2>Informacion del Pedido</h2>
+	<input type="hidden" name="version" value="${pedidoActual.version}"/>
 	<form:form modelAttribute="proveedor" class="form-horizontal" id="edit-linea-form">
 		<table class = "table table-striped">
 			<tr>
