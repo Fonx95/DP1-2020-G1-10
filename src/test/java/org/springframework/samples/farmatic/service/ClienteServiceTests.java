@@ -103,7 +103,7 @@ public class ClienteServiceTests {
 
 		@Test
 		void shouldNotFinClienteUser() {
-			//User user=this.UserService.findUser("farm1").get();
+		
 			User user1= new User();
 			Cliente cliente10 = new Cliente();
 			cliente10.setProvincia("Sevilla");
@@ -116,7 +116,7 @@ public class ClienteServiceTests {
 			user10.setUsername("cliente10");
 			cliente10.setDni("20035098z");
 			cliente10.setSurnames("Maria Pola");
-			//Assertions.assertThat(this.clienteService.findClienteUser(user1)).isNull();
+			
 			assertThrows(EntityNotFoundException.class, ()->{this.clienteService.findClienteUser(user10);});
 		
 		}
