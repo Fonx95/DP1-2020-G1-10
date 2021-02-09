@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.NoSuchElementException;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
@@ -102,9 +103,21 @@ public class ClienteServiceTests {
 
 		@Test
 		void shouldNotFinClienteUser() {
-			User user=this.UserService.findUser("farm1").get();
+		
+			User user1= new User();
+			Cliente cliente10 = new Cliente();
+			cliente10.setProvincia("Sevilla");
+			cliente10.setLocalidad("Alcala");
+			cliente10.setDireccion("Calle Pinto");
+			cliente10.setPorPagarTotal(35.0);
+			User user10= new User();
+			user10.setCliente(cliente10);
+			user10.setPassword("1234");
+			user10.setUsername("cliente10");
+			cliente10.setDni("20035098z");
+			cliente10.setSurnames("Maria Pola");
 			
-			Assertions.assertThat(this.clienteService.findClienteUser(user)).isNull();
+			assertThrows(EntityNotFoundException.class, ()->{this.clienteService.findClienteUser(user10);});
 		
 		}
 		@Test
