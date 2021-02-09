@@ -42,15 +42,12 @@ public class ClienteServiceTests {
 		@Test
 		void shouldFindVentasByClient() {
 			Cliente cliente = this.clienteRepository.findById(2);
-			Iterable<Venta> aux = cliente.getVenta();
+			Collection<Venta> aux = cliente.getVenta();
 			//System.out.println(aux);
-			assertThat(aux.iterator().next() != null); // Comprobará que lo devuelto no sea nulo.
-
-			Collection<Venta> lista = new HashSet<>();
-			aux.iterator().forEachRemaining(x -> lista.add(x));
-			assertThat(lista.size()).isEqualTo(2); // Comprobará que el número de elementos de la lista sea correcto. Depende de la base de datos.
+			assertThat(aux.size()).isEqualTo(2); // Comprobará que el número de elementos de la lista sea correcto. Depende de la base de datos.
 		}
 		
+		@Test
 		void shouldNotFindVentasByClient() {
 			Cliente cliente = this.clienteRepository.findById(1);
 			Collection<Venta> aux = cliente.getVenta();

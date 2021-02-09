@@ -13,6 +13,7 @@ import org.springframework.samples.farmatic.model.Producto;
 import org.springframework.samples.farmatic.model.TipoMedicamento;
 import org.springframework.samples.farmatic.model.TipoProducto;
 import org.springframework.samples.farmatic.model.validator.ProductoValidator;
+import org.springframework.samples.farmatic.repository.TipoMedicamentoRepository;
 import org.springframework.samples.farmatic.service.ProductoService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -33,10 +34,12 @@ public class ProductoController {
 
 	private final ProductoService	productoService;
 
+	private final TipoMedicamentoRepository	tipoMedicamentoRepository;
 
 	@Autowired
-	public ProductoController(final ProductoService productService) {
+	public ProductoController(final ProductoService productService, final TipoMedicamentoRepository	tipoMedicamentoRepository) {
 		this.productoService = productService;
+		this.tipoMedicamentoRepository = tipoMedicamentoRepository;
 	}
 
 	@InitBinder("producto")
@@ -162,7 +165,8 @@ public class ProductoController {
 	@GetMapping(value = {
 		"/productos/tipo/{idTipo}"
 	})
-	public String showProductoTipo(@PathVariable("idTipo") final TipoMedicamento tipo, final ModelMap model) {
+	public String showProductoTipo(@PathVariable("idTipo") final int idTipo, final ModelMap model) {
+		TipoMedicamento tipo = this.tipoMedicamentoRepository.findById(idTipo).get();
 		Collection<Producto> productos = this.productoService.findProductosByTipo(tipo);
 		model.addAttribute("productos", productos);
 		model.addAttribute("producto", new Producto());
