@@ -93,7 +93,9 @@ public class PedidoControllerTests {
 	@WithMockUser(value = "spring", authorities = "farmaceutico")
 	@Test
 	void testShowLineaEditSuccess() throws Exception {
-		this.mockMvc.perform(MockMvcRequestBuilders.get("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).with(SecurityMockMvcRequestPostProcessors.csrf())).andExpect(MockMvcResultMatchers.status().isOk())
-			.andExpect(MockMvcResultMatchers.model().attributeExists("producto")).andExpect(MockMvcResultMatchers.view().name("pedidos/editarLinea"));
+		this.mockMvc.perform(MockMvcRequestBuilders.get("/pedidos/actual/{lineaId}", PedidoControllerTests.TEST_LINEA_ID).with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andExpect(MockMvcResultMatchers.status().isOk())
+			.andExpect(MockMvcResultMatchers.model().attributeExists("producto"))
+			.andExpect(MockMvcResultMatchers.view().name("pedidos/editarLinea"));
 	}
 }

@@ -16,12 +16,15 @@
 package org.springframework.samples.farmatic.service;
 
 
+import java.util.Collection;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.samples.farmatic.model.User;
 import org.springframework.samples.farmatic.repository.UserRepository;
+import org.springframework.samples.farmatic.service.exception.MatchPasswordException;
+import org.springframework.samples.farmatic.service.exception.UserAlreadyExit;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -46,9 +49,21 @@ public class UserService {
 		this.userRepository = userRepository;
 	}
 
-	@Transactional
-	public void saveUser(User user) throws DataAccessException {
+	@Transactional(rollbackFor = {UserAlreadyExit.class, MatchPasswordException.class})
+	public void createUser(User user) throws DataAccessException, UserAlreadyExit, MatchPasswordException {
+		Collection<User> users = this.userRepository.findAll();
+		for(User user1 : users) {
+			if(user1.getUsername().equals(user.getUsername())) {
+				throw new UserAlreadyExit(user);
+			}
+		}
+		validatePassword(user.getPassword());
 		user.setEnabled(true);
+		userRepository.save(user);
+	}
+	
+	@Transactional
+	public void updateUser (User user) throws DataAccessException {
 		userRepository.save(user);
 	}
 	
@@ -62,5 +77,14 @@ public class UserService {
 		String currentPrincipalName = authentication.getName();             //Obtiene el nombre del ususario actual
 		log.debug("El usuario logueado es '" + currentPrincipalName + "'");
 		return this.userRepository.findByUsername(currentPrincipalName);         //Obtiene el usuario con ese nombre
+	}
+	
+	private void validatePassword(String password) throws MatchPasswordException {
+		String regex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)\\S{5,16}$";
+		if(password.isEmpty() || password == null) {
+			throw new MatchPasswordException();
+		}else if(!password.matches(regex)){
+			throw new MatchPasswordException();
+		}
 	}
 }

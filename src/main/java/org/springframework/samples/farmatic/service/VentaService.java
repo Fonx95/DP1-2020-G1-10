@@ -165,7 +165,8 @@ public class VentaService {
 	}
 
 	@Transactional(rollbackFor = {VentaCompradorEmptyException.class, VentaClienteEmptyException.class, LineaEmptyException.class})
-	public void finalizarVenta(Venta venta) throws DataAccessException, VentaCompradorEmptyException, VentaClienteEmptyException, LineaEmptyException {
+	public void finalizarVenta(Venta venta) throws DataAccessException, VentaCompradorEmptyException, 
+														VentaClienteEmptyException, LineaEmptyException {
 		//establece una venta en realizada
 		venta = this.venta(venta.getId());
 																			//actualiza la informacion de la venta:
@@ -179,7 +180,8 @@ public class VentaService {
 		validateVenta(venta);
 		
 		this.ventaRepository.save(venta);
-		VentaService.log.debug("La venta se ha a realizado con la fecha " + venta.getFecha() + ", un importe total de " + venta.getImporteTotal() + "€, un pago de " + venta.getPagado() + "€ y " + venta.getLineaVenta().size() + " lineas de venta");
+		VentaService.log.debug("La venta se ha a realizado con la fecha " + venta.getFecha() + ", un importe total de " 
+				+ venta.getImporteTotal() + "€, un pago de " + venta.getPagado() + "€ y " + venta.getLineaVenta().size() + " lineas de venta");
 		this.controlStock(venta);//actualiza el stock de los productos
 		Venta nuevaVenta = new Venta();//crea una nueva venta borrador
 		this.ventaRepository.save(nuevaVenta);
@@ -235,7 +237,8 @@ public class VentaService {
 		linea.setImporte(this.numberFormatter(importeLinea));
 
 		this.lineaRepository.save(linea);
-		VentaService.log.debug("Se ha creado o modificado la linea de venta del producto '" + linea.getProducto().getCode() + "' y un importe de " + linea.getImporte() + "€");
+		VentaService.log.debug("Se ha creado o modificado la linea de venta del producto '" 
+				+ linea.getProducto().getCode() + "' y un importe de " + linea.getImporte() + "€");
 
 		Venta venta = this.ventaActual();
 		this.updateVenta(venta);//actualiza la infromacion de la venta

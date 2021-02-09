@@ -15,6 +15,7 @@
 			<farmatic:inputType label="Contraseña:" name="password" type="password" value="${user.password}" holder="Antigua contraseña" display="5 left"/>
 			<farmatic:inputType label="Nueva contraseña:" name="newPassword"  type="password" value="${user.newPassword}" holder="Nueva contraseña" display="5 left"/>
 			<farmatic:inputType label="Confirma contraseña:" name="validPassword"  type="password" value="${validPassword}" holder="Confirma contraseña" display="5 left"/>
+			
 			<button class="btn btn-default" type="submit">Aceptar</button>
 		</form:form>
 	</div>
