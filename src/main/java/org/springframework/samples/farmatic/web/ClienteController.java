@@ -65,7 +65,8 @@ public class ClienteController {
 	}
 	
 	@GetMapping(value = {"/clientes/{idCliente}/edit"})
-	public String initEditCliente(@PathVariable("idCliente") Cliente cliente, ModelMap model) {
+	public String initEditCliente(@PathVariable("idCliente") int idCliente, ModelMap model) {
+		Cliente cliente= this.clienteService.findClienteById(idCliente);
 		model.addAttribute("cliente", cliente);
 		return VIEWS_CLIENTE_CREATE_OR_UPDATE_FORM;
 	}
