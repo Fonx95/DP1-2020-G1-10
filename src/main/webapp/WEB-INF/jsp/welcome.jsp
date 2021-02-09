@@ -2,17 +2,17 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="petclinic" tagdir="/WEB-INF/tags" %>
+<%@ taglib prefix="farmatic" tagdir="/WEB-INF/tags" %>
 <!-- %@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %-->  
 
-<petclinic:layout pageName="home">
+<farmatic:layout pageName="home">
     <h2><fmt:message key="welcome"/></h2>
     <div>
     	<h2>Project: ${title}</h2>
     	<h2>Group: ${group}</h2>
     	<p><ul>
     	<c:forEach items="${persons}" var="person">
-    		<li>${person.firstName}<p> </p>${person.lastName}</li>
+    		<li><p>${person.firstName} &nbsp ${person.lastName}</p></li>
     	</c:forEach></ul>
     </div>
     <div class="row">
@@ -21,4 +21,4 @@
             <img class="img-responsive" src="${petsImage}"/>
         </div>
     </div>
-</petclinic:layout>
+</farmatic:layout>
